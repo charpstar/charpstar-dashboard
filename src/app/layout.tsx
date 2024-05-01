@@ -22,8 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full bg-white">
-      <body className={`${inter.className} h-full`}>
-        <AppLayout>{children}</AppLayout>
+      <body
+        className={`${inter.className} h-full antialiased bg-gray-50 dark:bg-gray-900`}
+      >
+        {children}
       </body>
     </html>
   );
