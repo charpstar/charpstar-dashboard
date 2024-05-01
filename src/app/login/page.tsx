@@ -26,11 +26,11 @@ export default function Login() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) router.push("/protected");
+      if (session) router.push("/");
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.push("/protected");
+      if (session) router.push("/");
     });
 
     return () => {
