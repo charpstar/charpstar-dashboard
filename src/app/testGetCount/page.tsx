@@ -11,7 +11,7 @@ export default function Test() {
   const fromTimestamp = 1714437100788724;
   const toTimestamp = 1714506417087651;
 
-  const [count, setCount] = React.useState<number>(0);
+  const [count, setCount] = React.useState<number | null>(null);
 
   React.useEffect(() => {
     getCountByEventName({
@@ -27,7 +27,9 @@ export default function Test() {
 
   return (
     <div>
-      <h1>Count: {count}</h1>
+      <h1 style={{ color: "white" }}>
+        Count: {count === null ? "Updating ..." : count}
+      </h1>
     </div>
   );
 }
