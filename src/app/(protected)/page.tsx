@@ -1,5 +1,6 @@
 import { Card, ProgressBar } from "@tremor/react";
 import AreaChartHero from "@/components/AreaChartHero";
+import { DemoComponent } from "@/components/DatePicker";
 
 export default async function Index() {
   return (
@@ -20,6 +21,7 @@ export default async function Index() {
       </Card>
 
       <AreaChartHero />
+      <DemoComponent />
     </div>
   );
 
