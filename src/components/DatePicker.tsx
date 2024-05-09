@@ -4,18 +4,16 @@ import React from "react";
 import Datepicker from "tailwind-datepicker-react";
 
 const options = {
-  title: "Demo Title",
+  title: "Date",
   autoHide: true,
-  todayBtn: false,
+  todayBtn: true,
   clearBtn: true,
   // clearBtnText: "Clear",
-  maxDate: new Date("2030-01-01"),
+  maxDate: new Date(),
   minDate: new Date("1950-01-01"),
   datepickerClassNames: "top-12",
-  defaultDate: new Date("2022-01-01"),
+  defaultDate: null,
   language: "en",
-  disabledDates: [],
-  weekDays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
   inputNameProp: "date",
   inputIdProp: "date",
   inputPlaceholderProp: "Select Date",
@@ -26,12 +24,12 @@ const options = {
   // },
 };
 
-export const DemoComponent = () => {
+export const DatePicker = ({
+  handleChange,
+}: {
+  handleChange: (date: Date) => void;
+}) => {
   const [show, setShow] = React.useState<boolean>(false);
-
-  const handleChange = (selectedDate: Date) => {
-    console.log(selectedDate);
-  };
 
   const handleClose = (state: boolean) => {
     setShow(state);

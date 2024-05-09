@@ -4,13 +4,11 @@ import { redirect } from "next/navigation";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 import { createClient } from "@/utils/supabase/server";
+import { getUserWithMetadata } from "@/utils/supabase/getUser";
 
 export default async function AuthButton() {
   const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUserWithMetadata(supabase);
 
   const signOut = async () => {
     "use server";
