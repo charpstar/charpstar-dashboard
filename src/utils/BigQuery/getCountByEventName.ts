@@ -2,36 +2,36 @@
 
 import { BigQuery } from "@google-cloud/bigquery";
 
-export async function getCountByEventName({
+export async function getEventsCount({
   projectId,
   datasetId,
-  tableName,
 
-  event_name,
   fromTimestamp,
   toTimestamp,
 }: {
   projectId: string;
   datasetId: string;
-  tableName: string;
 
-  event_name: string;
   fromTimestamp: number;
   toTimestamp: number;
-}): Promise<number> {
+}): Promise<{
+  [eventName: string]: number;
+}> {
   const bigqueryClient = new BigQuery({
     projectId,
   });
 
+  // TODO: Optimization can be done by removing wildcard and using the exact tables related to the timestamps.
+
   const query = `
     SELECT
-      COUNT(*) as count
+      event_name,
+      COUNT(event_name) as count
     FROM
-      \`${projectId}.${datasetId}.${tableName}\`
+      \`${projectId}.${datasetId}.events_*\`
     WHERE
-      event_name = "${event_name}"
-      AND event_timestamp >= ${fromTimestamp}
-      AND event_timestamp <= ${toTimestamp};
+      event_timestamp BETWEEN ${fromTimestamp} AND ${toTimestamp}
+    GROUP BY 1;
   `;
 
   const options = {
@@ -40,9 +40,14 @@ export async function getCountByEventName({
   };
 
   const [job] = await bigqueryClient.createQueryJob(options);
-  const result = await job.getQueryResults();
+  const response = await job.getQueryResults();
 
-  const { count } = result[0][0];
+  const result = response[0] as unknown as {
+    event_name: string;
+    count: number;
+  }[];
 
-  return count;
+  return Object.fromEntries(
+    result.map(({ event_name, count }) => [event_name, count]),
+  );
 }

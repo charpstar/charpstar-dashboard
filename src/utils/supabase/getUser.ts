@@ -9,7 +9,7 @@ export async function getUserWithMetadata(supabase: SupabaseClient) {
 
   const { data: metadata, error } = await supabase
     .from("profiles")
-    .select("projectId:projectid, datasetId:datasetid, tableName:tablename")
+    .select("projectId:projectid, datasetId:datasetid")
     .eq("id", user.id)
     .single();
 
