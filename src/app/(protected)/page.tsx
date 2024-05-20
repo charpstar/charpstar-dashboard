@@ -3,10 +3,7 @@
 import React from "react";
 
 import { Card } from "@tremor/react";
-import Datepicker, {
-  DateRangeType,
-  DateValueType,
-} from "react-tailwindcss-datepicker";
+import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 
 import dayjs from "@/utils/dayjs";
 
@@ -19,45 +16,70 @@ import Skeleton from "@/components/Skeleton";
 const defaultEvents = {
   charpstAR_Load: {
     title: "CharpstAR Load",
-    count: 0,
+    count: undefined,
   },
   charpstAR_AR_Button_Click: {
     title: "CharpstAR AR Click",
-    count: 0,
+    count: undefined,
   },
   charpstAR_3D_Button_Click: {
     title: "CharpstAR 3D Click",
-    count: 0,
+    count: undefined,
   },
-};
+} as { [event_name: string]: { title: string; count: number | undefined } };
 
-const today = dayjs
-  .utc()
-  .set("hour", 0)
-  .set("minute", 0)
-  .set("second", 0)
-  .toDate();
+function normalizeDate(date: dayjs.ConfigType, isEnd: boolean) {
+  return dayjs(date)
+    .utc(true)
+    .set("hour", isEnd ? 23 : 0)
+    .set("minute", isEnd ? 59 : 0)
+    .set("second", isEnd ? 59 : 0);
+}
 
-const previousWeek = dayjs(today).subtract(1, "week").toDate();
+function buildDateRange(startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs) {
+  return {
+    startDate: (
+      startDate ?? normalizeDate(undefined, false).subtract(7, "days")
+    ).toDate(),
+    endDate: (endDate ?? normalizeDate(undefined, true)).toDate(),
+  };
+}
+
+function dateToBqTableName(date: Date) {
+  return dayjs(date).utc().format("YYYYMMDD");
+}
 
 export default function Index() {
   const supabase = createClient();
-
-  const [dateRange, setDateRange] = React.useState<DateRangeType>({
-    startDate: previousWeek,
-    endDate: today,
-  });
-
   const [eventsCount, setEventsCount] = React.useState(defaultEvents);
+  const [dateRange, setDateRange] = React.useState(buildDateRange());
 
   const handleValueChange = (newValue: DateValueType) => {
-    if (newValue) setDateRange(newValue); // TODO: Handle timezone.
+    const { startDate: startDateStr, endDate: endDateStr } = newValue ?? {};
+
+    if (
+      startDateStr &&
+      endDateStr &&
+      typeof startDateStr === "string" &&
+      typeof endDateStr === "string"
+    ) {
+      const startDate = normalizeDate(startDateStr, false);
+      const endDate = normalizeDate(endDateStr, true);
+
+      setDateRange(buildDateRange(startDate, endDate));
+    }
   };
-  const fromTimestamp = dayjs(dateRange.startDate!).unix() * Math.pow(10, 6);
-  const toTimestamp = dayjs(dateRange.endDate!).unix() * Math.pow(10, 6);
+
+  const startTableName = dateToBqTableName(dateRange.startDate);
+  const endTableName = dateToBqTableName(dateRange.endDate);
+
+  console.log({
+    startTableName,
+    endTableName,
+  });
 
   React.useEffect(() => {
-    if (!fromTimestamp || !toTimestamp) return;
+    if (!startTableName || !endTableName) return;
 
     setEventsCount(defaultEvents);
 
@@ -68,41 +90,48 @@ export default function Index() {
         projectId,
         datasetId,
 
-        fromTimestamp,
-        toTimestamp,
-      }).then((r) =>
-        setEventsCount(
-          Object.fromEntries(
-            Object.entries(defaultEvents).map(([event_name, data]) => [
-              event_name,
-              {
-                ...data,
-                count: r[event_name] as number,
-              },
-            ]),
-          ) as typeof defaultEvents,
-        ),
+        startTableName,
+        endTableName,
+      }).then(
+        (r) =>
+          console.table(r) ||
+          setEventsCount(
+            Object.fromEntries(
+              Object.entries(defaultEvents).map(([event_name, data]) => [
+                event_name,
+                {
+                  ...data,
+                  count: r[event_name] || 0,
+                },
+              ]),
+            ) as typeof defaultEvents,
+          ),
       );
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fromTimestamp, toTimestamp]);
+  }, [startTableName, endTableName]);
+
+  const componentDateRange = {
+    startDate: dayjs(dateRange.startDate).toISOString().split("T")[0],
+    endDate: dayjs(dateRange.endDate).toISOString().split("T")[0],
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
       <div className="lg:col-start-3 rounded-lg dark:border-gray-600">
         <Datepicker
-          value={dateRange}
+          value={componentDateRange}
           onChange={handleValueChange}
           showShortcuts={true}
-          maxDate={today}
+          maxDate={dayjs().add(1, "day").toDate()}
         />
       </div>
 
       <div className="col-span-3">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {Object.entries(eventsCount).map(([event_name, { title, count }]) => (
-            <EventCountCard key={event_name} title={title} value={count} />
+            <EventCountCard key={event_name} title={title} count={count} />
           ))}
         </div>
       </div>
@@ -110,8 +139,8 @@ export default function Index() {
   );
 }
 
-function EventCountCard({ title, value }: { title: string; value?: number }) {
-  if (!value) return <Skeleton />;
+function EventCountCard({ title, count }: (typeof defaultEvents)[string]) {
+  if (count === undefined) return <Skeleton />;
 
   return (
     <Card>
@@ -120,7 +149,7 @@ function EventCountCard({ title, value }: { title: string; value?: number }) {
       </h4>
 
       <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-        {value}
+        {count}
       </p>
 
       <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">

@@ -17,7 +17,6 @@ export default function Login() {
     };
 
     const { data, error } = await supabase.auth.signInWithPassword(rawFormData);
-    console.log(data, error);
 
     if (error) alert(error.message);
   };

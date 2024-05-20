@@ -6,14 +6,14 @@ export async function getEventsCount({
   projectId,
   datasetId,
 
-  fromTimestamp,
-  toTimestamp,
+  startTableName,
+  endTableName,
 }: {
   projectId: string;
   datasetId: string;
 
-  fromTimestamp: number;
-  toTimestamp: number;
+  startTableName: string;
+  endTableName: string;
 }): Promise<{
   [eventName: string]: number;
 }> {
@@ -21,16 +21,14 @@ export async function getEventsCount({
     projectId,
   });
 
-  // TODO: Optimization can be done by removing wildcard and using the exact tables related to the timestamps.
-
   const query = `
     SELECT
       event_name,
-      COUNT(event_name) as count
+      COUNT(*) as count
     FROM
       \`${projectId}.${datasetId}.events_*\`
     WHERE
-      event_timestamp BETWEEN ${fromTimestamp} AND ${toTimestamp}
+      _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
     GROUP BY 1;
   `;
 
