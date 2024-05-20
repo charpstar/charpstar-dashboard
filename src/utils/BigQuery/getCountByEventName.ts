@@ -29,6 +29,7 @@ export async function getEventsCount({
       \`${projectId}.${datasetId}.events_*\`
     WHERE
       _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND traffic_source.medium IS NOT NULL
     GROUP BY 1;
   `;
 

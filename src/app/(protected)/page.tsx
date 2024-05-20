@@ -28,25 +28,22 @@ const defaultEvents = {
   },
 } as { [event_name: string]: { title: string; count: number | undefined } };
 
-function normalizeDate(date: dayjs.ConfigType, isEnd: boolean) {
-  return dayjs(date)
-    .utc(true)
-    .set("hour", isEnd ? 23 : 0)
-    .set("minute", isEnd ? 59 : 0)
-    .set("second", isEnd ? 59 : 0);
+function dayjsToComp(date: dayjs.Dayjs) {
+  return date.format("YYYY-MM-DD");
 }
 
-function buildDateRange(startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs) {
+function compToBq(date: string) {
+  return date.replace(/-/g, "");
+}
+
+function buildDateRange(
+  startDate: dayjs.Dayjs = dayjs().subtract(7, "days"),
+  endDate: dayjs.Dayjs = dayjs(),
+) {
   return {
-    startDate: (
-      startDate ?? normalizeDate(undefined, false).subtract(7, "days")
-    ).toDate(),
-    endDate: (endDate ?? normalizeDate(undefined, true)).toDate(),
+    startDate: dayjsToComp(startDate),
+    endDate: dayjsToComp(endDate),
   };
-}
-
-function dateToBqTableName(date: Date) {
-  return dayjs(date).utc().format("YYYYMMDD");
 }
 
 export default function Index() {
@@ -63,20 +60,12 @@ export default function Index() {
       typeof startDateStr === "string" &&
       typeof endDateStr === "string"
     ) {
-      const startDate = normalizeDate(startDateStr, false);
-      const endDate = normalizeDate(endDateStr, true);
-
-      setDateRange(buildDateRange(startDate, endDate));
+      setDateRange(newValue as { startDate: string; endDate: string });
     }
   };
 
-  const startTableName = dateToBqTableName(dateRange.startDate);
-  const endTableName = dateToBqTableName(dateRange.endDate);
-
-  console.log({
-    startTableName,
-    endTableName,
-  });
+  const startTableName = compToBq(dateRange.startDate);
+  const endTableName = compToBq(dateRange.endDate);
 
   React.useEffect(() => {
     if (!startTableName || !endTableName) return;
@@ -92,36 +81,29 @@ export default function Index() {
 
         startTableName,
         endTableName,
-      }).then(
-        (r) =>
-          console.table(r) ||
-          setEventsCount(
-            Object.fromEntries(
-              Object.entries(defaultEvents).map(([event_name, data]) => [
-                event_name,
-                {
-                  ...data,
-                  count: r[event_name] || 0,
-                },
-              ]),
-            ) as typeof defaultEvents,
-          ),
+      }).then((r) =>
+        setEventsCount(
+          Object.fromEntries(
+            Object.entries(defaultEvents).map(([event_name, data]) => [
+              event_name,
+              {
+                ...data,
+                count: r[event_name] || 0,
+              },
+            ]),
+          ) as typeof defaultEvents,
+        ),
       );
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTableName, endTableName]);
 
-  const componentDateRange = {
-    startDate: dayjs(dateRange.startDate).toISOString().split("T")[0],
-    endDate: dayjs(dateRange.endDate).toISOString().split("T")[0],
-  };
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
       <div className="lg:col-start-3 rounded-lg dark:border-gray-600">
         <Datepicker
-          value={componentDateRange}
+          value={dateRange}
           onChange={handleValueChange}
           showShortcuts={true}
           maxDate={dayjs().add(1, "day").toDate()}
