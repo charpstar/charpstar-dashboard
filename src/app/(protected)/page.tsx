@@ -45,6 +45,7 @@ export default function Index() {
     if (!user) return;
 
     setEventsCount(defaultEvents);
+    setClientQueryResult(null);
 
     executeClientQuery({
       projectId,

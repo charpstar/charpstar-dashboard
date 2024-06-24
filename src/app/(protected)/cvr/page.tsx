@@ -17,6 +17,8 @@ export default function Index() {
     React.ComponentProps<typeof CVRTable>["rows"] | null
   >(null);
 
+  setClientQueryResult(null);
+
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
 
