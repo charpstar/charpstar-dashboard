@@ -11,6 +11,7 @@ import {
 // 3D Sessions => 3D_Click
 export default function CVRTable({
   rows,
+  showMore,
   onShowMoreClick,
 }: {
   rows: {
@@ -18,10 +19,11 @@ export default function CVRTable({
     arSessionsCount: number;
     threeDSessionsCount: number;
     CVR: {
-      default: number;
-      charpstAR: number;
+      default: string;
+      charpstAR: string;
     };
   }[];
+  showMore: boolean;
   onShowMoreClick: () => void;
 }) {
   return (
@@ -53,17 +55,19 @@ export default function CVRTable({
           </TableRow>
         ))}
 
-        <TableRow>
-          <TableCell colSpan={5} className="text-center">
-            <button
-              className="text-tremor-default text-tremor-content underline"
-              type="button"
-              onClick={onShowMoreClick}
-            >
-              Show more
-            </button>
-          </TableCell>
-        </TableRow>
+        {showMore && (
+          <TableRow>
+            <TableCell colSpan={5} className="text-center">
+              <button
+                className="text-tremor-default text-tremor-content underline"
+                type="button"
+                onClick={onShowMoreClick}
+              >
+                Show more
+              </button>
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

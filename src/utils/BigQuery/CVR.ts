@@ -135,9 +135,9 @@ export async function executeClientQuery({
   let query = queries[datasetId];
   if (!query) throw new Error(`Query not found for datasetId: ${datasetId}`);
 
-  if (limit) {
-    query = `${query} LIMIT ${limit}`;
-  }
+  query = `${query} ORDER BY product_conv_rate DESC`;
+
+  if (limit) query = `${query} LIMIT ${limit}`;
 
   const { value: bigqueryClient } = getBigQueryClient({
     projectId: "fast-lattice-421210",
@@ -149,15 +149,41 @@ export async function executeClientQuery({
   };
 
   const [job] = await bigqueryClient.createQueryJob(options);
-  const [response] = await job.getQueryResults();
+  const [_response] = await job.getQueryResults();
 
-  return response as {
-    products_name: string;
+  /*
+    total_purchases - Total purchases
+    purchases_with_service - Total purchases by users who have clicked either buttons
+    product_conv_rate - Conv Rate with AR/3D
+    default_conv_rate - Conv Rate default
+  */
+
+  const response = _response as {
+    product_name: string;
+
     _3D_Button_Clicks: number;
     AR_Button_Clicks: number;
-    products_purchased: string;
     total_button_clicks: number;
+
+    total_purchases: number;
+    total_views: number;
+    purchases_with_service: number;
+
     product_conv_rate: number;
-    total_pageviews: number;
+    default_conv_rate: number;
   }[];
+
+  console.log(response[0]);
+
+  return response.map((row) => {
+    return {
+      product_name: row.product_name,
+      arSessionsCount: row.AR_Button_Clicks,
+      threeDSessionsCount: row._3D_Button_Clicks,
+      CVR: {
+        default: `${row.default_conv_rate}%`,
+        charpstAR: `${row.product_conv_rate}%`,
+      },
+    };
+  });
 }

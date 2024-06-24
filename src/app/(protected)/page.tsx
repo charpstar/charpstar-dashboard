@@ -14,6 +14,7 @@ import { getUserWithMetadata } from "@/utils/supabase/getUser";
 import Skeleton from "@/components/Skeleton";
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import CVRTable from "@/components/CVRTable";
+import { useRouter } from "next/navigation";
 
 const defaultEvents = {
   charpstAR_Load: {
@@ -30,15 +31,15 @@ const defaultEvents = {
   },
 } as { [event_name: string]: { title: string; count: number | undefined } };
 
-function dayjsToComp(date: dayjs.Dayjs) {
+export function dayjsToComp(date: dayjs.Dayjs) {
   return date.format("YYYY-MM-DD");
 }
 
-function compToBq(date: string) {
+export function compToBq(date: string) {
   return date.replace(/-/g, "");
 }
 
-function buildDateRange(
+export function buildDateRange(
   startDate: dayjs.Dayjs = dayjs().subtract(7, "days"),
   endDate: dayjs.Dayjs = dayjs(),
 ) {
@@ -49,6 +50,7 @@ function buildDateRange(
 }
 
 export default function Index() {
+  const router = useRouter();
   const supabase = createClient();
   const [eventsCount, setEventsCount] = React.useState(defaultEvents);
   const [dateRange, setDateRange] = React.useState(buildDateRange());
@@ -84,21 +86,7 @@ export default function Index() {
         projectId,
         datasetId,
         limit: 10,
-      })
-        .then((r) =>
-          r.map((row) => {
-            return {
-              product_name: row.products_name,
-              arSessionsCount: row.AR_Button_Clicks,
-              threeDSessionsCount: row._3D_Button_Clicks,
-              CVR: {
-                default: 0,
-                charpstAR: 0,
-              },
-            };
-          }),
-        )
-        .then((r) => setClientQueryResult(r));
+      }).then((r) => setClientQueryResult(r));
 
       getEventsCount({
         projectId,
@@ -144,7 +132,13 @@ export default function Index() {
       </div>
 
       <div className="col-span-2">
-        <CVRTable rows={clientQueryResult} onShowMoreClick={() => {}} />
+        <CVRTable
+          rows={clientQueryResult}
+          onShowMoreClick={() => {
+            router.push("/cvr");
+          }}
+          showMore
+        />
       </div>
     </div>
   );
