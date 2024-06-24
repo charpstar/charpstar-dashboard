@@ -188,12 +188,17 @@ export async function executeClientQuery({
   return response.map((row) => {
     return {
       product_name: row.product_name,
-      arSessionsCount: row.AR_Button_Clicks,
-      threeDSessionsCount: row._3D_Button_Clicks,
+
+      AR_Button_Clicks: row.AR_Button_Clicks,
+      _3D_Button_Clicks: row._3D_Button_Clicks,
+
       CVR: {
         default: `${row.default_conv_rate}%`,
         charpstAR: `${row.product_conv_rate}%`,
       },
+
+      total_purchases: row.total_purchases,
+      purchases_with_service: row.purchases_with_service,
     };
   });
 }

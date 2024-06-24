@@ -1,3 +1,4 @@
+import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import {
   Table,
   TableBody,
@@ -7,25 +8,27 @@ import {
   TableRow,
 } from "@tremor/react";
 
+interface CVRTableProps {
+  rows: Awaited<ReturnType<typeof executeClientQuery>>;
+
+  showColumns: {
+    total_purchases: boolean;
+    purchases_with_service: boolean;
+  };
+
+  showMore: boolean;
+
+  onShowMoreClick: () => void;
+}
+
 // AR Sessions => AR_Click
 // 3D Sessions => 3D_Click
 export default function CVRTable({
   rows,
   showMore,
+  showColumns,
   onShowMoreClick,
-}: {
-  rows: {
-    product_name: string;
-    arSessionsCount: number;
-    threeDSessionsCount: number;
-    CVR: {
-      default: string;
-      charpstAR: string;
-    };
-  }[];
-  showMore: boolean;
-  onShowMoreClick: () => void;
-}) {
+}: CVRTableProps) {
   return (
     <Table className="table-fixed">
       <TableHead>
@@ -37,6 +40,18 @@ export default function CVRTable({
           <TableHeaderCell className="text-right">
             CVR (CharpstAR)
           </TableHeaderCell>
+
+          {showColumns.total_purchases && (
+            <TableHeaderCell className="text-right">
+              Total Purchases
+            </TableHeaderCell>
+          )}
+
+          {showColumns.purchases_with_service && (
+            <TableHeaderCell className="text-right">
+              Purchase with Service
+            </TableHeaderCell>
+          )}
         </TableRow>
       </TableHead>
 
@@ -46,12 +61,24 @@ export default function CVRTable({
             <TableCell>
               <div className="w-15 whitespace-normal">{row.product_name}</div>
             </TableCell>
-            <TableCell className="text-right">{row.arSessionsCount}</TableCell>
+            <TableCell className="text-right">{row.AR_Button_Clicks}</TableCell>
             <TableCell className="text-right">
-              {row.threeDSessionsCount}
+              {row._3D_Button_Clicks}
             </TableCell>
             <TableCell className="text-right">{row.CVR.default}</TableCell>
             <TableCell className="text-right">{row.CVR.charpstAR}</TableCell>
+
+            {showColumns.total_purchases && (
+              <TableCell className="text-right">
+                {row.total_purchases}
+              </TableCell>
+            )}
+
+            {showColumns.purchases_with_service && (
+              <TableCell className="text-right">
+                {row.purchases_with_service}
+              </TableCell>
+            )}
           </TableRow>
         ))}
 

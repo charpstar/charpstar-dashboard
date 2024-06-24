@@ -60,6 +60,26 @@ export default function AppSide() {
             title="Overview"
             href="/"
           />
+
+          <ListItem
+            icon={
+              <svg
+                aria-hidden="true"
+                className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 10a2 2 0 114 0 2 2 0 01-4 0z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            }
+            title="CVR"
+            href="/cvr"
+          />
         </ul>
 
         <ul className="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">

@@ -72,6 +72,10 @@ export default function Index() {
           rows={clientQueryResult}
           onShowMoreClick={() => {}}
           showMore={false}
+          showColumns={{
+            total_purchases: true,
+            purchases_with_service: true,
+          }}
         />
       </div>
     </div>

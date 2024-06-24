@@ -142,6 +142,10 @@ export default function Index() {
             router.push("/cvr");
           }}
           showMore
+          showColumns={{
+            total_purchases: false,
+            purchases_with_service: false,
+          }}
         />
       </div>
     </div>
