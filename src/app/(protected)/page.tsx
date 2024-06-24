@@ -119,13 +119,15 @@ export default function Index() {
       </div>
 
       <div className="col-span-2">
-        <CVRTable
-          rows={clientQueryResult}
-          showColumns={{
-            total_purchases: false,
-            purchases_with_service: false,
-          }}
-        />
+        <Card>
+          <CVRTable
+            rows={clientQueryResult}
+            showColumns={{
+              total_purchases: false,
+              purchases_with_service: false,
+            }}
+          />
+        </Card>
       </div>
     </div>
   );
