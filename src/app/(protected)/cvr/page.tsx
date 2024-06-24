@@ -17,14 +17,14 @@ export default function Index() {
     React.ComponentProps<typeof CVRTable>["rows"] | null
   >(null);
 
-  setClientQueryResult(null);
-
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
 
   React.useEffect(() => {
     if (!startTableName || !endTableName) return;
     if (!user) return;
+
+    setClientQueryResult(null);
 
     executeClientQuery({
       projectId,
