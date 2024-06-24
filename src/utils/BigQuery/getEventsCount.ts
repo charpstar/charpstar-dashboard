@@ -1,6 +1,6 @@
 "use server";
 
-import { BigQuery } from "@google-cloud/bigquery";
+import { getBigQueryClient } from "./client";
 
 export async function getEventsCount({
   projectId,
@@ -17,9 +17,7 @@ export async function getEventsCount({
 }): Promise<{
   [eventName: string]: number;
 }> {
-  const bigqueryClient = new BigQuery({
-    projectId,
-  });
+  const { value: bigqueryClient } = getBigQueryClient({ projectId });
 
   const query = `
     SELECT

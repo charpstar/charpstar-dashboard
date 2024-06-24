@@ -2,15 +2,18 @@ import { redirect } from "next/navigation";
 
 import AppLayout from "@/components/AppLayout";
 import { createClient } from "@/utils/supabase/server";
-import { getUserWithMetadata } from "@/utils/supabase/getUser";
+import { getUser, getUserWithMetadata } from "@/utils/supabase/getUser";
 
 export default async function ProtectedLayout({
   children,
 }: React.PropsWithChildren) {
   const supabase = createClient();
-  const user = await getUserWithMetadata(supabase);
 
+  const user = await getUser(supabase);
   if (!user) return redirect("/login");
+
+  const userWithData = await getUserWithMetadata(supabase);
+  if (!userWithData) return redirect("/no-data");
 
   return <AppLayout>{children}</AppLayout>;
 }

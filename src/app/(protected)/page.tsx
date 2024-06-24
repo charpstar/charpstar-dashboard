@@ -8,10 +8,12 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import dayjs from "@/utils/dayjs";
 
 import { createClient } from "@/utils/supabase/client";
-import { getEventsCount } from "@/utils/BigQuery/getCountByEventName";
+import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
 import { getUserWithMetadata } from "@/utils/supabase/getUser";
 
 import Skeleton from "@/components/Skeleton";
+import { executeClientQuery } from "@/utils/BigQuery/CVR";
+import CVRTable from "@/components/CVRTable";
 
 const defaultEvents = {
   charpstAR_Load: {
@@ -50,6 +52,9 @@ export default function Index() {
   const supabase = createClient();
   const [eventsCount, setEventsCount] = React.useState(defaultEvents);
   const [dateRange, setDateRange] = React.useState(buildDateRange());
+  const [clientQueryResult, setClientQueryResult] = React.useState<
+    React.ComponentProps<typeof CVRTable>["rows"]
+  >([]);
 
   const handleValueChange = (newValue: DateValueType) => {
     const { startDate: startDateStr, endDate: endDateStr } = newValue ?? {};
@@ -74,6 +79,26 @@ export default function Index() {
 
     getUserWithMetadata(supabase).then((user) => {
       const { projectId, datasetId } = user!.metadata;
+
+      executeClientQuery({
+        projectId,
+        datasetId,
+        limit: 10,
+      })
+        .then((r) =>
+          r.map((row) => {
+            return {
+              product_name: row.products_name,
+              arSessionsCount: row.AR_Button_Clicks,
+              threeDSessionsCount: row._3D_Button_Clicks,
+              CVR: {
+                default: 0,
+                charpstAR: 0,
+              },
+            };
+          }),
+        )
+        .then((r) => setClientQueryResult(r));
 
       getEventsCount({
         projectId,
@@ -116,6 +141,10 @@ export default function Index() {
             <EventCountCard key={event_name} title={title} count={count} />
           ))}
         </div>
+      </div>
+
+      <div className="col-span-2">
+        <CVRTable rows={clientQueryResult} onShowMoreClick={() => {}} />
       </div>
     </div>
   );
