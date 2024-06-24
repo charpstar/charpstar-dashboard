@@ -10,6 +10,7 @@ import DateRangePicker from "@/components/DateRangePicker";
 
 export default function Index() {
   const user = useUser();
+  const { monitoredSince, projectId, datasetId } = user.metadata;
 
   const [dateRange, setDateRange] = React.useState(buildDateRange());
   const [clientQueryResult, setClientQueryResult] = React.useState<
@@ -22,8 +23,6 @@ export default function Index() {
   React.useEffect(() => {
     if (!startTableName || !endTableName) return;
     if (!user) return;
-
-    const { projectId, datasetId } = user.metadata;
 
     executeClientQuery({
       projectId,
@@ -41,7 +40,11 @@ export default function Index() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
       <div className="lg:col-start-3 rounded-lg dark:border-gray-600">
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
+        <DateRangePicker
+          value={dateRange}
+          onChange={setDateRange}
+          minDate={monitoredSince}
+        />
       </div>
 
       <div className="col-span-3">

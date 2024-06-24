@@ -3,11 +3,13 @@ import dayjs from "@/utils/dayjs";
 
 interface DateRangePickerProps {
   value: { startDate: string; endDate: string };
+  minDate?: Date;
   onChange: (newValue: { startDate: string; endDate: string }) => void;
 }
 
 export default function DateRangePicker({
   value,
+  minDate,
   onChange,
 }: DateRangePickerProps) {
   const handleValueChange = (newValue: DateValueType) => {
@@ -29,6 +31,7 @@ export default function DateRangePicker({
       onChange={handleValueChange}
       showShortcuts={true}
       maxDate={dayjs().add(1, "day").toDate()}
+      minDate={minDate}
     />
   );
 }
