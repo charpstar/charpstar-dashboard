@@ -45,6 +45,10 @@ export default function Index() {
       executeClientQuery({
         projectId,
         datasetId,
+
+        startTableName,
+        endTableName,
+
         limit: 100,
       }).then((r) => setClientQueryResult(r));
     });

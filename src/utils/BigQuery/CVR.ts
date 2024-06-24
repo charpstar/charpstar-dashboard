@@ -126,13 +126,23 @@ export async function getPageViewsCount({
 export async function executeClientQuery({
   projectId,
   datasetId,
+
+  startTableName,
+  endTableName,
+
   limit,
 }: {
   projectId: string;
   datasetId: keyof typeof queries;
+
+  startTableName: string;
+  endTableName: string;
+
   limit?: number;
 }) {
-  let query = queries[datasetId];
+  const eventsBetween = getEventsBetween({ startTableName, endTableName });
+
+  let query = queries[datasetId](eventsBetween);
   if (!query) throw new Error(`Query not found for datasetId: ${datasetId}`);
 
   query = `${query} ORDER BY product_conv_rate DESC`;
