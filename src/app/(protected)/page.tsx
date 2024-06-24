@@ -15,6 +15,7 @@ import Skeleton from "@/components/Skeleton";
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import CVRTable from "@/components/CVRTable";
 import { useRouter } from "next/navigation";
+import { buildDateRange, compToBq } from "@/utils/uiUtils";
 
 const defaultEvents = {
   charpstAR_Load: {
@@ -31,32 +32,14 @@ const defaultEvents = {
   },
 } as { [event_name: string]: { title: string; count: number | undefined } };
 
-export function dayjsToComp(date: dayjs.Dayjs) {
-  return date.format("YYYY-MM-DD");
-}
-
-export function compToBq(date: string) {
-  return date.replace(/-/g, "");
-}
-
-export function buildDateRange(
-  startDate: dayjs.Dayjs = dayjs().subtract(7, "days"),
-  endDate: dayjs.Dayjs = dayjs(),
-) {
-  return {
-    startDate: dayjsToComp(startDate),
-    endDate: dayjsToComp(endDate),
-  };
-}
-
 export default function Index() {
   const router = useRouter();
   const supabase = createClient();
   const [eventsCount, setEventsCount] = React.useState(defaultEvents);
   const [dateRange, setDateRange] = React.useState(buildDateRange());
   const [clientQueryResult, setClientQueryResult] = React.useState<
-    React.ComponentProps<typeof CVRTable>["rows"]
-  >([]);
+    React.ComponentProps<typeof CVRTable>["rows"] | null
+  >(null);
 
   const handleValueChange = (newValue: DateValueType) => {
     const { startDate: startDateStr, endDate: endDateStr } = newValue ?? {};
@@ -138,10 +121,6 @@ export default function Index() {
       <div className="col-span-2">
         <CVRTable
           rows={clientQueryResult}
-          onShowMoreClick={() => {
-            router.push("/cvr");
-          }}
-          showMore
           showColumns={{
             total_purchases: false,
             purchases_with_service: false,

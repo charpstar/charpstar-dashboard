@@ -11,14 +11,14 @@ import { getUserWithMetadata } from "@/utils/supabase/getUser";
 
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import CVRTable from "@/components/CVRTable";
-import { buildDateRange, compToBq } from "../page";
+import { buildDateRange, compToBq } from "@/utils/uiUtils";
 
 export default function Index() {
   const supabase = createClient();
   const [dateRange, setDateRange] = React.useState(buildDateRange());
   const [clientQueryResult, setClientQueryResult] = React.useState<
-    React.ComponentProps<typeof CVRTable>["rows"]
-  >([]);
+    React.ComponentProps<typeof CVRTable>["rows"] | null
+  >(null);
 
   const handleValueChange = (newValue: DateValueType) => {
     const { startDate: startDateStr, endDate: endDateStr } = newValue ?? {};
@@ -70,8 +70,6 @@ export default function Index() {
       <div className="col-span-3">
         <CVRTable
           rows={clientQueryResult}
-          onShowMoreClick={() => {}}
-          showMore={false}
           showColumns={{
             total_purchases: true,
             purchases_with_service: true,
