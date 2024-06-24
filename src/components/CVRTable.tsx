@@ -26,10 +26,9 @@ export default function CVRTable({
 }) {
   return (
     <Table className="table-fixed">
-      {/* <div className="mx-auto max-w-2xl"></div> */}
       <TableHead>
         <TableRow>
-          <TableHeaderCell className="w-3">Product name</TableHeaderCell>
+          <TableHeaderCell className="w-15">Product name</TableHeaderCell>
           <TableHeaderCell className="text-right">AR Sessions</TableHeaderCell>
           <TableHeaderCell className="text-right">3D Sessions</TableHeaderCell>
           <TableHeaderCell className="text-right">CVR</TableHeaderCell>
@@ -42,8 +41,8 @@ export default function CVRTable({
       <TableBody className="text-white">
         {rows.map((row, i) => (
           <TableRow key={i}>
-            <TableCell className="w-3 break-words">
-              {row.product_name}
+            <TableCell>
+              <div className="w-15 whitespace-normal">{row.product_name}</div>
             </TableCell>
             <TableCell className="text-right">{row.arSessionsCount}</TableCell>
             <TableCell className="text-right">
