@@ -145,7 +145,7 @@ export async function executeClientQuery({
   let query = queries[datasetId](eventsBetween);
   if (!query) throw new Error(`Query not found for datasetId: ${datasetId}`);
 
-  query = `${query} ORDER BY product_conv_rate DESC`;
+  query = `${query} ORDER BY total_button_clicks DESC`;
 
   if (limit) query = `${query} LIMIT ${limit}`;
 
@@ -191,6 +191,7 @@ export async function executeClientQuery({
 
       AR_Button_Clicks: row.AR_Button_Clicks,
       _3D_Button_Clicks: row._3D_Button_Clicks,
+      total_button_clicks: row.total_button_clicks,
 
       CVR: {
         default: `${row.default_conv_rate}%`,

@@ -41,6 +41,8 @@ export default function CVRTable({
             CVR (CharpstAR)
           </TableHeaderCell>
 
+          <TableHeaderCell className="text-right">Total Clicks</TableHeaderCell>
+
           {showColumns.total_purchases && (
             <TableHeaderCell className="text-right">
               Total Purchases
@@ -67,6 +69,9 @@ export default function CVRTable({
             </TableCell>
             <TableCell className="text-right">{row.CVR.default}</TableCell>
             <TableCell className="text-right">{row.CVR.charpstAR}</TableCell>
+            <TableCell className="text-right">
+              {row.total_button_clicks}
+            </TableCell>
 
             {showColumns.total_purchases && (
               <TableCell className="text-right">
