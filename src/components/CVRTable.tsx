@@ -24,6 +24,8 @@ interface CVRTableProps {
 export default function CVRTable({ rows, showColumns }: CVRTableProps) {
   const isLoading = !rows;
 
+  if (isLoading) return <TableSkeleton />;
+
   return (
     <Card>
       <Table className="table-fixed">
@@ -60,14 +62,6 @@ export default function CVRTable({ rows, showColumns }: CVRTableProps) {
         </TableHead>
 
         <TableBody className="text-white">
-          {isLoading && (
-            <TableRow>
-              <TableCell colSpan={8}>
-                <TableSkeleton />
-              </TableCell>
-            </TableRow>
-          )}
-
           {rows && rows.length === 0 && (
             <TableRow>
               <TableCell colSpan={8} className="text-center">
