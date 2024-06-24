@@ -2,6 +2,7 @@ CREATE TABLE public.profiles (
   id uuid NOT NULL REFERENCES auth.users ON DELETE CASCADE,
   projectId text,
   datasetId text,
+  monitoredSince timestamp WITH time zone DEFAULT NOW(),
   PRIMARY KEY (id)
 );
 -- ALTER TABLE public.profiles enable ROW LEVEL SECURITY;

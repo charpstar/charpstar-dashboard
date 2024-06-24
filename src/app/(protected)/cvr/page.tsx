@@ -6,15 +6,14 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 
 import dayjs from "@/utils/dayjs";
 
-import { createClient } from "@/utils/supabase/client";
-import { getUserWithMetadata } from "@/utils/supabase/getUser";
-
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import CVRTable from "@/components/CVRTable";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
+import { useUser } from "@/contexts/UserContext";
 
 export default function Index() {
-  const supabase = createClient();
+  const user = useUser();
+
   const [dateRange, setDateRange] = React.useState(buildDateRange());
   const [clientQueryResult, setClientQueryResult] = React.useState<
     React.ComponentProps<typeof CVRTable>["rows"] | null
@@ -38,20 +37,19 @@ export default function Index() {
 
   React.useEffect(() => {
     if (!startTableName || !endTableName) return;
+    if (!user) return;
 
-    getUserWithMetadata(supabase).then((user) => {
-      const { projectId, datasetId } = user!.metadata;
+    const { projectId, datasetId } = user.metadata;
 
-      executeClientQuery({
-        projectId,
-        datasetId,
+    executeClientQuery({
+      projectId,
+      datasetId,
 
-        startTableName,
-        endTableName,
+      startTableName,
+      endTableName,
 
-        limit: 100,
-      }).then((r) => setClientQueryResult(r));
-    });
+      limit: 100,
+    }).then((r) => setClientQueryResult(r));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTableName, endTableName]);

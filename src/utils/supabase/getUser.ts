@@ -14,7 +14,9 @@ export async function getUserWithMetadata(supabase: SupabaseClient) {
 
   const { data: metadata, error } = await supabase
     .from("profiles")
-    .select("projectId:projectid, datasetId:datasetid")
+    .select(
+      "projectId:projectid, datasetId:datasetid, monitoredSince: monitoredsince",
+    )
     .eq("id", user.id)
     .single();
 

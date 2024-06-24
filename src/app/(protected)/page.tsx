@@ -7,15 +7,12 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 
 import dayjs from "@/utils/dayjs";
 
-import { createClient } from "@/utils/supabase/client";
 import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
-import { getUserWithMetadata } from "@/utils/supabase/getUser";
-
 import Skeleton from "@/components/Skeleton";
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import CVRTable from "@/components/CVRTable";
-import { useRouter } from "next/navigation";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
+import { useUser } from "@/contexts/UserContext";
 
 const defaultEvents = {
   charpstAR_Load: {
@@ -33,8 +30,8 @@ const defaultEvents = {
 } as { [event_name: string]: { title: string; count: number | undefined } };
 
 export default function Index() {
-  const router = useRouter();
-  const supabase = createClient();
+  const user = useUser();
+
   const [eventsCount, setEventsCount] = React.useState(defaultEvents);
   const [dateRange, setDateRange] = React.useState(buildDateRange());
   const [clientQueryResult, setClientQueryResult] = React.useState<
@@ -59,42 +56,41 @@ export default function Index() {
 
   React.useEffect(() => {
     if (!startTableName || !endTableName) return;
+    if (!user) return;
+
+    const { projectId, datasetId } = user.metadata;
 
     setEventsCount(defaultEvents);
 
-    getUserWithMetadata(supabase).then((user) => {
-      const { projectId, datasetId } = user!.metadata;
+    executeClientQuery({
+      projectId,
+      datasetId,
 
-      executeClientQuery({
-        projectId,
-        datasetId,
+      startTableName,
+      endTableName,
 
-        startTableName,
-        endTableName,
+      limit: 10,
+    }).then((r) => setClientQueryResult(r));
 
-        limit: 10,
-      }).then((r) => setClientQueryResult(r));
+    getEventsCount({
+      projectId,
+      datasetId,
 
-      getEventsCount({
-        projectId,
-        datasetId,
-
-        startTableName,
-        endTableName,
-      }).then((r) =>
-        setEventsCount(
-          Object.fromEntries(
-            Object.entries(defaultEvents).map(([event_name, data]) => [
-              event_name,
-              {
-                ...data,
-                count: r[event_name] || 0,
-              },
-            ]),
-          ) as typeof defaultEvents,
-        ),
-      );
-    });
+      startTableName,
+      endTableName,
+    }).then((r) =>
+      setEventsCount(
+        Object.fromEntries(
+          Object.entries(defaultEvents).map(([event_name, data]) => [
+            event_name,
+            {
+              ...data,
+              count: r[event_name] || 0,
+            },
+          ]),
+        ) as typeof defaultEvents,
+      ),
+    );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTableName, endTableName]);
