@@ -81,6 +81,15 @@ export default function Index() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
+      <div className="rounded-lg dark:border-gray-600">
+        <h1
+          className="text-2xl font-semibold dark:text-white"
+          style={{ marginBottom: 0 }}
+        >
+          {user.metadata.name}
+        </h1>
+      </div>
+
       <div className="lg:col-start-3 rounded-lg dark:border-gray-600">
         <DateRangePicker
           value={dateRange}
