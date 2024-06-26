@@ -2,10 +2,10 @@
 
 import React from "react";
 
-import { Card } from "@tremor/react";
+import { Card, DonutChart } from "@tremor/react";
 
 import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
-import Skeleton from "@/components/Skeleton";
+import Skeleton, { RoundSkeleton } from "@/components/Skeleton";
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import CVRTable from "@/components/CVRTable";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
@@ -85,6 +85,17 @@ export default function Index() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startTableName, endTableName]);
 
+  const pieData = [
+    {
+      name: "AR Sessions",
+      value: eventsCount.charpstAR_AR_Button_Click?.count || 0,
+    },
+    {
+      name: "3D Sessions",
+      value: eventsCount.charpstAR_3D_Button_Click?.count || 0,
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
       <div className="rounded-lg dark:border-gray-600">
@@ -121,6 +132,25 @@ export default function Index() {
             purchases_with_service: true,
           }}
         />
+      </div>
+
+      <div className="col-span-1">
+        <div className="space-y-3">
+          <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+            Sessions pie chart
+          </span>
+          <div className="flex justify-center">
+            {eventsCount.charpstAR_AR_Button_Click?.count === undefined ? (
+              <RoundSkeleton />
+            ) : (
+              <DonutChart
+                data={pieData}
+                variant="pie"
+                valueFormatter={(number: number) => `${number} session.`}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
