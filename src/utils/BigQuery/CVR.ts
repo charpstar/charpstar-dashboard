@@ -145,10 +145,6 @@ export async function executeClientQuery({
   let query = queries[datasetId](eventsBetween);
   if (!query) throw new Error(`Query not found for datasetId: ${datasetId}`);
 
-  query = `${query} ORDER BY total_button_clicks DESC`;
-
-  if (limit) query = `${query} LIMIT ${limit}`;
-
   const { value: bigqueryClient } = getBigQueryClient({
     projectId: "fast-lattice-421210",
   });
@@ -183,23 +179,7 @@ export async function executeClientQuery({
     default_conv_rate: number;
   }[];
 
-  console.log(response[0]);
+  console.log(response);
 
-  return response.map((row) => {
-    return {
-      product_name: row.product_name,
-
-      AR_Button_Clicks: row.AR_Button_Clicks,
-      _3D_Button_Clicks: row._3D_Button_Clicks,
-      total_button_clicks: row.total_button_clicks,
-
-      CVR: {
-        default: `${row.default_conv_rate}%`,
-        charpstAR: `${row.product_conv_rate}%`,
-      },
-
-      total_purchases: row.total_purchases,
-      purchases_with_service: row.purchases_with_service,
-    };
-  });
+  return response;
 }

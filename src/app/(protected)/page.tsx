@@ -34,8 +34,10 @@ export default function Index() {
   const [eventsCount, setEventsCount] = React.useState(defaultEvents);
   const [dateRange, setDateRange] = React.useState(buildDateRange());
   const [clientQueryResult, setClientQueryResult] = React.useState<
-    React.ComponentProps<typeof CVRTable>["rows"] | null
-  >(null);
+    React.ComponentProps<typeof CVRTable>["data"]
+  >([]);
+
+  const [isQueryLoading, setIsQueryLoading] = React.useState(false);
 
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
@@ -45,7 +47,8 @@ export default function Index() {
     if (!user) return;
 
     setEventsCount(defaultEvents);
-    setClientQueryResult(null);
+    setClientQueryResult([]);
+    setIsQueryLoading(true);
 
     executeClientQuery({
       projectId,
@@ -55,7 +58,9 @@ export default function Index() {
       endTableName,
 
       limit: 10,
-    }).then((r) => setClientQueryResult(r));
+    })
+      .then((r) => setClientQueryResult(r))
+      .finally(() => setIsQueryLoading(false));
 
     getEventsCount({
       projectId,
@@ -109,10 +114,11 @@ export default function Index() {
 
       <div className="col-span-2">
         <CVRTable
-          rows={clientQueryResult}
+          isLoading={isQueryLoading}
+          data={clientQueryResult}
           showColumns={{
-            total_purchases: false,
-            purchases_with_service: false,
+            total_purchases: true,
+            purchases_with_service: true,
           }}
         />
       </div>

@@ -1,4 +1,22 @@
-import { executeClientQuery } from "@/utils/BigQuery/CVR";
+"use client";
+
+import React from "react";
+
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+
+import {
+  RiArrowDownSLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
+  RiArrowUpSLine,
+} from "@remixicon/react";
+
 import {
   Card,
   Table,
@@ -8,10 +26,15 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
+
+import { executeClientQuery } from "@/utils/BigQuery/CVR";
+import { classNames } from "@/utils/uiUtils";
+import { Button } from "./Button";
 import { TableSkeleton } from "./Skeleton";
 
 interface CVRTableProps {
-  rows: Awaited<ReturnType<typeof executeClientQuery>> | null;
+  isLoading: boolean;
+  data: Awaited<ReturnType<typeof executeClientQuery>>;
 
   showColumns: {
     total_purchases: boolean;
@@ -19,94 +42,223 @@ interface CVRTableProps {
   };
 }
 
-// AR Sessions => AR_Click
-// 3D Sessions => 3D_Click
-export default function CVRTable({ rows, showColumns }: CVRTableProps) {
-  const isLoading = !rows;
+export default function CVRTable({
+  showColumns,
+  isLoading,
+  data,
+}: CVRTableProps) {
+  const columns = [
+    {
+      header: "Product Name",
+      accessorKey: "product_name",
+      enableSorting: false,
+      meta: {
+        align: "text-left",
+      },
+    },
+    {
+      header: "AR Sessions",
+      accessorKey: "AR_Button_Clicks",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    },
+    {
+      header: "3D Sessions",
+      accessorKey: "_3D_Button_Clicks",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    },
+    {
+      header: "CVR",
+      accessorKey: "default_conv_rate",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    },
+    {
+      header: "CVR (CharpstAR)",
+      accessorKey: "product_conv_rate",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    },
+    {
+      header: "Total Clicks",
+      accessorKey: "total_button_clicks",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    },
+  ];
+
+  if (showColumns.total_purchases)
+    columns.push({
+      header: "Total Purchases",
+      accessorKey: "total_purchases",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    });
+
+  if (showColumns.purchases_with_service)
+    columns.push({
+      header: "Purchase with Service",
+      accessorKey: "purchases_with_service",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    });
+
+  const table = useReactTable({
+    data,
+    columns,
+
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+
+    initialState: {
+      sorting: [
+        {
+          id: "default_conv_rate",
+          desc: true,
+        },
+      ],
+
+      pagination: {
+        pageSize: 10,
+      },
+    },
+  });
 
   if (isLoading) return <TableSkeleton />;
 
   return (
     <Card>
-      <Table className="table-fixed">
+      <Table>
         <TableHead>
-          <TableRow>
-            <TableHeaderCell className="w-15">Product name</TableHeaderCell>
-            <TableHeaderCell className="text-right">
-              AR Sessions
-            </TableHeaderCell>
-            <TableHeaderCell className="text-right">
-              3D Sessions
-            </TableHeaderCell>
-            <TableHeaderCell className="text-right">CVR</TableHeaderCell>
-            <TableHeaderCell className="text-right">
-              CVR (CharpstAR)
-            </TableHeaderCell>
-
-            <TableHeaderCell className="text-right">
-              Total Clicks
-            </TableHeaderCell>
-
-            {showColumns.total_purchases && (
-              <TableHeaderCell className="text-right">
-                Total Purchases
-              </TableHeaderCell>
-            )}
-
-            {showColumns.purchases_with_service && (
-              <TableHeaderCell className="text-right">
-                Purchase with Service
-              </TableHeaderCell>
-            )}
-          </TableRow>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="border-b border-tremor-border dark:border-dark-tremor-border"
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHeaderCell
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className={classNames(
+                    header.column.getCanSort()
+                      ? "cursor-pointer select-none"
+                      : "",
+                    "px-0.5 py-1.5",
+                  )}
+                  tabIndex={header.column.getCanSort() ? 0 : -1}
+                >
+                  <div
+                    className={classNames(
+                      header.column.columnDef.enableSorting === true
+                        ? "flex items-center justify-between gap-2 hover:bg-tremor-background-muted hover:dark:bg-dark-tremor-background-muted"
+                        : header.column.columnDef.meta?.align,
+                      " rounded-tremor-default px-3 py-1.5",
+                    )}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                    {header.column.getCanSort() ? (
+                      <div className="-space-y-2">
+                        <RiArrowUpSLine
+                          className={classNames(
+                            "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
+                            header.column.getIsSorted() === "desc"
+                              ? "opacity-30"
+                              : "",
+                          )}
+                          aria-hidden={true}
+                        />
+                        <RiArrowDownSLine
+                          className={classNames(
+                            "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
+                            header.column.getIsSorted() === "asc"
+                              ? "opacity-30"
+                              : "",
+                          )}
+                          aria-hidden={true}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                </TableHeaderCell>
+              ))}
+            </TableRow>
+          ))}
         </TableHead>
 
-        <TableBody className="text-white">
-          {rows && rows.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={8} className="text-center">
-                No data available
-              </TableCell>
+        <TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <TableRow key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <TableCell
+                  key={cell.id}
+                  className={classNames(cell.column.columnDef.meta?.align)}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
             </TableRow>
-          )}
-
-          {rows &&
-            rows.map((row, i) => (
-              <TableRow key={i}>
-                <TableCell>
-                  <div className="w-15 whitespace-normal">
-                    {row.product_name}
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  {row.AR_Button_Clicks}
-                </TableCell>
-                <TableCell className="text-right">
-                  {row._3D_Button_Clicks}
-                </TableCell>
-                <TableCell className="text-right">{row.CVR.default}</TableCell>
-                <TableCell className="text-right">
-                  {row.CVR.charpstAR}
-                </TableCell>
-                <TableCell className="text-right">
-                  {row.total_button_clicks}
-                </TableCell>
-
-                {showColumns.total_purchases && (
-                  <TableCell className="text-right">
-                    {row.total_purchases}
-                  </TableCell>
-                )}
-
-                {showColumns.purchases_with_service && (
-                  <TableCell className="text-right">
-                    {row.purchases_with_service}
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
+          ))}
         </TableBody>
       </Table>
+
+      <div className="mt-10 flex items-center justify-between">
+        <p className="text-tremor-default tabular-nums text-tremor-content dark:text-dark-tremor-content">
+          Page{" "}
+          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">{`${
+            table.getState().pagination.pageIndex + 1
+          }`}</span>{" "}
+          of
+          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+            {" "}
+            {`${table.getPageCount()}`}
+          </span>
+        </p>
+        <div className="inline-flex items-center rounded-tremor-full shadow-tremor-input ring-1 ring-inset ring-tremor-ring dark:shadow-dark-tremor-input dark:ring-dark-tremor-ring">
+          <Button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <span className="sr-only">Previous</span>
+            <RiArrowLeftSLine
+              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+              aria-hidden={true}
+            />
+          </Button>
+          <span
+            className="h-5 border-r border-tremor-border dark:border-dark-tremor-border"
+            aria-hidden={true}
+          />
+          <Button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <span className="sr-only">Next</span>
+            <RiArrowRightSLine
+              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+              aria-hidden={true}
+            />
+          </Button>
+        </div>
+      </div>
     </Card>
   );
 }
