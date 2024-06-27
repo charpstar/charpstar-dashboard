@@ -97,8 +97,8 @@ export default function Index() {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
-      <div className="rounded-lg dark:border-gray-600">
+    <div className="grid grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
+      <div className="col-span-3 lg:col-span-1 rounded-lg dark:border-gray-600">
         <h1
           className="text-2xl font-semibold dark:text-white"
           style={{ marginBottom: 0 }}
@@ -107,7 +107,7 @@ export default function Index() {
         </h1>
       </div>
 
-      <div className="lg:col-start-3 rounded-lg dark:border-gray-600">
+      <div className="col-span-3 lg:col-span-1 lg:col-start-3 rounded-lg dark:border-gray-600">
         <DateRangePicker
           value={dateRange}
           onChange={setDateRange}
@@ -123,7 +123,7 @@ export default function Index() {
         </div>
       </div>
 
-      <div className="col-span-2">
+      <div className="col-span-3 lg:col-span-2">
         <CVRTable
           isLoading={isQueryLoading}
           showPaginationControls={false}
@@ -135,7 +135,7 @@ export default function Index() {
         />
       </div>
 
-      <div className="col-span-1">
+      <div className="col-span-3 lg:col-span-1">
         {eventsCount.charpstAR_AR_Button_Click?.count === undefined ? (
           <div className="flex items-center justify-center h-[320px]">
             <RoundSkeleton />
