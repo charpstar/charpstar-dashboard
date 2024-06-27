@@ -126,10 +126,11 @@ export default function Index() {
       <div className="col-span-2">
         <CVRTable
           isLoading={isQueryLoading}
+          showPaginationControls={false}
           data={clientQueryResult}
           showColumns={{
-            total_purchases: true,
-            purchases_with_service: true,
+            total_purchases: false,
+            purchases_with_service: false,
           }}
         />
       </div>

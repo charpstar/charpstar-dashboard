@@ -3,6 +3,7 @@
 import React from "react";
 
 import {
+  filterFns,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -42,10 +43,13 @@ interface CVRTableProps {
     total_purchases: boolean;
     purchases_with_service: boolean;
   };
+
+  showPaginationControls?: boolean;
 }
 
 export default function CVRTable({
   showColumns,
+  showPaginationControls = true,
   isLoading,
   data,
 }: CVRTableProps) {
@@ -54,9 +58,10 @@ export default function CVRTable({
       header: "Product Name",
       accessorKey: "product_name",
       enableSorting: false,
-      filterFn: "includesString",
+      filterFn: filterFns.includesString,
       meta: {
         align: "text-left",
+        width: "w-15 whitespace-normal",
       },
     },
     {
@@ -84,7 +89,7 @@ export default function CVRTable({
       },
     },
     {
-      header: "CVR (CharpstAR)",
+      header: "CVR (AR)",
       accessorKey: "product_conv_rate",
       enableSorting: true,
       meta: {
@@ -180,6 +185,7 @@ export default function CVRTable({
                         ? "flex items-center justify-between gap-2 hover:bg-tremor-background-muted hover:dark:bg-dark-tremor-background-muted"
                         : header.column.columnDef.meta?.align,
                       " rounded-tremor-default px-3 py-1.5",
+                      header.column.columnDef.meta?.width,
                     )}
                   >
                     {flexRender(
@@ -221,7 +227,10 @@ export default function CVRTable({
               {row.getVisibleCells().map((cell) => (
                 <TableCell
                   key={cell.id}
-                  className={classNames(cell.column.columnDef.meta?.align)}
+                  className={classNames(
+                    cell.column.columnDef.meta?.align,
+                    cell.column.columnDef.meta?.width,
+                  )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
@@ -231,45 +240,47 @@ export default function CVRTable({
         </TableBody>
       </Table>
 
-      <div className="mt-10 flex items-center justify-between">
-        <p className="text-tremor-default tabular-nums text-tremor-content dark:text-dark-tremor-content">
-          Page{" "}
-          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">{`${
-            table.getState().pagination.pageIndex + 1
-          }`}</span>{" "}
-          of
-          <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-            {" "}
-            {`${table.getPageCount()}`}
-          </span>
-        </p>
-        <div className="inline-flex items-center rounded-tremor-full shadow-tremor-input ring-1 ring-inset ring-tremor-ring dark:shadow-dark-tremor-input dark:ring-dark-tremor-ring">
-          <Button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <span className="sr-only">Previous</span>
-            <RiArrowLeftSLine
-              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+      {showPaginationControls && (
+        <div className="mt-10 flex items-center justify-between">
+          <p className="text-tremor-default tabular-nums text-tremor-content dark:text-dark-tremor-content">
+            Page{" "}
+            <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">{`${
+              table.getState().pagination.pageIndex + 1
+            }`}</span>{" "}
+            of
+            <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+              {" "}
+              {`${table.getPageCount()}`}
+            </span>
+          </p>
+          <div className="inline-flex items-center rounded-tremor-full shadow-tremor-input ring-1 ring-inset ring-tremor-ring dark:shadow-dark-tremor-input dark:ring-dark-tremor-ring">
+            <Button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <span className="sr-only">Previous</span>
+              <RiArrowLeftSLine
+                className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+                aria-hidden={true}
+              />
+            </Button>
+            <span
+              className="h-5 border-r border-tremor-border dark:border-dark-tremor-border"
               aria-hidden={true}
             />
-          </Button>
-          <span
-            className="h-5 border-r border-tremor-border dark:border-dark-tremor-border"
-            aria-hidden={true}
-          />
-          <Button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <span className="sr-only">Next</span>
-            <RiArrowRightSLine
-              className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
-              aria-hidden={true}
-            />
-          </Button>
+            <Button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <span className="sr-only">Next</span>
+              <RiArrowRightSLine
+                className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
+                aria-hidden={true}
+              />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 }
