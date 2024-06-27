@@ -5,6 +5,7 @@ import React from "react";
 import {
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -25,6 +26,7 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  TextInput,
 } from "@tremor/react";
 
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
@@ -52,6 +54,7 @@ export default function CVRTable({
       header: "Product Name",
       accessorKey: "product_name",
       enableSorting: false,
+      filterFn: "includesString",
       meta: {
         align: "text-left",
       },
@@ -125,6 +128,7 @@ export default function CVRTable({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
 
     initialState: {
       sorting: [
@@ -144,6 +148,13 @@ export default function CVRTable({
 
   return (
     <Card>
+      <TextInput
+        placeholder="Search..."
+        value={table.getState().globalFilter}
+        onChange={(e) => table.setGlobalFilter(e.target.value)}
+        className="mb-5"
+      />
+
       <Table>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
