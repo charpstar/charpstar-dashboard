@@ -36,9 +36,11 @@ export function RoundSkeleton() {
   return (
     <div
       role="status"
-      className="p-4 border border-gray-200 rounded-full shadow animate-pulse md:p-6 dark:border-gray-700"
+      className="p-4 border border-gray-200 bg-gray-700 rounded-full shadow animate-pulse md:p-6 dark:border-gray-700
+      h-[300px]
+      w-[300px]
+      "
     >
-      <div className="h-8 w-8 bg-gray-200 rounded-full dark:bg-gray-700"></div>
       <span className="sr-only">Loading...</span>
     </div>
   );

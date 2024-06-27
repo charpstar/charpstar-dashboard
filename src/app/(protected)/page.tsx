@@ -136,22 +136,27 @@ export default function Index() {
       </div>
 
       <div className="col-span-1">
-        <div className="space-y-3">
-          <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            Sessions pie chart
-          </span>
-          <div className="flex justify-center">
-            {eventsCount.charpstAR_AR_Button_Click?.count === undefined ? (
-              <RoundSkeleton />
-            ) : (
-              <DonutChart
-                data={pieData}
-                variant="pie"
-                valueFormatter={(number: number) => `${number} session.`}
-              />
-            )}
+        {eventsCount.charpstAR_AR_Button_Click?.count === undefined ? (
+          <div className="flex items-center justify-center h-[320px]">
+            <RoundSkeleton />
           </div>
-        </div>
+        ) : (
+          <Card>
+            <div className="space-y-5">
+              <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                Sessions pie chart
+              </span>
+              <div className="flex items-center justify-center h-[320px]">
+                <DonutChart
+                  data={pieData}
+                  variant="pie"
+                  valueFormatter={(number: number) => `${number} session.`}
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );
