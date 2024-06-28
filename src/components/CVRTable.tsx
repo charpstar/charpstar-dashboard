@@ -42,9 +42,12 @@ interface CVRTableProps {
   showColumns: {
     total_purchases: boolean;
     purchases_with_service: boolean;
+    _3d_sessions : boolean;
+    ar_sessions : boolean;
   };
 
   showPaginationControls?: boolean;
+  showSearch?: boolean;  
 }
 
 export default function CVRTable({
@@ -52,6 +55,7 @@ export default function CVRTable({
   showPaginationControls = true,
   isLoading,
   data,
+  showSearch = false, 
 }: CVRTableProps) {
   const columns = [
     {
@@ -65,23 +69,15 @@ export default function CVRTable({
       },
     },
     {
-      header: "AR Sessions",
-      accessorKey: "AR_Button_Clicks",
+      header: "Total Sessions (CharpstAR)",
+      accessorKey: "total_button_clicks",
       enableSorting: true,
       meta: {
         align: "text-right",
       },
     },
     {
-      header: "3D Sessions",
-      accessorKey: "_3D_Button_Clicks",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-      },
-    },
-    {
-      header: "CVR",
+      header: "CVR (Default)",
       accessorKey: "default_conv_rate",
       enableSorting: true,
       meta: {
@@ -89,22 +85,34 @@ export default function CVRTable({
       },
     },
     {
-      header: "CVR (AR)",
+      header: "CVR (CharpstAR)",
       accessorKey: "product_conv_rate",
       enableSorting: true,
       meta: {
         align: "text-right",
       },
     },
-    {
-      header: "Total Clicks",
-      accessorKey: "total_button_clicks",
+
+  ];
+  if (showColumns.ar_sessions)
+    columns.splice(1, 0, {
+      header: "AR Sessions",
+      accessorKey: "AR_Button_Clicks",
       enableSorting: true,
       meta: {
         align: "text-right",
       },
-    },
-  ];
+    });
+  
+  if (showColumns._3d_sessions)
+    columns.splice(1, 0, {
+      header: "3D Sessions",
+      accessorKey: "_3D_Button_Clicks",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+      },
+    });
 
   if (showColumns.total_purchases)
     columns.push({
@@ -118,7 +126,7 @@ export default function CVRTable({
 
   if (showColumns.purchases_with_service)
     columns.push({
-      header: "Purchase with Service",
+      header: "Total Purchases (CharpstAR)",
       accessorKey: "purchases_with_service",
       enableSorting: true,
       meta: {
@@ -153,13 +161,14 @@ export default function CVRTable({
 
   return (
     <Card>
-      <TextInput
-        placeholder="Search..."
-        value={table.getState().globalFilter}
-        onChange={(e) => table.setGlobalFilter(e.target.value)}
-        className="mb-5"
-      />
-
+      {showSearch && ( // Conditionally render the search bar
+        <TextInput
+          placeholder="Search..."
+          value={table.getState().globalFilter}
+          onChange={(e) => table.setGlobalFilter(e.target.value)}
+          className="mb-5"
+        />
+      )}
       <Table>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (

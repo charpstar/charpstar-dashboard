@@ -97,8 +97,8 @@ export default function Index() {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
-      <div className="col-span-3 lg:col-span-1 rounded-lg dark:border-gray-600">
+    <div className="grid grid-cols-12 gap-4 mb-4 dark:text-gray-400 justify-end">
+      <div className="col-span-12 lg:col-span-6 rounded-lg dark:border-gray-600">
         <h1
           className="text-2xl font-semibold dark:text-white"
           style={{ marginBottom: 0 }}
@@ -107,7 +107,7 @@ export default function Index() {
         </h1>
       </div>
 
-      <div className="col-span-3 lg:col-span-1 lg:col-start-3 rounded-lg dark:border-gray-600">
+      <div className="col-span-12 lg:col-span-4 lg:col-start-10 rounded-lg dark:border-gray-600">
         <DateRangePicker
           value={dateRange}
           onChange={setDateRange}
@@ -115,7 +115,7 @@ export default function Index() {
         />
       </div>
 
-      <div className="col-span-3">
+      <div className="col-span-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {Object.entries(eventsCount).map(([event_name, { title, count }]) => (
             <EventCountCard key={event_name} title={title} count={count} />
@@ -123,7 +123,7 @@ export default function Index() {
         </div>
       </div>
 
-      <div className="col-span-3 lg:col-span-2">
+      <div className="col-span-12 lg:col-span-7">
         <CVRTable
           isLoading={isQueryLoading}
           showPaginationControls={false}
@@ -135,7 +135,7 @@ export default function Index() {
         />
       </div>
 
-      <div className="col-span-3 lg:col-span-1">
+      <div className="col-span-12 lg:col-span-5">
         {eventsCount.charpstAR_AR_Button_Click?.count === undefined ? (
           <div className="flex items-center justify-center h-[320px]">
             <RoundSkeleton />
@@ -144,13 +144,13 @@ export default function Index() {
           <Card>
             <div className="space-y-5">
               <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                Sessions pie chart
+               CharpstAR Sessions (Tech Breakdown)
               </span>
               <div className="flex items-center justify-center h-[320px]">
                 <DonutChart
                   data={pieData}
                   variant="pie"
-                  valueFormatter={(number: number) => `${number} session.`}
+                  valueFormatter={(number: number) => `${number} clicks`}
                   className="w-full h-full"
                 />
               </div>
