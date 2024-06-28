@@ -195,6 +195,7 @@ export default function CVRTable({
                         : header.column.columnDef.meta?.align,
                       " rounded-tremor-default px-3 py-1.5",
                       header.column.columnDef.meta?.width,
+                      "text-tremor-content-muted dark:text-dark-tremor-content-muted" 
                     )}
                   >
                     {flexRender(
@@ -239,6 +240,7 @@ export default function CVRTable({
                   className={classNames(
                     cell.column.columnDef.meta?.align,
                     cell.column.columnDef.meta?.width,
+                    "text-tremor-content-strong dark:text-dark-tremor-content-strong" 
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
