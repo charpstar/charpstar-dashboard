@@ -1,21 +1,6 @@
-"use client";
-
 import { ListItem } from "./components";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 
 export default function AppSide() {
-  const pathname = usePathname();
-  const [activeLink, setActiveLink] = useState(pathname);
-
-  useEffect(() => {
-    setActiveLink(pathname);
-  }, [pathname]);
-
-  const handleLinkClick = (href: string) => {
-    setActiveLink(href);
-  };
-
   return (
     <aside
       className="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-dark-tremor-background dark:border-gray-700"
@@ -39,8 +24,6 @@ export default function AppSide() {
             }
             title="Overview"
             href="/"
-            onClick={() => handleLinkClick("/")}
-            isActive={activeLink === "/"}
           />
 
           <ListItem
@@ -61,8 +44,6 @@ export default function AppSide() {
             }
             title="Detailed CharpstAR Stats"
             href="/cvr"
-            onClick={() => handleLinkClick("/cvr")}
-            isActive={activeLink === "/cvr"}
           />
         </ul>
 
@@ -86,8 +67,6 @@ export default function AppSide() {
             }
             title="Documentation"
             href="/docs"
-            onClick={() => handleLinkClick("/docs")}
-            isActive={activeLink === "/docs"}
           />
         </ul>
       </div>
