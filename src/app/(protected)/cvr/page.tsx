@@ -73,7 +73,7 @@ export default function Index() {
             total_purchases: true,
             purchases_with_service: true,
           }}
-          showSearch={true} 
+          showSearch={true}
         />
       </div>
     </div>

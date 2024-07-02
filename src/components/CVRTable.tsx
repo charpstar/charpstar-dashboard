@@ -42,12 +42,12 @@ interface CVRTableProps {
   showColumns: {
     total_purchases: boolean;
     purchases_with_service: boolean;
-    _3d_sessions : boolean;
-    ar_sessions : boolean;
+    _3d_sessions: boolean;
+    ar_sessions: boolean;
   };
 
   showPaginationControls?: boolean;
-  showSearch?: boolean;  
+  showSearch?: boolean;
 }
 
 export default function CVRTable({
@@ -55,7 +55,7 @@ export default function CVRTable({
   showPaginationControls = true,
   isLoading,
   data,
-  showSearch = false, 
+  showSearch = false,
 }: CVRTableProps) {
   const columns = [
     {
@@ -92,7 +92,6 @@ export default function CVRTable({
         align: "text-right",
       },
     },
-
   ];
   if (showColumns.ar_sessions)
     columns.splice(1, 0, {
@@ -103,7 +102,7 @@ export default function CVRTable({
         align: "text-right",
       },
     });
-  
+
   if (showColumns._3d_sessions)
     columns.splice(1, 0, {
       header: "3D Sessions",
@@ -195,7 +194,7 @@ export default function CVRTable({
                         : header.column.columnDef.meta?.align,
                       " rounded-tremor-default px-3 py-1.5",
                       header.column.columnDef.meta?.width,
-                      "text-tremor-content-muted dark:text-dark-tremor-content-muted" 
+                      "text-tremor-content-muted dark:text-dark-tremor-content-muted",
                     )}
                   >
                     {flexRender(
@@ -240,7 +239,7 @@ export default function CVRTable({
                   className={classNames(
                     cell.column.columnDef.meta?.align,
                     cell.column.columnDef.meta?.width,
-                    "text-tremor-content-strong dark:text-dark-tremor-content-strong" 
+                    "text-tremor-content-strong dark:text-dark-tremor-content-strong",
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -10,7 +10,8 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: "CharpstAR Client Dashboard",
-  description: "Explore CharpstAR's client platform to access detailed statistics of our AR and 3D services. Empower your business with advanced features to view, QA, and render your products in stunning 3D, ensuring top-quality digital experiences. ",
+  description:
+    "Explore CharpstAR's client platform to access detailed statistics of our AR and 3D services. Empower your business with advanced features to view, QA, and render your products in stunning 3D, ensuring top-quality digital experiences. ",
   icons: {
     icon: "/public/favicon.ico",
   },
