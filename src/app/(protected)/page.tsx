@@ -131,6 +131,8 @@ export default function Index() {
           showColumns={{
             total_purchases: false,
             purchases_with_service: false,
+            _3d_sessions: false,
+            ar_sessions: false,
           }}
         />
       </div>
@@ -144,7 +146,7 @@ export default function Index() {
           <Card>
             <div className="space-y-5">
               <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-               CharpstAR Sessions (Tech Breakdown)
+                CharpstAR Sessions (Tech Breakdown)
               </span>
               <div className="flex items-center justify-center h-[320px]">
                 <DonutChart
