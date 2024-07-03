@@ -29,17 +29,18 @@ export default function EventCountCards({
       </>
     );
 
-  return Object.entries(eventsCount).map(([event_name, { title, count }]) => (
-    <EventCountCard key={event_name} title={title} count={count} />
+  return Object.entries(eventsCount).map(([event_name, data]) => (
+    <EventCountCard key={event_name} {...data} />
   ));
 }
 
 export function EventCountCard({
   title,
   count,
+  tooltip,
 }: (typeof defaultEvents)[string]) {
   return (
-    <Tooltip side="top" content="Tooltip">
+    <Tooltip side="top" content={tooltip}>
       <Card>
         <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
           {title}
