@@ -36,6 +36,7 @@ import { type executeClientQuery } from "@/utils/BigQuery/CVR";
 import { classNames } from "@/utils/uiUtils";
 import { Button } from "./Button";
 import { TableSkeleton } from "./Skeleton";
+import { Tooltip } from "./TremorRawTooltip";
 
 interface CVRTableProps {
   isLoading: boolean;
@@ -71,6 +72,7 @@ export default function CVRTable({
       meta: {
         align: "text-left",
         width: "w-15 whitespace-normal",
+        tooltip: "The name of the product",
       },
     },
     {
@@ -194,43 +196,48 @@ export default function CVRTable({
                   )}
                   tabIndex={header.column.getCanSort() ? 0 : -1}
                 >
-                  <div
-                    className={classNames(
-                      header.column.columnDef.enableSorting === true
-                        ? "flex items-center justify-between gap-2 hover:bg-tremor-background-muted hover:dark:bg-dark-tremor-background-muted"
-                        : header.column.columnDef.meta?.align,
-                      " rounded-tremor-default px-3 py-1.5",
-                      header.column.columnDef.meta?.width,
-                      "text-tremor-content-muted dark:text-dark-tremor-content-muted",
-                    )}
+                  <Tooltip
+                    side="top"
+                    content={header.column.columnDef.meta?.tooltip}
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                    {header.column.getCanSort() ? (
-                      <div className="-space-y-2">
-                        <RiArrowUpSLine
-                          className={classNames(
-                            "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
-                            header.column.getIsSorted() === "desc"
-                              ? "opacity-30"
-                              : "",
-                          )}
-                          aria-hidden={true}
-                        />
-                        <RiArrowDownSLine
-                          className={classNames(
-                            "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
-                            header.column.getIsSorted() === "asc"
-                              ? "opacity-30"
-                              : "",
-                          )}
-                          aria-hidden={true}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
+                    <div
+                      className={classNames(
+                        header.column.columnDef.enableSorting === true
+                          ? "flex items-center justify-between gap-2 hover:bg-tremor-background-muted hover:dark:bg-dark-tremor-background-muted"
+                          : header.column.columnDef.meta?.align,
+                        " rounded-tremor-default px-3 py-1.5",
+                        header.column.columnDef.meta?.width,
+                        "text-tremor-content-muted dark:text-dark-tremor-content-muted",
+                      )}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                      {header.column.getCanSort() ? (
+                        <div className="-space-y-2">
+                          <RiArrowUpSLine
+                            className={classNames(
+                              "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
+                              header.column.getIsSorted() === "desc"
+                                ? "opacity-30"
+                                : "",
+                            )}
+                            aria-hidden={true}
+                          />
+                          <RiArrowDownSLine
+                            className={classNames(
+                              "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
+                              header.column.getIsSorted() === "asc"
+                                ? "opacity-30"
+                                : "",
+                            )}
+                            aria-hidden={true}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </Tooltip>
                 </TableHeaderCell>
               ))}
             </TableRow>
