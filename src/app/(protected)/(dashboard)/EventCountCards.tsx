@@ -4,6 +4,7 @@ import { Card } from "@tremor/react";
 import { useEventsCount } from "@/queries/useEventsCount";
 
 import Skeleton from "@/components/Skeleton";
+import { Tooltip } from "@/components/TremorRawTooltip";
 
 export default function EventCountCards({
   startTableName,
@@ -38,21 +39,23 @@ export function EventCountCard({
   count,
 }: (typeof defaultEvents)[string]) {
   return (
-    <Card>
-      <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-        {title}
-      </h4>
+    <Tooltip side="top" content="Tooltip">
+      <Card>
+        <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+          {title}
+        </h4>
 
-      <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-        {count?.toLocaleString(undefined, {
-          maximumFractionDigits: 0,
-        })}
-      </p>
+        <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+          {count?.toLocaleString(undefined, {
+            maximumFractionDigits: 0,
+          })}
+        </p>
 
-      <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-        {/* <span>Occurences</span> */}
-        {/* <span>$225,000</span> */}
-      </p>
-    </Card>
+        <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+          {/* <span>Occurences</span> */}
+          {/* <span>$225,000</span> */}
+        </p>
+      </Card>
+    </Tooltip>
   );
 }
