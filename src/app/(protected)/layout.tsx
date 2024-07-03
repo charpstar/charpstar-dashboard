@@ -4,6 +4,7 @@ import AppLayout from "@/components/AppLayout";
 import { createClient } from "@/utils/supabase/server";
 import { getUser, getUserWithMetadata } from "@/utils/supabase/getUser";
 import { UserProvider } from "@/contexts/UserContext";
+import Providers from "../Providers";
 
 export default async function ProtectedLayout({
   children,
@@ -18,7 +19,9 @@ export default async function ProtectedLayout({
 
   return (
     <AppLayout>
-      <UserProvider user={userWithData}>{children}</UserProvider>
+      <Providers>
+        <UserProvider user={userWithData}>{children}</UserProvider>
+      </Providers>
     </AppLayout>
   );
 }
