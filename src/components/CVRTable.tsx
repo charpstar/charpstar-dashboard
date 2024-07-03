@@ -3,6 +3,8 @@
 import React from "react";
 
 import {
+  type ColumnDef,
+  createColumnHelper,
   filterFns,
   flexRender,
   getCoreRowModel,
@@ -50,6 +52,9 @@ interface CVRTableProps {
   showSearch?: boolean;
 }
 
+type Row = CVRTableProps["data"][number];
+const columnHelper = createColumnHelper<Row>();
+
 export default function CVRTable({
   showColumns,
   showPaginationControls = true,
@@ -76,23 +81,24 @@ export default function CVRTable({
         align: "text-right",
       },
     },
-    {
+    columnHelper.accessor("default_conv_rate", {
+      cell: (info) => info.getValue() + "%",
       header: "CVR (Default)",
-      accessorKey: "default_conv_rate",
       enableSorting: true,
       meta: {
         align: "text-right",
       },
-    },
-    {
+    }),
+    columnHelper.accessor("product_conv_rate", {
+      cell: (info) => info.getValue() + "%",
       header: "CVR (CharpstAR)",
-      accessorKey: "product_conv_rate",
       enableSorting: true,
       meta: {
         align: "text-right",
       },
-    },
-  ];
+    }),
+  ] as ColumnDef<Row, unknown>[];
+
   if (showColumns.ar_sessions)
     columns.splice(1, 0, {
       header: "AR Sessions",
