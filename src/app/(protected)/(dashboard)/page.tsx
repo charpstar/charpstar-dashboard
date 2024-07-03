@@ -4,86 +4,58 @@ import React from "react";
 
 import { Card, DonutChart } from "@tremor/react";
 
-import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
-import Skeleton, { RoundSkeleton } from "@/components/Skeleton";
-import { executeClientQuery } from "@/utils/BigQuery/CVR";
-import CVRTable from "@/components/CVRTable";
-import { buildDateRange, compToBq } from "@/utils/uiUtils";
-import { useUser } from "@/contexts/UserContext";
-import DateRangePicker from "@/components/DateRangePicker";
+import { defaultEvents } from "./defaultEvents";
 
-const defaultEvents = {
-  charpstAR_Load: {
-    title: "CharpstAR Load",
-    count: undefined,
-  },
-  charpstAR_AR_Button_Click: {
-    title: "CharpstAR AR Click",
-    count: undefined,
-  },
-  charpstAR_3D_Button_Click: {
-    title: "CharpstAR 3D Click",
-    count: undefined,
-  },
-} as { [event_name: string]: { title: string; count: number | undefined } };
+import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
+import { executeClientQuery } from "@/utils/BigQuery/CVR";
+import { buildDateRange, compToBq } from "@/utils/uiUtils";
+
+import { useUser } from "@/contexts/UserContext";
+
+import { RoundSkeleton } from "@/components/Skeleton";
+import CVRTable from "@/components/CVRTable";
+import DateRangePicker from "@/components/DateRangePicker";
+import EventCountCard from "./EventCountCard";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Index() {
   const user = useUser();
   const { monitoredSince, projectId, datasetId } = user.metadata;
 
-  const [eventsCount, setEventsCount] = React.useState(defaultEvents);
   const [dateRange, setDateRange] = React.useState(buildDateRange());
-  const [clientQueryResult, setClientQueryResult] = React.useState<
-    React.ComponentProps<typeof CVRTable>["data"]
-  >([]);
-
-  const [isQueryLoading, setIsQueryLoading] = React.useState(false);
 
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
 
-  React.useEffect(() => {
-    if (!startTableName || !endTableName) return;
-    if (!user) return;
+  const shouldEnableFetching = Boolean(user && startTableName && endTableName);
 
-    setEventsCount(defaultEvents);
-    setClientQueryResult([]);
-    setIsQueryLoading(true);
-
-    executeClientQuery({
+  const { data: _clientQueryResult, isLoading: isQueryLoading } = useQuery({
+    queryKey: [
+      "clientQuery",
       projectId,
       datasetId,
-
       startTableName,
       endTableName,
+    ],
+    queryFn: executeClientQueryFn,
+    enabled: shouldEnableFetching,
+  });
 
-      limit: 10,
-    })
-      .then((r) => setClientQueryResult(r))
-      .finally(() => setIsQueryLoading(false));
+  const clientQueryResult = _clientQueryResult || [];
 
-    getEventsCount({
+  const { data: _eventsCount, isLoading: isEventsCountLoading } = useQuery({
+    queryKey: [
+      "eventsCount",
       projectId,
       datasetId,
-
       startTableName,
       endTableName,
-    }).then((r) =>
-      setEventsCount(
-        Object.fromEntries(
-          Object.entries(defaultEvents).map(([event_name, data]) => [
-            event_name,
-            {
-              ...data,
-              count: r[event_name] || 0,
-            },
-          ]),
-        ) as typeof defaultEvents,
-      ),
-    );
+    ],
+    queryFn: getEventsCountFn,
+    enabled: shouldEnableFetching,
+  });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startTableName, endTableName]);
+  const eventsCount = _eventsCount || defaultEvents;
 
   const pieData = [
     {
@@ -164,23 +136,60 @@ export default function Index() {
   );
 }
 
-function EventCountCard({ title, count }: (typeof defaultEvents)[string]) {
-  if (count === undefined) return <Skeleton />;
+function executeClientQueryFn({
+  queryKey,
+}: {
+  queryKey: [
+    string,
+    string,
+    Parameters<typeof executeClientQuery>[0]["datasetId"],
+    string,
+    string,
+  ];
+}) {
+  const [_, projectId, datasetId, startTableName, endTableName] = queryKey;
 
-  return (
-    <Card>
-      <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-        {title}
-      </h4>
+  return executeClientQuery({
+    projectId,
+    datasetId,
 
-      <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-        {count}
-      </p>
+    startTableName,
+    endTableName,
 
-      <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-        {/* <span>Occurences</span> */}
-        {/* <span>$225,000</span> */}
-      </p>
-    </Card>
+    limit: 10,
+  });
+}
+
+async function getEventsCountFn({
+  queryKey,
+}: {
+  queryKey: [
+    string,
+    string,
+    Parameters<typeof getEventsCount>[0]["datasetId"],
+    string,
+    string,
+  ];
+}) {
+  const [_, projectId, datasetId, startTableName, endTableName] = queryKey;
+
+  const idk = await getEventsCount({
+    projectId,
+    datasetId,
+
+    startTableName,
+    endTableName,
+  });
+
+  const result: typeof defaultEvents = Object.fromEntries(
+    Object.entries(defaultEvents).map(([event_name, data]) => [
+      event_name,
+      {
+        ...data,
+        count: idk[event_name] || 0,
+      },
+    ]),
   );
+
+  return result;
 }
