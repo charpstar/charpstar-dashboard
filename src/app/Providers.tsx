@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  defaultShouldDehydrateQuery,
   isServer,
   QueryClient,
   QueryClientProvider,
@@ -11,6 +12,13 @@ function makeQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000, // TODO: ARJUN
+      },
+      dehydrate: {
+        // per default, only successful Queries are included,
+        // this includes pending Queries as well
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === "pending",
       },
     },
   });
