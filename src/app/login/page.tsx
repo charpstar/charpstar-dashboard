@@ -38,5 +38,5 @@ export default function Login() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  <LoginPage formAction={handleLoginAction} />;
+  return <LoginPage formAction={handleLoginAction} />;
 }
