@@ -44,7 +44,9 @@ export function EventCountCard({
       </h4>
 
       <p className="text-tremor-metric font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-        {count}
+        {count?.toLocaleString(undefined, {
+          maximumFractionDigits: 0,
+        })}
       </p>
 
       <p className="mt-4 flex items-center justify-between text-tremor-default text-tremor-content dark:text-dark-tremor-content">
