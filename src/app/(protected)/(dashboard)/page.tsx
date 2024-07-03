@@ -17,6 +17,8 @@ import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
 import EventCountCard from "./EventCountCard";
 import { useQuery } from "@tanstack/react-query";
+import { getEventsCountFn } from "@/queries/getEventsCountFn";
+import { executeClientQueryFn } from "@/queries/executeClientQueryFn";
 
 export default function Index() {
   const user = useUser();
@@ -134,62 +136,4 @@ export default function Index() {
       </div>
     </div>
   );
-}
-
-function executeClientQueryFn({
-  queryKey,
-}: {
-  queryKey: [
-    string,
-    string,
-    Parameters<typeof executeClientQuery>[0]["datasetId"],
-    string,
-    string,
-  ];
-}) {
-  const [_, projectId, datasetId, startTableName, endTableName] = queryKey;
-
-  return executeClientQuery({
-    projectId,
-    datasetId,
-
-    startTableName,
-    endTableName,
-
-    limit: 10,
-  });
-}
-
-async function getEventsCountFn({
-  queryKey,
-}: {
-  queryKey: [
-    string,
-    string,
-    Parameters<typeof getEventsCount>[0]["datasetId"],
-    string,
-    string,
-  ];
-}) {
-  const [_, projectId, datasetId, startTableName, endTableName] = queryKey;
-
-  const idk = await getEventsCount({
-    projectId,
-    datasetId,
-
-    startTableName,
-    endTableName,
-  });
-
-  const result: typeof defaultEvents = Object.fromEntries(
-    Object.entries(defaultEvents).map(([event_name, data]) => [
-      event_name,
-      {
-        ...data,
-        count: idk[event_name] || 0,
-      },
-    ]),
-  );
-
-  return result;
 }
