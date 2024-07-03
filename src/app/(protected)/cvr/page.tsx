@@ -5,6 +5,8 @@ import React from "react";
 import { useUser } from "@/contexts/UserContext";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
 
+import UserLayout from "../UserLayout";
+
 import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
 import { useClientQuery } from "@/queries/useClientQuery";
@@ -25,37 +27,30 @@ export default function Index() {
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
-      <div className="rounded-lg dark:border-gray-600">
-        <h1
-          className="text-2xl font-semibold dark:text-white"
-          style={{ marginBottom: 0 }}
-        >
-          {user.metadata.name}
-        </h1>
-      </div>
+    <UserLayout>
+      <>
+        <div className="col-span-12 lg:col-span-3 lg:col-start-10 rounded-lg dark:border-gray-600">
+          <DateRangePicker
+            value={dateRange}
+            onChange={setDateRange}
+            minDate={new Date(monitoredSince)}
+          />
+        </div>
 
-      <div className="lg:col-start-3 rounded-lg dark:border-gray-600">
-        <DateRangePicker
-          value={dateRange}
-          onChange={setDateRange}
-          minDate={new Date(monitoredSince)}
-        />
-      </div>
-
-      <div className="col-span-3">
-        <CVRTable
-          isLoading={isQueryLoading}
-          data={clientQueryResult}
-          showColumns={{
-            ar_sessions: true,
-            _3d_sessions: true,
-            total_purchases: true,
-            purchases_with_service: true,
-          }}
-          showSearch={true}
-        />
-      </div>
-    </div>
+        <div className="col-span-12">
+          <CVRTable
+            isLoading={isQueryLoading}
+            data={clientQueryResult}
+            showColumns={{
+              ar_sessions: true,
+              _3d_sessions: true,
+              total_purchases: true,
+              purchases_with_service: true,
+            }}
+            showSearch={true}
+          />
+        </div>
+      </>
+    </UserLayout>
   );
 }
