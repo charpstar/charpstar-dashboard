@@ -15,48 +15,28 @@ import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
 import EventCountCard from "./EventCountCard";
 
-import { getEventsCountFn } from "@/queries/getEventsCountFn";
-import { executeClientQueryFn } from "@/queries/executeClientQueryFn";
+import { getEventsCountFn, useEventsCount } from "@/queries/useEventsCount";
+import { useClientQuery } from "@/queries/useClientQuery";
 
 export default function Index() {
   const user = useUser();
-  const { monitoredSince, projectId, datasetId } = user.metadata;
+  const { monitoredSince } = user.metadata;
 
   const [dateRange, setDateRange] = React.useState(buildDateRange());
 
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
 
-  const shouldEnableFetching = Boolean(user && startTableName && endTableName);
-
-  const { data: _clientQueryResult, isLoading: isQueryLoading } = useQuery({
-    queryKey: [
-      "clientQuery",
-      projectId,
-      datasetId,
-      startTableName,
-      endTableName,
-      10,
-    ],
-    queryFn: executeClientQueryFn,
-    enabled: shouldEnableFetching,
+  const { clientQueryResult, isQueryLoading } = useClientQuery({
+    startTableName,
+    endTableName,
+    limit: 10,
   });
 
-  const clientQueryResult = _clientQueryResult || [];
-
-  const { data: _eventsCount, isLoading: isEventsCountLoading } = useQuery({
-    queryKey: [
-      "eventsCount",
-      projectId,
-      datasetId,
-      startTableName,
-      endTableName,
-    ],
-    queryFn: getEventsCountFn,
-    enabled: shouldEnableFetching,
+  const { eventsCount, isEventsCountLoading } = useEventsCount({
+    startTableName,
+    endTableName,
   });
-
-  const eventsCount = _eventsCount || defaultEvents;
 
   const pieData = [
     {

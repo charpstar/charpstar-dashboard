@@ -1,40 +1,28 @@
 "use client";
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 
-import { executeClientQueryFn } from "@/queries/executeClientQueryFn";
 import { useUser } from "@/contexts/UserContext";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
 
 import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
+import { useClientQuery } from "@/queries/useClientQuery";
 
 export default function Index() {
   const user = useUser();
-  const { monitoredSince, projectId, datasetId } = user.metadata;
+  const { monitoredSince } = user.metadata;
 
   const [dateRange, setDateRange] = React.useState(buildDateRange());
 
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
 
-  const shouldEnableFetching = Boolean(user && startTableName && endTableName);
-
-  const { data: _clientQueryResult, isLoading: isQueryLoading } = useQuery({
-    queryKey: [
-      "clientQuery",
-      projectId,
-      datasetId,
-      startTableName,
-      endTableName,
-      100,
-    ],
-    queryFn: executeClientQueryFn,
-    enabled: shouldEnableFetching,
+  const { clientQueryResult, isQueryLoading } = useClientQuery({
+    startTableName,
+    endTableName,
+    limit: 100,
   });
-
-  const clientQueryResult = _clientQueryResult || [];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4 dark:text-gray-400 justify-end">
