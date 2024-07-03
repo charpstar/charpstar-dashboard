@@ -1,7 +1,7 @@
 "use client";
 
-import { getUserWithMetadata } from "@/utils/supabase/getUser";
 import React from "react";
+import { type getUserWithMetadata } from "@/utils/supabase/getUser";
 
 type UserOrNull = Awaited<ReturnType<typeof getUserWithMetadata>> | null;
 

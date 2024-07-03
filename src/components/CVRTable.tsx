@@ -30,7 +30,7 @@ import {
   TextInput,
 } from "@tremor/react";
 
-import { executeClientQuery } from "@/utils/BigQuery/CVR";
+import { type executeClientQuery } from "@/utils/BigQuery/CVR";
 import { classNames } from "@/utils/uiUtils";
 import { Button } from "./Button";
 import { TableSkeleton } from "./Skeleton";
@@ -163,6 +163,7 @@ export default function CVRTable({
       {showSearch && ( // Conditionally render the search bar
         <TextInput
           placeholder="Search..."
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           value={table.getState().globalFilter}
           onChange={(e) => table.setGlobalFilter(e.target.value)}
           className="mb-5"

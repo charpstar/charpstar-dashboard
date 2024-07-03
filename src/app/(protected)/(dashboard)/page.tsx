@@ -1,11 +1,8 @@
 "use client";
 
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import { Card, DonutChart } from "@tremor/react";
-
-import { defaultEvents } from "@/utils/defaultEvents";
 
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
 import { useUser } from "@/contexts/UserContext";
@@ -15,7 +12,7 @@ import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
 import EventCountCard from "./EventCountCard";
 
-import { getEventsCountFn, useEventsCount } from "@/queries/useEventsCount";
+import { useEventsCount } from "@/queries/useEventsCount";
 import { useClientQuery } from "@/queries/useClientQuery";
 
 export default function Index() {
@@ -41,11 +38,11 @@ export default function Index() {
   const pieData = [
     {
       name: "AR Sessions",
-      value: eventsCount.charpstAR_AR_Button_Click?.count || 0,
+      value: eventsCount.charpstAR_AR_Button_Click?.count ?? 0,
     },
     {
       name: "3D Sessions",
-      value: eventsCount.charpstAR_3D_Button_Click?.count || 0,
+      value: eventsCount.charpstAR_3D_Button_Click?.count ?? 0,
     },
   ];
 
@@ -64,7 +61,7 @@ export default function Index() {
         <DateRangePicker
           value={dateRange}
           onChange={setDateRange}
-          minDate={monitoredSince}
+          minDate={new Date(monitoredSince)}
         />
       </div>
 

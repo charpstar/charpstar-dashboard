@@ -1,7 +1,7 @@
 "use server";
 
 import { getBigQueryClient } from "./client";
-import { queries } from "./clientQueries";
+import { queries, type TDatasets } from "./clientQueries";
 import { getEventsBetween, getEventsTableName } from "./utils";
 
 // Default CVR = (Total amount of people who have purchased the product / page_view event count) * 100
@@ -61,8 +61,13 @@ export async function getPurchasesCount({
   };
 
   const [job] = await bigqueryClient.createQueryJob(options);
-  const [response] = await job.getQueryResults();
-  const { count } = response[0];
+  const [_response] = await job.getQueryResults();
+
+  const response = _response as {
+    count: number;
+  }[];
+
+  const { count } = response[0]!;
 
   return count;
 }
@@ -129,20 +134,16 @@ export async function executeClientQuery({
 
   startTableName,
   endTableName,
-
-  limit,
 }: {
   projectId: string;
-  datasetId: keyof typeof queries;
+  datasetId: TDatasets;
 
   startTableName: string;
   endTableName: string;
-
-  limit?: number;
 }) {
   const eventsBetween = getEventsBetween({ startTableName, endTableName });
 
-  let query = queries[datasetId](eventsBetween);
+  const query = queries[datasetId](eventsBetween);
   if (!query) throw new Error(`Query not found for datasetId: ${datasetId}`);
 
   const { value: bigqueryClient } = getBigQueryClient({

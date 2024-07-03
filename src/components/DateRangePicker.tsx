@@ -1,4 +1,4 @@
-import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
+import Datepicker, { type DateValueType } from "react-tailwindcss-datepicker";
 import dayjs from "@/utils/dayjs";
 
 interface DateRangePickerProps {

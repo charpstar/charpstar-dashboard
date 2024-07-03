@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 export class GlobalRef<T> {
   private readonly sym: symbol;
 

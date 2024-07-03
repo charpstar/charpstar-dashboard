@@ -1,4 +1,4 @@
-import { defaultEvents } from "@/utils/defaultEvents";
+import { type defaultEvents } from "@/utils/defaultEvents";
 
 import Skeleton from "@/components/Skeleton";
 import { Card } from "@tremor/react";

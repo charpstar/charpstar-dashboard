@@ -29,7 +29,7 @@ export function useEventsCount({
     enabled: shouldEnableFetching,
   });
 
-  const eventsCount = _eventsCount || defaultEvents;
+  const eventsCount = _eventsCount ?? defaultEvents;
 
   return { eventsCount, isEventsCountLoading };
 }
@@ -45,7 +45,7 @@ export async function getEventsCountFn({
     string,
   ];
 }) {
-  const [_, projectId, datasetId, startTableName, endTableName] = queryKey;
+  const [, projectId, datasetId, startTableName, endTableName] = queryKey;
 
   const idk = await getEventsCount({
     projectId,
@@ -60,7 +60,7 @@ export async function getEventsCountFn({
       event_name,
       {
         ...data,
-        count: idk[event_name] || 0,
+        count: idk[event_name] ?? 0,
       },
     ]),
   );

@@ -1,3 +1,5 @@
+export type TDatasets = keyof typeof queries;
+
 export const queries = {
   analytics_311675532: (eventsBetween: string) => `WITH
   -- This CTE Grabs all the product names from the items array

@@ -9,7 +9,7 @@ export function ListItem({
   title,
   href,
 }: {
-  icon: any;
+  icon: React.ReactNode;
   title: string;
   href: string;
 }) {

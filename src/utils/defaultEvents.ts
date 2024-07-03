@@ -11,4 +11,4 @@ export const defaultEvents = {
     title: "CharpstAR 3D Click",
     count: undefined,
   },
-} as { [event_name: string]: { title: string; count: number | undefined } };
+} as Record<string, { title: string; count: number | undefined }>;

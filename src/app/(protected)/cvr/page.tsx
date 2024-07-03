@@ -39,7 +39,7 @@ export default function Index() {
         <DateRangePicker
           value={dateRange}
           onChange={setDateRange}
-          minDate={monitoredSince}
+          minDate={new Date(monitoredSince)}
         />
       </div>
 

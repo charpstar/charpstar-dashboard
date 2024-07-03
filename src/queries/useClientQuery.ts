@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import { useUser } from "@/contexts/UserContext";
+import { type TDatasets } from "@/utils/BigQuery/clientQueries";
 
 export function useClientQuery({
   startTableName,
   endTableName,
-  limit,
 }: {
   startTableName: string;
   endTableName: string;
@@ -24,13 +24,12 @@ export function useClientQuery({
       datasetId,
       startTableName,
       endTableName,
-      limit,
     ],
     queryFn: executeClientQueryFn,
     enabled: shouldEnableFetching,
   });
 
-  const clientQueryResult = _clientQueryResult || [];
+  const clientQueryResult = _clientQueryResult ?? [];
 
   return { clientQueryResult, isQueryLoading };
 }
@@ -38,17 +37,9 @@ export function useClientQuery({
 export function executeClientQueryFn({
   queryKey,
 }: {
-  queryKey: [
-    string,
-    string,
-    Parameters<typeof executeClientQuery>[0]["datasetId"],
-    string,
-    string,
-    number,
-  ];
+  queryKey: [string, string, TDatasets, string, string];
 }) {
-  const [_, projectId, datasetId, startTableName, endTableName, limit] =
-    queryKey;
+  const [, projectId, datasetId, startTableName, endTableName] = queryKey;
 
   return executeClientQuery({
     projectId,
@@ -56,7 +47,5 @@ export function executeClientQueryFn({
 
     startTableName,
     endTableName,
-
-    limit,
   });
 }

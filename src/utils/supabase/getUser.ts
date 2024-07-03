@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { type TDatasets } from "../BigQuery/clientQueries";
 
 export async function getUser(supabase: SupabaseClient) {
   const {
@@ -22,5 +23,13 @@ export async function getUserWithMetadata(supabase: SupabaseClient) {
 
   if (error) return null;
 
-  return { ...user, metadata };
+  return {
+    ...user,
+    metadata: metadata as {
+      projectId: string;
+      datasetId: TDatasets;
+      monitoredSince: string;
+      name: string;
+    },
+  };
 }

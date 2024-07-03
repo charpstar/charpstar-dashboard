@@ -27,7 +27,7 @@ export default function Login() {
       if (session) router.push("/");
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    void supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) router.push("/");
     });
 
