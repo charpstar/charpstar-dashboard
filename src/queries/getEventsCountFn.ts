@@ -1,4 +1,4 @@
-import { defaultEvents } from "@/app/(protected)/(dashboard)/defaultEvents";
+import { defaultEvents } from "@/utils/defaultEvents";
 import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
 
 export async function getEventsCountFn({

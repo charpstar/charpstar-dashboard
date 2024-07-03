@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Card, DonutChart } from "@tremor/react";
 
-import { defaultEvents } from "./defaultEvents";
+import { defaultEvents } from "@/utils/defaultEvents";
 
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
 import { useUser } from "@/contexts/UserContext";
@@ -91,7 +91,12 @@ export default function Index() {
       <div className="col-span-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {Object.entries(eventsCount).map(([event_name, { title, count }]) => (
-            <EventCountCard key={event_name} title={title} count={count} />
+            <EventCountCard
+              key={event_name}
+              title={title}
+              count={count}
+              isLoading={isEventsCountLoading}
+            />
           ))}
         </div>
       </div>
@@ -111,7 +116,7 @@ export default function Index() {
       </div>
 
       <div className="col-span-12 lg:col-span-5">
-        {eventsCount.charpstAR_AR_Button_Click?.count === undefined ? (
+        {isEventsCountLoading ? (
           <div className="flex items-center justify-center h-[320px]">
             <RoundSkeleton />
           </div>

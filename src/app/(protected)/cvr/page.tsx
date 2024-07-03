@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-
-import { executeClientQuery } from "@/utils/BigQuery/CVR";
-import CVRTable from "@/components/CVRTable";
-import { buildDateRange, compToBq } from "@/utils/uiUtils";
-import { useUser } from "@/contexts/UserContext";
-import DateRangePicker from "@/components/DateRangePicker";
 import { useQuery } from "@tanstack/react-query";
+
 import { executeClientQueryFn } from "@/queries/executeClientQueryFn";
+import { useUser } from "@/contexts/UserContext";
+import { buildDateRange, compToBq } from "@/utils/uiUtils";
+
+import CVRTable from "@/components/CVRTable";
+import DateRangePicker from "@/components/DateRangePicker";
 
 export default function Index() {
   const user = useUser();

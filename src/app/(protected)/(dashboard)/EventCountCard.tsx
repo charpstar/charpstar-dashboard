@@ -1,12 +1,14 @@
+import { defaultEvents } from "@/utils/defaultEvents";
+
 import Skeleton from "@/components/Skeleton";
-import { defaultEvents } from "./defaultEvents";
 import { Card } from "@tremor/react";
 
 export default function EventCountCard({
   title,
   count,
-}: (typeof defaultEvents)[string]) {
-  if (count === undefined) return <Skeleton />;
+  isLoading,
+}: (typeof defaultEvents)[string] & { isLoading: boolean }) {
+  if (isLoading) return <Skeleton />;
 
   return (
     <Card>
