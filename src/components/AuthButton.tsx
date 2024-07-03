@@ -5,6 +5,7 @@ import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
 
 import { createClient } from "@/utils/supabase/server";
 import { getUserWithMetadata } from "@/utils/supabase/getUser";
+import PendingFormLoader from "./PendingFormLoader";
 
 export default async function AuthButton() {
   const supabase = createClient();
@@ -30,7 +31,9 @@ export default async function AuthButton() {
       >
         <span className="sr-only">Sign out</span>
 
-        <ArrowRightEndOnRectangleIcon className="h-8 w-8 rounded-full text-gray-400" />
+        <PendingFormLoader>
+          <ArrowRightEndOnRectangleIcon className="h-8 w-8 rounded-full text-gray-400" />
+        </PendingFormLoader>
       </button>
     </form>
   ) : (
