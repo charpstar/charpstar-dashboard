@@ -5,13 +5,11 @@ import React from "react";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
 import { useUser } from "@/contexts/UserContext";
 
-import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
-
-import { useClientQuery } from "@/queries/useClientQuery";
 
 import EventCountCards from "./EventCountCards";
 import TechBreakdownPie from "./TechBreakdownPie";
+import DashboardCVRTable from "./DashboardCVRTable";
 
 export default function Index() {
   const user = useUser();
@@ -21,12 +19,6 @@ export default function Index() {
 
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
-
-  const { clientQueryResult, isQueryLoading } = useClientQuery({
-    startTableName,
-    endTableName,
-    limit: 10,
-  });
 
   return (
     <div className="grid grid-cols-12 gap-4 mb-4 dark:text-gray-400 justify-end">
@@ -57,16 +49,9 @@ export default function Index() {
       </div>
 
       <div className="col-span-12 lg:col-span-7">
-        <CVRTable
-          isLoading={isQueryLoading}
-          showPaginationControls={false}
-          data={clientQueryResult}
-          showColumns={{
-            total_purchases: false,
-            purchases_with_service: false,
-            _3d_sessions: false,
-            ar_sessions: false,
-          }}
+        <DashboardCVRTable
+          startTableName={startTableName}
+          endTableName={endTableName}
         />
       </div>
 
