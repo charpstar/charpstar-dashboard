@@ -9,9 +9,11 @@ export function executeClientQueryFn({
     Parameters<typeof executeClientQuery>[0]["datasetId"],
     string,
     string,
+    number,
   ];
 }) {
-  const [_, projectId, datasetId, startTableName, endTableName] = queryKey;
+  const [_, projectId, datasetId, startTableName, endTableName, limit] =
+    queryKey;
 
   return executeClientQuery({
     projectId,
@@ -20,6 +22,6 @@ export function executeClientQueryFn({
     startTableName,
     endTableName,
 
-    limit: 10,
+    limit,
   });
 }

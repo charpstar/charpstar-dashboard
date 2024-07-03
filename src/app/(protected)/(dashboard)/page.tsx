@@ -1,22 +1,20 @@
 "use client";
 
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Card, DonutChart } from "@tremor/react";
 
 import { defaultEvents } from "./defaultEvents";
 
-import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
-import { executeClientQuery } from "@/utils/BigQuery/CVR";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
-
 import { useUser } from "@/contexts/UserContext";
 
 import { RoundSkeleton } from "@/components/Skeleton";
 import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
 import EventCountCard from "./EventCountCard";
-import { useQuery } from "@tanstack/react-query";
+
 import { getEventsCountFn } from "@/queries/getEventsCountFn";
 import { executeClientQueryFn } from "@/queries/executeClientQueryFn";
 
@@ -38,6 +36,7 @@ export default function Index() {
       datasetId,
       startTableName,
       endTableName,
+      10,
     ],
     queryFn: executeClientQueryFn,
     enabled: shouldEnableFetching,
