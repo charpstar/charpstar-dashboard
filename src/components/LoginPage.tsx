@@ -1,4 +1,5 @@
 import Image from "next/image";
+import PendingFormLoader from "./PendingFormLoader";
 
 export default function LoginPage({
   formAction,
@@ -77,7 +78,9 @@ export default function LoginPage({
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Sign in
+              <div className="flex h-6 items-center justify-center">
+                <PendingFormLoader>Sign in</PendingFormLoader>
+              </div>
             </button>
           </div>
         </form>

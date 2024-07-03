@@ -31,9 +31,11 @@ export default async function AuthButton() {
       >
         <span className="sr-only">Sign out</span>
 
-        <PendingFormLoader>
-          <ArrowRightEndOnRectangleIcon className="h-8 w-8 rounded-full text-gray-400" />
-        </PendingFormLoader>
+        <div className="flex h-8 items-center justify-center">
+          <PendingFormLoader>
+            <ArrowRightEndOnRectangleIcon className="h-8 w-8 rounded-full text-gray-400" />
+          </PendingFormLoader>
+        </div>
       </button>
     </form>
   ) : (

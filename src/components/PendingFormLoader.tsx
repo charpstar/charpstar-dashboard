@@ -11,9 +11,7 @@ export default function PendingFormLoader({
 
   if (pending)
     return (
-      <div className="flex h-8 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-white"></div>
-      </div>
+      <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-t-2 border-white"></div>
     );
 
   return children;
