@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Jost } from "next/font/google";
 import "./globals.css";
+import NextTopLoader from "nextjs-toploader";
 
 const jost = Jost({ subsets: ["latin"] });
 const defaultUrl = process.env.VERCEL_URL
@@ -24,6 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full bg-white dark:bg-slate-950 antialiased">
+      <NextTopLoader />
       <body className={`${jost.className}`}>{children}</body>
     </html>
   );
