@@ -7,7 +7,7 @@ import DateRangePicker from "@/components/DateRangePicker";
 
 import EventCountCards from "./EventCountCards";
 import TechBreakdownPie from "./TechBreakdownPie";
-import DashboardCVRTable from "./DashboardCVRTable";
+
 
 export default function Dashboard({
   dateRangePickerMinDate,
@@ -30,7 +30,7 @@ export default function Dashboard({
       </div>
 
       <div className="col-span-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <EventCountCards
             startTableName={startTableName}
             endTableName={endTableName}
@@ -38,14 +38,7 @@ export default function Dashboard({
         </div>
       </div>
 
-      <div className="col-span-12 lg:col-span-7">
-        <DashboardCVRTable
-          startTableName={startTableName}
-          endTableName={endTableName}
-        />
-      </div>
-
-      <div className="col-span-12 lg:col-span-5">
+      <div className="col-span-12 lg:col-span-4">
         <TechBreakdownPie
           startTableName={startTableName}
           endTableName={endTableName}

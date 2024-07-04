@@ -178,9 +178,12 @@ export async function executeClientQuery({
 
     product_conv_rate: number;
     default_conv_rate: number;
+
+    avg_session_duration_seconds: number;
+    avg_combined_session_duration: number;
   }[];
 
-  console.log(response);
+ // console.log(response);
 
   return response;
 }

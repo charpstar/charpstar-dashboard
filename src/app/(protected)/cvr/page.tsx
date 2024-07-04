@@ -42,10 +42,11 @@ export default function Index() {
             isLoading={isQueryLoading}
             data={clientQueryResult}
             showColumns={{
-              ar_sessions: true,
-              _3d_sessions: true,
+              ar_sessions: false,
+              _3d_sessions: false,
               total_purchases: true,
               purchases_with_service: true,
+              avg_session_duration_seconds : true,
             }}
             showSearch={true}
           />

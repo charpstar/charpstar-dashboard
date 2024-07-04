@@ -47,6 +47,7 @@ interface CVRTableProps {
     purchases_with_service: boolean;
     _3d_sessions: boolean;
     ar_sessions: boolean;
+    avg_session_duration_seconds: boolean;
   };
 
   showPaginationControls?: boolean;
@@ -81,6 +82,7 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
+        tooltip: "Total AR and 3D Button Clicks",
       },
     },
     columnHelper.accessor("default_conv_rate", {
@@ -89,6 +91,7 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
+        tooltip: "Default Conversion Rate of the Product",
       },
     }),
     columnHelper.accessor("product_conv_rate", {
@@ -97,6 +100,27 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
+        tooltip: "Conversion Rate of the product of users who have clicked either the AR or 3D Buttons",
+      },
+    }),
+
+    columnHelper.accessor("avg_session_duration_seconds", {
+      cell: (info) => info.getValue() + " seconds",
+      header: "Avg Session Duration",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+        tooltip: "The product page average session time in seconds",
+      },
+    }),
+
+    columnHelper.accessor("avg_combined_session_duration", {
+      cell: (info) => info.getValue() + " seconds",
+      header: "Avg Session Duration (CharpstAR)",
+      enableSorting: true,
+      meta: {
+        align: "text-right",
+        tooltip: "The average session duration in seconds of users who have visited a product page and clicked either the AR or 3D Button",
       },
     }),
   ] as ColumnDef<Row, unknown>[];
@@ -108,6 +132,7 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
+        tooltip: "Total AR Button Clicks",
       },
     });
 
@@ -118,6 +143,7 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
+        tooltip: "Total 3D Button Clicks",
       },
     });
 
@@ -128,6 +154,7 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
+        tooltip: "Total Purchases of the product",
       },
     });
 
@@ -138,8 +165,11 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
+        tooltip: "Total Purchases of the product by users who have clicked either the AR or 3D Buttons",
       },
     });
+
+
 
   const table = useReactTable({
     data,
@@ -159,7 +189,7 @@ export default function CVRTable({
       ],
 
       pagination: {
-        pageSize: 10,
+        pageSize: 15,
       },
     },
   });
@@ -203,9 +233,9 @@ export default function CVRTable({
                     <div
                       className={classNames(
                         header.column.columnDef.enableSorting === true
-                          ? "flex items-center justify-between gap-2 hover:bg-tremor-background-muted hover:dark:bg-dark-tremor-background-muted"
+                          ? "flex items-center justify-between gap-1 hover:bg-tremor-background-muted hover:dark:bg-dark-tremor-background-muted"
                           : header.column.columnDef.meta?.align,
-                        " rounded-tremor-default px-3 py-1.5",
+                        " rounded-tremor-default px-1.5 py-1.5 text-xs",
                         header.column.columnDef.meta?.width,
                         "text-tremor-content-muted dark:text-dark-tremor-content-muted",
                       )}
@@ -253,7 +283,7 @@ export default function CVRTable({
                   className={classNames(
                     cell.column.columnDef.meta?.align,
                     cell.column.columnDef.meta?.width,
-                    "text-tremor-content-strong dark:text-dark-tremor-content-strong",
+                    "text-tremor-content-strong dark:text-dark-tremor-content-strong text-sm p-3",
                   )}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -7,27 +7,22 @@ export default function LoginPage({
   formAction: (formData: FormData) => void;
 }) {
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center items-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h3 className="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-white">
-          CharpstAR Client Area
-        </h3>
-      </div>
-
-      <Image
+    <div className="flex min-h-full flex-1 flex-col justify-center items-center px-6 py-36 lg:px-8">
+         <Image
         src="/charpstar.svg"
         alt="Charpstar Logo"
         className="invert"
-        width={100}
-        height={24}
+        width={200}
+        height={100}
         priority
       />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-2 text-center text-xl font-bold leading-9 tracking-tight text-white">
-          Sign in to your account
-        </h2>
+        <h3 className="mt-10 text-center text-3xl leading-9 tracking-tight text-white">
+          Client Area
+        </h3>
       </div>
+
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" action={formAction}>

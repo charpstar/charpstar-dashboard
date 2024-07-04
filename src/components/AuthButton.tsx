@@ -33,8 +33,10 @@ export default async function AuthButton() {
 
         <div className="flex h-8 items-center justify-center">
           <PendingFormLoader>
-            <ArrowRightEndOnRectangleIcon className="h-8 w-8 rounded-full text-gray-400" />
-          </PendingFormLoader>
+            <ArrowRightEndOnRectangleIcon className="h-6 w-6 rounded-full text-gray-400" />
+            </PendingFormLoader>
+            <div className="text-gray-400">  Logout</div>
+        
         </div>
       </button>
     </form>

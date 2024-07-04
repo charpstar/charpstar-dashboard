@@ -44,7 +44,7 @@ export default function AppSide() {
             }
             title="Detailed CharpstAR Stats"
             href="/cvr"
-          />
+          /> 
         </ul>
 
         <ul className="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">

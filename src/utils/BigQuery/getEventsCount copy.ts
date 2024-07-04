@@ -120,73 +120,11 @@ export async function getEventsCount({
         ) * 100,
         2
       ) AS percentage_ar_users
-  ),
-  avg_engagement_time AS (
-    SELECT
-      AVG((SELECT value.int_value 
-           FROM UNNEST(event_params) ep 
-           WHERE ep.key = 'engagement_time_msec') / 1000.0) AS avg_session_duration_seconds
-    FROM
-    \`${projectId}.${datasetId}.events_*\`
-    WHERE
-      event_name IN ('page_view', 'user_engagement')
-      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
-  ),
- ar_events AS (
-  SELECT
-    user_pseudo_id,
-    event_timestamp,
-  FROM
-  \`${projectId}.${datasetId}.events_*\`
-  WHERE
-    event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
-    AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
-),
-next_events AS (
-  SELECT
-    ar.user_pseudo_id,
-    ar.event_timestamp AS ar_event_timestamp,
-    MIN(e.event_timestamp) / 1000 AS next_event_timestamp,
-  FROM
-    ar_events AS ar
-  JOIN
-  \`${projectId}.${datasetId}.events_*\` AS e
-  ON
-    ar.user_pseudo_id = e.user_pseudo_id
-    AND e.event_timestamp > ar.event_timestamp
-  GROUP BY
-    ar.user_pseudo_id, ar.event_timestamp
-),
-ar_durations AS (
-  SELECT
-    SAFE_DIVIDE(ne.next_event_timestamp - ar.event_timestamp / 1000, 1000) AS interaction_duration_seconds
-  FROM
-    ar_events AS ar
-  LEFT JOIN
-    next_events AS ne
-  ON
-    ar.user_pseudo_id = ne.user_pseudo_id
-    AND ar.event_timestamp = ne.ar_event_timestamp
-  WHERE
-    ne.next_event_timestamp IS NOT NULL
-    AND SAFE_DIVIDE(ne.next_event_timestamp - ar.event_timestamp / 1000, 1000) BETWEEN 0 AND 3600
-),
-avg_ar_duration AS (
-  SELECT
-    AVG(interaction_duration_seconds) AS avg_ar_session_duration_seconds
-  FROM
-    ar_durations
-),
-
-combined_durations AS (
-  SELECT
-    (SELECT avg_ar_session_duration_seconds FROM avg_ar_duration) + 
-    (SELECT avg_session_duration_seconds FROM avg_engagement_time) AS total_avg_session_duration
-)
+  )
   
   SELECT
     'overall_conv_rate' AS event_name,
-    overall_avg_conversion_rate AS count
+    overall_avg_conversion_rate AS value
   FROM
     conversion_rates
   
@@ -194,7 +132,7 @@ combined_durations AS (
   
   SELECT
     'overall_conv_rate_CharpstAR' AS event_name,
-    overall_avg_conversion_rate_with_ar AS count
+    overall_avg_conversion_rate_with_ar AS value
   FROM
     conversion_rates
   
@@ -202,7 +140,7 @@ combined_durations AS (
   
   SELECT
     event_name AS event_name,
-    total_events AS count
+    total_events AS value
   FROM
     event_counts
   
@@ -210,35 +148,9 @@ combined_durations AS (
   
   SELECT
     'percentage_charpstAR' AS event_name,
-    percentage_ar_users AS count 
+    percentage_ar_users AS value
   FROM
-    ar_percentage
-  
-  UNION ALL
-
-  SELECT
-  'session_time_charpstAR' AS event_name,
-  ROUND(avg_ar_session_duration_seconds, 2) AS count
-FROM
-  avg_ar_duration
-
-UNION ALL
-
-SELECT
-  'session_time_default' AS event_name,
-  ROUND(avg_session_duration_seconds, 2) AS count
-FROM
-  avg_engagement_time
-
-UNION ALL
-
-SELECT
-  'combined_session_time' AS event_name,
-  ROUND(total_avg_session_duration, 2) AS count
-FROM
-  combined_durations;
-
-
+    ar_percentage;
   `;
   
 

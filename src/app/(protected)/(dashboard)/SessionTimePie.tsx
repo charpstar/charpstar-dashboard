@@ -3,7 +3,7 @@ import { useEventsCount } from "@/queries/useEventsCount";
 
 import { RoundSkeleton } from "@/components/Skeleton";
 
-export default function TechBreakdownPie({
+export default function SessionTimePie({
   startTableName,
   endTableName,
 }: {
@@ -37,7 +37,7 @@ export default function TechBreakdownPie({
     <Card>
       <div className="space-y-5">
         <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-          CharpstAR AR/3D Usage 
+          Sessions Time (Tech Breakdown)
         </span>
         <div className="flex items-center justify-center h-[320px]">
           <DonutChart

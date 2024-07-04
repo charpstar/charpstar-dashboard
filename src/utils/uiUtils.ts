@@ -9,7 +9,7 @@ export function compToBq(date: string) {
 }
 
 export function buildDateRange(
-  startDate: dayjs.Dayjs = dayjs().subtract(7, "days"),
+  startDate: dayjs.Dayjs = dayjs().subtract(15, "days"),
   endDate: dayjs.Dayjs = dayjs(),
 ) {
   return {
