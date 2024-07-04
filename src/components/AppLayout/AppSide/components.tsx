@@ -1,9 +1,9 @@
 "use client";
 
 import { classNames } from "@/utils/uiUtils";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
+import { usePathname } from "next/navigation";
+import { Link } from "nextjs13-progress";
 
 export function ListItem({
   icon,

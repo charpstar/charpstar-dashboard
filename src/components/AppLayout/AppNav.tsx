@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 
 import AuthButton from "@/components/AuthButton";
+import { Link } from "nextjs13-progress";
 
 export default function AppNav() {
   return (
