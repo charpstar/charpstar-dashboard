@@ -26,7 +26,7 @@ export async function getPurchasesCount({
   startTableName: string;
   endTableName: string;
 }) {
-  const { value: bigqueryClient } = getBigQueryClient({ projectId });
+  const bigqueryClient  = getBigQueryClient({ projectId });
   const eventsTableName = getEventsTableName({ projectId, datasetId });
   const eventsBetween = getEventsBetween({ startTableName, endTableName });
 
@@ -85,7 +85,7 @@ export async function getPageViewsCount({
   startTableName: string;
   endTableName: string;
 }) {
-  const { value: bigqueryClient } = getBigQueryClient({ projectId });
+  const bigqueryClient  = getBigQueryClient({ projectId });
 
   const query = `
     WITH data_prep AS (
@@ -146,9 +146,7 @@ export async function executeClientQuery({
   const query = queries[datasetId](eventsBetween);
   if (!query) throw new Error(`Query not found for datasetId: ${datasetId}`);
 
-  const { value: bigqueryClient } = getBigQueryClient({
-    projectId: "fast-lattice-421210",
-  });
+  const bigqueryClient  = getBigQueryClient({ projectId });
 
   const options = {
     query: query,
