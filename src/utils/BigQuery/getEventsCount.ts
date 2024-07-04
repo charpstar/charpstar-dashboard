@@ -14,19 +14,8 @@ export async function getEventsCount({
   endTableName: string;
 }): Promise<Record<string, number>> {
   const { value: bigqueryClient } = getBigQueryClient({ projectId });
+  
 
-  if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-  }
-  const { BigQuery } = require('@google-cloud/bigquery');
-  const fs = require('fs');
-
-  // Check if GOOGLE_APPLICATION_CREDENTIALS is set and write it to a file
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-  const credentialsPath = './google-credentials.json';
-  fs.writeFileSync(credentialsPath, process.env.GOOGLE_APPLICATION_CREDENTIALS);
-  process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
-}
   const query = `
   WITH
   total_views AS (
