@@ -1,6 +1,8 @@
 import Datepicker, { type DateValueType } from "react-tailwindcss-datepicker";
 import dayjs from "@/utils/dayjs";
 
+import { customShortcuts } from "@/utils/uiUtils";
+
 interface DateRangePickerProps {
   value: { startDate: string; endDate: string };
   minDate?: Date;
@@ -30,8 +32,11 @@ export default function DateRangePicker({
       value={value}
       onChange={handleValueChange}
       showShortcuts={true}
-      maxDate={dayjs().add(1, "day").toDate()}
+      maxDate={dayjs().add(-1, "day").toDate()}
       minDate={minDate}
+      configs={{
+        shortcuts: customShortcuts,
+      }}
     />
   );
 }
