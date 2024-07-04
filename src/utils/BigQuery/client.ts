@@ -1,18 +1,11 @@
 import { BigQuery } from "@google-cloud/bigquery";
-import { GlobalRef } from "@/utils/GlobalRef";
-import fs from "fs";
-import path from "path";
+import { getGCPCredentials } from "@/utils/getGCPCredentials"; // Add this import
 
 export function getBigQueryClient({ projectId }: { projectId: string }) {
+  const { credentials, projectId: envProjectId } = getGCPCredentials();
   
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_CONTENT) {
-    const credentialsPath = path.join(__dirname, "google-credentials.json");
-    fs.writeFileSync(credentialsPath, process.env.GOOGLE_APPLICATION_CREDENTIALS_CONTENT);
-    process.env.GOOGLE_APPLICATION_CREDENTIALS = credentialsPath;
-  }
-
   return new BigQuery({
-    projectId,
-    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+    projectId: projectId || envProjectId,
+    credentials,
   });
 }
