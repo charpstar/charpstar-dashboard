@@ -183,7 +183,7 @@ export default function CVRTable({
     initialState: {
       sorting: [
         {
-          id: "default_conv_rate",
+          id: "product_conv_rate",
           desc: true,
         },
       ],
@@ -220,7 +220,7 @@ export default function CVRTable({
                   onClick={header.column.getToggleSortingHandler()}
                   className={classNames(
                     header.column.getCanSort()
-                      ? "cursor-pointer select-none"
+                      ? "cursor-pointer select-none text-right"
                       : "",
                     "px-0.5 py-1.5",
                   )}
