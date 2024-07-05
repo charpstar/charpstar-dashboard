@@ -223,15 +223,18 @@ WHERE total_button_clicks > 0 OR purchases_with_service > 0
     WHERE event_name = 'charpstAR_3D_Button_Click'
     GROUP BY TRIM(page_title_product_name)
   ),
+
   purchases AS (
     SELECT DISTINCT
       user_pseudo_id,
       event_timestamp,
       (SELECT value.int_value FROM UNNEST(event_params) WHERE key = 'ga_session_id') AS ga_session_id,
-      (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id') AS transaction_id
-    FROM \`fast-lattice-421210.analytics_351120479.events_*\`
-    WHERE event_name = 'purchase' AND ${eventsBetween}
+      (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id') AS transaction_id,
+      (SELECT TRIM(i.item_name) FROM UNNEST(items) AS i LIMIT 1) AS product_name
+      FROM \`fast-lattice-421210.analytics_351120479.events_*\`
+      WHERE event_name = 'purchase' AND ${eventsBetween}
   ),
+
   tran_ids_required AS (
     SELECT DISTINCT p.transaction_id
     FROM click_events AS c
@@ -240,15 +243,34 @@ WHERE total_button_clicks > 0 OR purchases_with_service > 0
       AND c.user_pseudo_id = p.user_pseudo_id
       AND p.event_timestamp > c.click_timestamp
   ),
+  purchases_with_ar AS (
+    SELECT
+      p.user_pseudo_id,
+      p.transaction_id,
+      p.product_name,
+      IF(
+        EXISTS (
+          SELECT 1
+          FROM click_events_with_products AS c
+          WHERE c.user_pseudo_id = p.user_pseudo_id
+          AND c.click_timestamp < p.event_timestamp
+        ),
+        'yes',
+        'no'
+      ) AS purchased_after_ar
+    FROM
+      purchases AS p
+  ),
   products_purchased_after_click_events AS (
     SELECT
-      TRIM(i.item_name) AS product_name,
-      COUNT(DISTINCT p.transaction_id) AS purchases_with_service
-    FROM \`fast-lattice-421210.analytics_351120479.events_*\` AS e, UNNEST(items) AS i
-    JOIN tran_ids_required AS p
-      ON p.transaction_id = (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id')
-    WHERE event_name = 'purchase' AND ${eventsBetween}
-    GROUP BY TRIM(i.item_name)
+      product_name,
+      COUNT(DISTINCT transaction_id) AS purchases_with_service
+    FROM
+      purchases_with_ar
+    WHERE
+      purchased_after_ar = 'yes'
+    GROUP BY
+      product_name
   ),
   total_views AS (
     SELECT
