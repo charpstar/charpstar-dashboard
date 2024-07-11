@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 
-import AppLayout from "@/components/AppLayout";
 import { createClient } from "@/utils/supabase/server";
 import { getUser, getUserWithMetadata } from "@/utils/supabase/getUser";
 import { UserProvider } from "@/contexts/UserContext";
@@ -18,10 +17,8 @@ export default async function ProtectedLayout({
   if (!userWithData) return redirect("/no-data");
 
   return (
-    <AppLayout>
-      <Providers>
-        <UserProvider user={userWithData}>{children}</UserProvider>
-      </Providers>
-    </AppLayout>
+    <Providers>
+      <UserProvider user={userWithData}>{children}</UserProvider>
+    </Providers>
   );
 }
