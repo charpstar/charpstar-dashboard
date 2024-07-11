@@ -1,9 +1,6 @@
 "use server";
 
 import { getBigQueryClient } from "./client";
-import dotenv from "dotenv";
-
-
 
 export async function getEventsCount({
   projectId,
@@ -16,10 +13,9 @@ export async function getEventsCount({
   startTableName: string;
   endTableName: string;
 }): Promise<Record<string, number>> {
-  const bigqueryClient  = getBigQueryClient({ projectId });
-  if (process.env.NODE_ENV !== 'production') {
-    dotenv.config();
-  }
+  console.log("projectId", projectId);
+
+  const bigqueryClient = getBigQueryClient({ projectId });
 
   const query = `
   WITH
@@ -246,7 +242,6 @@ FROM
 
 
   `;
-  
 
   const options = {
     query: query,
