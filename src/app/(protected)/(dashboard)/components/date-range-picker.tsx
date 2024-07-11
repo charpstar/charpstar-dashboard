@@ -13,6 +13,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import dayjs from "@/utils/dayjs";
+import { dayjsToComp } from "@/utils/uiUtils";
 
 export function CalendarDateRangePicker({
   className,
@@ -35,15 +36,10 @@ export function CalendarDateRangePicker({
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {dayjs(date.from).format("LLL dd, y")} -{" "}
-                  {dayjs(date.to).format("LLL dd, y")}
-                </>
-              ) : (
-                dayjs(date.from).format("LLL dd, y")
-              )
+            {date?.from && date.to ? (
+              <>
+                {dayjsToComp(dayjs(date.from))} - {dayjsToComp(dayjs(date.to))}
+              </>
             ) : (
               <span>Pick a date</span>
             )}
