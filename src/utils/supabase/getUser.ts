@@ -4,7 +4,10 @@ import { type TDatasets } from "../BigQuery/clientQueries";
 export async function getUser(supabase: SupabaseClient) {
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
+
+  if (error) console.log("error", error);
 
   return user;
 }
@@ -21,7 +24,10 @@ export async function getUserWithMetadata(supabase: SupabaseClient) {
     .eq("id", user.id)
     .single();
 
-  if (error) return null;
+  if (error) {
+    if (error) console.log("error", error);
+    return null;
+  }
 
   return {
     ...user,

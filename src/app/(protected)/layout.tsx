@@ -11,7 +11,7 @@ export default async function ProtectedLayout({
   const supabase = createClient();
 
   const user = await getUser(supabase);
-  if (!user) return redirect("/login");
+  console.log("user", user);
 
   const userWithData = await getUserWithMetadata(supabase);
   if (!userWithData) return redirect("/no-data");
