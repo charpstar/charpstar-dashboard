@@ -38,11 +38,11 @@ export function CalendarDateRangePicker({
             {date?.from ? (
               date.to ? (
                 <>
-                  {dayjs(date.from, "LLL dd, y").toString()} -{" "}
-                  {dayjs(date.to, "LLL dd, y").toString()}
+                  {dayjs(date.from).format("LLL dd, y")} -{" "}
+                  {dayjs(date.to).format("LLL dd, y")}
                 </>
               ) : (
-                dayjs(date.from, "LLL dd, y").toString()
+                dayjs(date.from).format("LLL dd, y")
               )
             ) : (
               <span>Pick a date</span>

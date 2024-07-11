@@ -18,22 +18,10 @@ export function MainNav({
         Overview
       </Link>
       <Link
-        href="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        href="/cvr"
+        className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground"
       >
-        Customers
-      </Link>
-      <Link
-        href="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Products
-      </Link>
-      <Link
-        href="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Settings
+        CVR Stats
       </Link>
     </nav>
   );
