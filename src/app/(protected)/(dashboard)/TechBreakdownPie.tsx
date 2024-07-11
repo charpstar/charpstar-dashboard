@@ -1,4 +1,3 @@
-import { Card, DonutChart } from "@tremor/react";
 import { useEventsCount } from "@/queries/useEventsCount";
 
 import { RoundSkeleton } from "@/components/Skeleton";
@@ -36,8 +35,8 @@ export default function TechBreakdownPie({
   return (
     <Card>
       <div className="space-y-5">
-        <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-          CharpstAR AR/3D Usage 
+        <span className="text-center block font-mono">
+          CharpstAR AR/3D Usage
         </span>
         <div className="flex items-center justify-center h-[320px]">
           <DonutChart

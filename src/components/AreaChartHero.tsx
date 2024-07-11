@@ -1,5 +1,4 @@
 "use client";
-import { AreaChart } from "@tremor/react";
 
 const chartdata = [
   {

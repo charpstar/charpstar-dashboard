@@ -1,4 +1,4 @@
-import { Card, DonutChart } from "@tremor/react";
+import { Card, CardContent } from "@/components/ui/card";
 import { useEventsCount } from "@/queries/useEventsCount";
 
 import { RoundSkeleton } from "@/components/Skeleton";
@@ -35,19 +35,21 @@ export default function SessionTimePie({
 
   return (
     <Card>
-      <div className="space-y-5">
-        <span className="text-center block font-mono text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-          Sessions Time (Tech Breakdown)
-        </span>
-        <div className="flex items-center justify-center h-[320px]">
-          <DonutChart
-            data={pieData}
-            variant="pie"
-            valueFormatter={(number: number) => `${number} clicks`}
-            className="w-full h-full"
-          />
+      <CardContent>
+        <div className="space-y-5">
+          <span className="text-center block font-mono">
+            Sessions Time (Tech Breakdown)
+          </span>
+          <div className="flex items-center justify-center h-[320px]">
+            {/* <DonutChart
+              data={pieData}
+              variant="pie"
+              valueFormatter={(number: number) => `${number} clicks`}
+              className="w-full h-full"
+            /> */}
+          </div>
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }

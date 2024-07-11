@@ -21,22 +21,9 @@ import {
   RiArrowUpSLine,
 } from "@remixicon/react";
 
-import {
-  Card,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-  TextInput,
-} from "@tremor/react";
-
 import { type executeClientQuery } from "@/utils/BigQuery/CVR";
 import { classNames } from "@/utils/uiUtils";
-import { Button } from "./Button";
 import { TableSkeleton } from "./Skeleton";
-import { Tooltip } from "./TremorRawTooltip";
 
 interface CVRTableProps {
   isLoading: boolean;
@@ -100,7 +87,8 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
-        tooltip: "Conversion Rate of the product of users who have clicked either the AR or 3D Buttons",
+        tooltip:
+          "Conversion Rate of the product of users who have clicked either the AR or 3D Buttons",
       },
     }),
 
@@ -120,7 +108,8 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
-        tooltip: "The average session duration in seconds of users who have visited a product page and clicked either the AR or 3D Button",
+        tooltip:
+          "The average session duration in seconds of users who have visited a product page and clicked either the AR or 3D Button",
       },
     }),
   ] as ColumnDef<Row, unknown>[];
@@ -165,11 +154,10 @@ export default function CVRTable({
       enableSorting: true,
       meta: {
         align: "text-right",
-        tooltip: "Total Purchases of the product by users who have clicked either the AR or 3D Buttons",
+        tooltip:
+          "Total Purchases of the product by users who have clicked either the AR or 3D Buttons",
       },
     });
-
-
 
   const table = useReactTable({
     data,
@@ -210,10 +198,7 @@ export default function CVRTable({
       <Table>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="border-b border-tremor-border dark:border-dark-tremor-border"
-            >
+            <TableRow key={headerGroup.id} className="border-b">
               {headerGroup.headers.map((header) => (
                 <TableHeaderCell
                   key={header.id}
