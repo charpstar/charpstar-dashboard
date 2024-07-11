@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full bg-white dark:bg-slate-950 antialiased">
+    <html lang="en" className="antialiased">
       <body className={`${jost.className}`}>
         <Next13NProgress height={5} />
         {children}

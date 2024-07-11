@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/client";
-import LoginPage from "@/components/LoginPage";
+import LoginPage from "@/components/Auth/LoginPage";
 
 export default function Login() {
   const supabase = createClient();
