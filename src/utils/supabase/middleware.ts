@@ -61,8 +61,6 @@ async function handleAuthStatusRedirect(
   request: NextRequest,
   supabaseResponse: NextResponse,
 ): Promise<NextResponse> {
-  console.log("user", user);
-
   function redirectTo(pathname: string) {
     const url = request.nextUrl.clone();
     url.pathname = pathname;

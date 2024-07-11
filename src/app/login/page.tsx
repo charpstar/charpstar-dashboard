@@ -1,10 +1,12 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
+
 import LoginPage from "@/components/Auth/LoginPage";
+import { loginAction } from "./loginAction";
 
 export default function Login() {
-  const supabase = createClient();
+  const router = useRouter();
 
   const handleLoginAction = async (formData: FormData) => {
     const rawFormData = {
@@ -12,8 +14,12 @@ export default function Login() {
       password: formData.get("password") as string,
     };
 
-    const { error } = await supabase.auth.signInWithPassword(rawFormData);
-    if (error) alert(error.message);
+    try {
+      await loginAction(rawFormData);
+      router.push("/");
+    } catch (error) {
+      if (error) alert(error?.message ?? "Unknown error occurred.");
+    }
   };
 
   return <LoginPage formAction={handleLoginAction} />;

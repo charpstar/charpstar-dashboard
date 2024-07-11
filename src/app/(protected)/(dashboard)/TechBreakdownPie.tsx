@@ -1,6 +1,7 @@
 import { useEventsCount } from "@/queries/useEventsCount";
 
 import { RoundSkeleton } from "@/components/Skeleton";
+import { Card } from "@/components/ui/card";
 
 export default function TechBreakdownPie({
   startTableName,

@@ -13,8 +13,6 @@ export async function getEventsCount({
   startTableName: string;
   endTableName: string;
 }): Promise<Record<string, number>> {
-  console.log("projectId", projectId);
-
   const bigqueryClient = getBigQueryClient({ projectId });
 
   const query = `
