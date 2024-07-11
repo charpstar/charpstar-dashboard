@@ -5,11 +5,10 @@ import React from "react";
 import { useUser } from "@/contexts/UserContext";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
 
-import UserLayout from "../UserLayout";
-
-import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
 import { useClientQuery } from "@/queries/useClientQuery";
+import { DataTable } from "@/components/cvr-table/data-table";
+import { columns } from "@/components/cvr-table/columns";
 
 export default function Index() {
   const user = useUser();
@@ -26,19 +25,9 @@ export default function Index() {
     limit: 100,
   });
 
-  return (
-    <UserLayout>
-      <>
-        <div className="col-span-12 lg:col-span-3 lg:col-start-10 rounded-lg dark:border-gray-600">
-          <DateRangePicker
-            value={dateRange}
-            onChange={setDateRange}
-            minDate={new Date(monitoredSince)}
-          />
-        </div>
+  return <DataTable columns={columns} data={clientQueryResult} />;
 
-        <div className="col-span-12">
-          <CVRTable
+  /* <CVRTable
             isLoading={isQueryLoading}
             data={clientQueryResult}
             showColumns={{
@@ -49,9 +38,5 @@ export default function Index() {
               avg_session_duration_seconds : true,
             }}
             showSearch={true}
-          />
-        </div>
-      </>
-    </UserLayout>
-  );
+          /> */
 }

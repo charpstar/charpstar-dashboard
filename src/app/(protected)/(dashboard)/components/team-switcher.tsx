@@ -48,7 +48,7 @@ const groups = [
     label: "Personal Account",
     teams: [
       {
-        label: "Alicia Koch",
+        label: "Website 1",
         value: "personal",
       },
     ],
@@ -57,11 +57,11 @@ const groups = [
     label: "Teams",
     teams: [
       {
-        label: "Acme Inc.",
+        label: "Website 2",
         value: "acme-inc",
       },
       {
-        label: "Monsters Inc.",
+        label: "Website 3",
         value: "monsters",
       },
     ],

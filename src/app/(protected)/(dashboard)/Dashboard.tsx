@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import {
   Card,
   CardContent,
@@ -12,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MainNav } from "./components/main-nav";
 import { CalendarDateRangePicker } from "./components/date-range-picker";
 import { Overview } from "./components/overview";
-import { Search } from "./components/search";
 import TeamSwitcher from "./components/team-switcher";
 import { UserNav } from "./components/user-nav";
 import Cards from "./components/cards";
@@ -28,7 +25,6 @@ export default function DashboardPage() {
             <MainNav className="mx-6" />
 
             <div className="ml-auto flex items-center space-x-4">
-              <Search />
               <UserNav />
             </div>
           </div>
