@@ -18,7 +18,8 @@ export default function Login() {
       await loginAction(rawFormData);
       router.push("/");
     } catch (error) {
-      if (error) alert(error?.message ?? "Unknown error occurred.");
+      const message = String(error) || "Unknown error occurred.";
+      if (error) alert(message);
     }
   };
 
