@@ -2,21 +2,44 @@
 
 import Skeleton from "@/components/Skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useEventsCount } from "@/queries/useEventsCount";
+
+function DashboardToolTip({
+  text,
+  children,
+}: {
+  text: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipContent>{text}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 function DashboardCard({
   title,
   content,
-  explanation,
+  node,
   icon,
 }: {
   title: string;
   content: string;
-  explanation: string;
+  node: React.ReactNode;
   icon: React.ReactNode;
 }) {
   return (
-    <Card>
+    <Card className="text-left">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}
@@ -24,14 +47,14 @@ function DashboardCard({
 
       <CardContent>
         <div className="text-2xl font-bold">{content}</div>
-        <p className="text-xs text-muted-foreground">{explanation}</p>
+        <p className="text-xs text-muted-foreground">{node}</p>
       </CardContent>
     </Card>
   );
 }
 
 export default function Cards() {
-  const startTableName = "20240101";
+  const startTableName = "20240101"; // TODO:
   const endTableName = "20240431";
 
   const { eventsCount, isEventsCountLoading } = useEventsCount({
@@ -82,13 +105,14 @@ export default function Cards() {
     );
 
     return (
-      <DashboardCard
-        key={event_name}
-        {...data}
-        content={String(data.count ?? 0)}
-        explanation={String(formattedCount)}
-        icon={<div>Icon</div>}
-      />
+      <DashboardToolTip text={data.tooltip} key={event_name}>
+        <DashboardCard
+          title={event_name}
+          content={String(data.count ?? 0)}
+          node={formattedCount}
+          icon={<div>Icon</div>}
+        />
+      </DashboardToolTip>
     );
   });
 }
