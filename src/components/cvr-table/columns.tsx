@@ -4,17 +4,11 @@ import {
   type ColumnDef,
   createColumnHelper,
   filterFns,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 
 import { type executeClientQuery } from "@/utils/BigQuery/CVR";
 
-export type CVRRow = Awaited<ReturnType<typeof executeClientQuery>>;
+export type CVRRow = Awaited<ReturnType<typeof executeClientQuery>>[number];
 const columnHelper = createColumnHelper<CVRRow>();
 
 export const columns = [
@@ -43,7 +37,7 @@ export const columns = [
     cell: ({ row }) => {
       return (
         <div className="text-right font-medium">
-          {`${row.getValue("default_conv_rate")}%`}
+          {`${row.getValue(`default_conv_rate`)}%`}
         </div>
       );
     },

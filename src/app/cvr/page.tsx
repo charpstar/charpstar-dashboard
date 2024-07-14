@@ -5,10 +5,10 @@ import React from "react";
 import { useUser } from "@/contexts/UserContext";
 import { buildDateRange, compToBq } from "@/utils/uiUtils";
 
-import DateRangePicker from "@/components/DateRangePicker";
 import { useClientQuery } from "@/queries/useClientQuery";
-import { DataTable } from "@/components/cvr-table/data-table";
+import { DataTable } from "@/components/ui/data-table/data-table";
 import { columns } from "@/components/cvr-table/columns";
+import { TableSkeleton } from "@/components/Skeleton";
 
 export default function Index() {
   const user = useUser();
@@ -24,6 +24,8 @@ export default function Index() {
     endTableName,
     limit: 100,
   });
+
+  if (isQueryLoading) return <TableSkeleton />;
 
   return <DataTable columns={columns} data={clientQueryResult} />;
 
