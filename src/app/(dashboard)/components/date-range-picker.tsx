@@ -17,12 +17,14 @@ import { dayjsToComp } from "@/utils/uiUtils";
 
 export function CalendarDateRangePicker({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2023, 0, 20),
-    to: new Date(2023, 0, 20),
-  });
-
+  range,
+  setRange,
+  minDate,
+}: React.HTMLAttributes<HTMLDivElement> & {
+  range?: DateRange;
+  setRange: (range: DateRange | undefined) => void;
+  minDate: Date;
+}) {
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -32,13 +34,14 @@ export function CalendarDateRangePicker({
             variant={"outline"}
             className={cn(
               "w-[260px] justify-start text-left font-normal",
-              !date && "text-muted-foreground",
+              !range && "text-muted-foreground",
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from && date.to ? (
+            {range?.from && range.to ? (
               <>
-                {dayjsToComp(dayjs(date.from))} - {dayjsToComp(dayjs(date.to))}
+                {dayjsToComp(dayjs(range.from))} -{" "}
+                {dayjsToComp(dayjs(range.to))}
               </>
             ) : (
               <span>Pick a date</span>
@@ -50,10 +53,14 @@ export function CalendarDateRangePicker({
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={setDate}
+            defaultMonth={range?.from}
+            selected={range}
+            onSelect={setRange}
             numberOfMonths={2}
+            disabled={{
+              after: new Date(),
+              before: minDate,
+            }}
           />
         </PopoverContent>
       </Popover>
