@@ -8,6 +8,7 @@ import {
 
 import { type executeClientQuery } from "@/utils/BigQuery/CVR";
 import { DataTableColumnHeader } from "@/components/ui/data-table/column-header";
+import { DashboardToolTip } from "../dashboard-tooltip";
 
 export type CVRRow = Awaited<ReturnType<typeof executeClientQuery>>[number];
 const columnHelper = createColumnHelper<CVRRow>();
@@ -35,7 +36,9 @@ export const columns = [
   },
   columnHelper.accessor("default_conv_rate", {
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="CVR (Default)" />
+      <DashboardToolTip text="Conversion Rate of the Product">
+        <DataTableColumnHeader column={column} title="CVR (Default)" />
+      </DashboardToolTip>
     ),
     cell: ({ row }) => {
       return (
@@ -47,7 +50,6 @@ export const columns = [
     enableSorting: true,
     meta: {
       align: "text-right",
-      tooltip: "Default Conversion Rate of the Product",
     },
   }),
   columnHelper.accessor("product_conv_rate", {

@@ -27,11 +27,13 @@ import { DataTablePagination } from "@/components/ui/data-table/data-table-pagin
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  initialColumnVisibility?: Record<string, boolean>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  initialColumnVisibility,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -43,6 +45,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
 
     initialState: {
+      columnVisibility: initialColumnVisibility,
       pagination: {
         pageSize: 10,
       },

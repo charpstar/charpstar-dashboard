@@ -27,18 +27,17 @@ export default function Index() {
 
   if (isQueryLoading) return <TableSkeleton />;
 
-  return <DataTable columns={columns} data={clientQueryResult} />;
-
-  /* <CVRTable
-            isLoading={isQueryLoading}
-            data={clientQueryResult}
-            showColumns={{
-              ar_sessions: false,
-              _3d_sessions: false,
-              total_purchases: true,
-              purchases_with_service: true,
-              avg_session_duration_seconds : true,
-            }}
-            showSearch={true}
-          /> */
+  return (
+    <DataTable
+      columns={columns}
+      data={clientQueryResult}
+      initialColumnVisibility={{
+        ar_sessions: false,
+        _3d_sessions: false,
+        total_purchases: true,
+        purchases_with_service: true,
+        avg_session_duration_seconds: true,
+      }}
+    />
+  );
 }

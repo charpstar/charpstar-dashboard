@@ -1,31 +1,9 @@
 "use client";
 
+import { DashboardToolTip } from "@/components/dashboard-tooltip";
 import Skeleton from "@/components/Skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useEventsCount } from "@/queries/useEventsCount";
-
-function DashboardToolTip({
-  text,
-  children,
-}: {
-  text: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
-        <TooltipContent>{text}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 
 function DashboardCard({
   title,
