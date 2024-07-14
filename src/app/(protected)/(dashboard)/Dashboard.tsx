@@ -5,6 +5,11 @@ import { UserNav } from "./components/user-nav";
 import Tabs from "./components/tabs";
 
 export default function DashboardPage() {
+  // const [dateRange, setDateRange] = React.useState(buildDateRange());
+
+  // const startTableName = compToBq(dateRange.startDate);
+  // const endTableName = compToBq(dateRange.endDate);
+
   return (
     <>
       <div className="hidden flex-col md:flex">

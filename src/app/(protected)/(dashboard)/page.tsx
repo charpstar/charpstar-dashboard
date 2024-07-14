@@ -3,7 +3,7 @@ import React from "react";
 import { createClient } from "@/utils/supabase/server";
 import { getUserWithMetadata } from "@/utils/supabase/getUser";
 
-import Dashboard from "./Dashboard";
+import Dashboard from "./dashboard";
 
 export default async function Index() {
   const supabase = createClient();
