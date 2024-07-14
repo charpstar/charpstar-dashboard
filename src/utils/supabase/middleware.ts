@@ -4,6 +4,8 @@ import { createServerClient } from "@supabase/ssr";
 import { type User } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
+const allowedPaths = ["/login"];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -80,7 +82,7 @@ async function handleAuthStatusRedirect(
     if (pathname !== "/login") return supabaseResponse;
     return redirectTo("/");
   } else {
-    if (pathname === "/login") return supabaseResponse;
+    if (allowedPaths.includes(pathname)) return supabaseResponse;
     return redirectTo("/login");
   }
 }
