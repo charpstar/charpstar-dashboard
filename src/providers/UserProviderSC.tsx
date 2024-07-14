@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { UserProvider } from "./UserContext";
+import { UserProvider } from "../contexts/UserContext";
 import { getUserWithMetadata } from "@/utils/supabase/getUser";
 
 export default async function UserProviderSC({

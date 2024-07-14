@@ -1,5 +1,5 @@
 import QueryClientProviderCC from "./QueryProvider";
-import UserProviderSC from "@/contexts/UserProviderSC";
+import UserProviderSC from "@/providers/UserProviderSC";
 
 export default function Providers({ children }: React.PropsWithChildren) {
   return (
