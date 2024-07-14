@@ -247,17 +247,20 @@ FROM
   };
 
   const [job] = await bigqueryClient.createQueryJob(options);
-  const response = await job.getQueryResults();
+  const results = await job.getQueryResults();
 
   // Output the response in the console
-  console.log("Query Results:", response);
 
-  const result = response[0] as unknown as {
+  const result = results[0] as unknown as {
     event_name: string;
     count: number;
   }[];
 
-  return Object.fromEntries(
-    result.map(({ event_name, count }) => [event_name, count]),
+  const response = Object.fromEntries(
+    result.map(({ event_name, count }) => [event_name, count || 0]),
   );
+
+  console.log("Query response: ", response);
+
+  return response;
 }
