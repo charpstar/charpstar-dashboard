@@ -3,6 +3,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type User } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
+import { getUserMetadata } from "./getUser";
 
 const allowedPaths = ["/login"];
 
@@ -55,10 +56,16 @@ export async function updateSession(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
 
-  return await handleAuthStatusRedirect(user, request, supabaseResponse);
+  return await handleAuthStatusRedirect(
+    supabase,
+    user,
+    request,
+    supabaseResponse,
+  );
 }
 
 async function handleAuthStatusRedirect(
+  supabase: ReturnType<typeof createServerClient>,
   user: User | null,
   request: NextRequest,
   supabaseResponse: NextResponse,
@@ -79,7 +86,13 @@ async function handleAuthStatusRedirect(
   const { pathname } = request.nextUrl;
 
   if (isAuthenticated) {
-    if (pathname !== "/login") return supabaseResponse;
+    if (pathname !== "/login") {
+      const userWithData = await getUserMetadata(supabase, user!.id);
+      if (!userWithData) return redirectTo("/no-data");
+
+      return supabaseResponse;
+    }
+
     return redirectTo("/");
   } else {
     if (allowedPaths.includes(pathname)) return supabaseResponse;
