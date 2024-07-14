@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
-import { cn } from "@/lib/utils";
+import { redirect } from "next/navigation";
+
 import { Inter as FontSans } from "next/font/google";
-import "./globals.css";
 import { Next13NProgress } from "nextjs13-progress";
+import { cn } from "@/lib/utils";
+
+import { createClient } from "@/utils/supabase/server";
+import { getUserWithMetadata } from "@/utils/supabase/getUser";
+import { UserProvider } from "@/contexts/UserContext";
+import Providers from "./Providers";
+
+import "./globals.css";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -23,11 +31,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = createClient();
+
+  const userWithData = await getUserWithMetadata(supabase);
+  if (!userWithData) return redirect("/no-data");
+
   return (
     <html lang="en" className="antialiased">
       <body
@@ -37,7 +50,9 @@ export default function RootLayout({
         )}
       >
         <Next13NProgress height={5} />
-        {children}
+        <Providers>
+          <UserProvider user={userWithData}>{children}</UserProvider>
+        </Providers>
       </body>
     </html>
   );
