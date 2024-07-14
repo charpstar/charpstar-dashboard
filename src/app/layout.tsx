@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Jost } from "next/font/google";
+import { cn } from "@/lib/utils";
+import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { Next13NProgress } from "nextjs13-progress";
 
-const jost = Jost({ subsets: ["latin"] });
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -25,7 +30,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="antialiased">
-      <body className={`${jost.className}`}>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+        )}
+      >
         <Next13NProgress height={5} />
         {children}
       </body>
