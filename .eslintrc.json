@@ -35,5 +35,6 @@
         }
       }
     ]
-  }
+  },
+  "ignorePatterns": ["src/components/ui/**/*.tsx"]
 }
