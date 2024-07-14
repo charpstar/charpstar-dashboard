@@ -24,7 +24,7 @@ export default function DashboardCVRTable({
         purchases_with_service: false,
         _3d_sessions: false,
         ar_sessions: false,
-        avg_session_duration_seconds : false,
+        avg_session_duration_seconds: false,
       }}
     />
   );

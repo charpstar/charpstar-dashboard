@@ -3,7 +3,7 @@ import { getGCPCredentials } from "@/utils/getGCPCredentials"; // Add this impor
 
 export function getBigQueryClient({ projectId }: { projectId: string }) {
   const { credentials, projectId: envProjectId } = getGCPCredentials();
-  
+
   return new BigQuery({
     projectId: projectId || envProjectId,
     credentials,

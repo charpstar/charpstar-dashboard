@@ -26,7 +26,7 @@ export async function getPurchasesCount({
   startTableName: string;
   endTableName: string;
 }) {
-  const bigqueryClient  = getBigQueryClient({ projectId });
+  const bigqueryClient = getBigQueryClient({ projectId });
   const eventsTableName = getEventsTableName({ projectId, datasetId });
   const eventsBetween = getEventsBetween({ startTableName, endTableName });
 
@@ -85,7 +85,7 @@ export async function getPageViewsCount({
   startTableName: string;
   endTableName: string;
 }) {
-  const bigqueryClient  = getBigQueryClient({ projectId });
+  const bigqueryClient = getBigQueryClient({ projectId });
 
   const query = `
     WITH data_prep AS (
@@ -146,7 +146,7 @@ export async function executeClientQuery({
   const query = queries[datasetId](eventsBetween);
   if (!query) throw new Error(`Query not found for datasetId: ${datasetId}`);
 
-  const bigqueryClient  = getBigQueryClient({ projectId });
+  const bigqueryClient = getBigQueryClient({ projectId });
 
   const options = {
     query: query,
@@ -181,7 +181,7 @@ export async function executeClientQuery({
     avg_combined_session_duration: number;
   }[];
 
- // console.log(response);
+  // console.log(response);
 
   return response;
 }

@@ -16,7 +16,8 @@ export const defaultEvents = {
   },
   percentage_charpstAR: {
     title: "Percentage of users using our service",
-    tooltip: "The percentage of users who have visited a page with our script and have clicked either the AR or 3D Button",
+    tooltip:
+      "The percentage of users who have visited a page with our script and have clicked either the AR or 3D Button",
     count: undefined,
   },
   overall_conv_rate: {
@@ -26,7 +27,8 @@ export const defaultEvents = {
   },
   overall_conv_rate_CharpstAR: {
     title: "Conversion rate with AR/3D on PDP",
-    tooltip: "The average conversion rate of users when using either of our services",
+    tooltip:
+      "The average conversion rate of users when using either of our services",
     count: undefined,
   },
   session_time_default: {
@@ -36,7 +38,8 @@ export const defaultEvents = {
   },
   combined_session_time: {
     title: "Session time duration with AR/3D usage",
-    tooltip: "The average session time of users who have visited a page with our services and clicked either the AR or 3D Button",
+    tooltip:
+      "The average session time of users who have visited a page with our services and clicked either the AR or 3D Button",
     count: undefined,
   },
 } as Record<
