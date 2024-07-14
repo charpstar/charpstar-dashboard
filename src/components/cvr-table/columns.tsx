@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-table";
 
 import { type executeClientQuery } from "@/utils/BigQuery/CVR";
+import { DataTableColumnHeader } from "@/components/ui/data-table/column-header";
 
 export type CVRRow = Awaited<ReturnType<typeof executeClientQuery>>[number];
 const columnHelper = createColumnHelper<CVRRow>();
@@ -33,11 +34,13 @@ export const columns = [
     },
   },
   columnHelper.accessor("default_conv_rate", {
-    header: () => <div className="text-right">CVR (Default)</div>,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="CVR (Default)" />
+    ),
     cell: ({ row }) => {
       return (
         <div className="text-right font-medium">
-          {`${row.getValue(`default_conv_rate`)}%`}
+          {`${row.getValue<number>(`default_conv_rate`) || 0}%`}
         </div>
       );
     },
@@ -48,11 +51,13 @@ export const columns = [
     },
   }),
   columnHelper.accessor("product_conv_rate", {
-    header: () => <div className="text-right">CVR (CharpstAR)</div>,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="CVR (CharpstAR)" />
+    ),
     cell: ({ row }) => {
       return (
         <div className="text-right font-medium">
-          {`${row.getValue("product_conv_rate")}%`}
+          {`${row.getValue<number>("product_conv_rate") || 0}%`}
         </div>
       );
     },
@@ -65,11 +70,13 @@ export const columns = [
   }),
 
   columnHelper.accessor("avg_session_duration_seconds", {
-    header: () => <div className="text-right">Averge Session Duration</div>,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Avg Session Duration" />
+    ),
     cell: ({ row }) => {
       return (
         <div className="text-right font-medium">
-          {`${row.getValue("avg_session_duration_seconds")} seconds`}
+          {`${row.getValue<number>("avg_session_duration_seconds") || 0} seconds`}
         </div>
       );
     },
@@ -81,8 +88,19 @@ export const columns = [
   }),
 
   columnHelper.accessor("avg_combined_session_duration", {
-    cell: (info) => info.getValue() + " seconds",
-    header: "Avg Session Duration (CharpstAR)",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Avg Session Duration (CharpstAR)"
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="text-right font-medium">
+          {`${row.getValue<number>("avg_combined_session_duration") || 0} seconds`}
+        </div>
+      );
+    },
     enableSorting: true,
     meta: {
       align: "text-right",
