@@ -1,8 +1,8 @@
-import { MainNav } from "./components/main-nav";
-import { CalendarDateRangePicker } from "./components/date-range-picker";
-import TeamSwitcher from "./components/team-switcher";
-import { UserNav } from "./components/user-nav";
-import Tabs from "./components/tabs";
+import { MainNav } from "./main-nav";
+import { CalendarDateRangePicker } from "./date-range-picker";
+import TeamSwitcher from "./team-switcher";
+import { UserNav } from "./user-nav";
+import Tabs from "./tabs";
 
 export default function DashboardPage() {
   // const [dateRange, setDateRange] = React.useState(buildDateRange());
