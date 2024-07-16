@@ -1,9 +1,6 @@
 "use server";
 
 import { getBigQueryClient } from "./client";
-import dotenv from "dotenv";
-
-
 
 export async function getEventsCount({
   projectId,
@@ -17,9 +14,6 @@ export async function getEventsCount({
   endTableName: string;
 }): Promise<Record<string, number>> {
   const bigqueryClient  = getBigQueryClient({ projectId });
-  if (process.env.NODE_ENV !== 'production') {
-    dotenv.config();
-  }
 
   const query = `
   WITH
@@ -117,14 +111,35 @@ export async function getEventsCount({
       event_name = 'charpstAR_3D_Button_Click'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
   ),
+  ar_user_count AS (
+    SELECT
+      COUNT(DISTINCT user_pseudo_id) AS total_ar_users
+    FROM
+      \`${projectId}.${datasetId}.events_*\`
+    WHERE
+      event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
+      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+  ),
+  ar_load_user_count AS (
+    SELECT
+      COUNT(DISTINCT user_pseudo_id) AS total_ar_load_users
+    FROM
+      \`${projectId}.${datasetId}.events_*\`
+    WHERE
+      event_name = 'charpstAR_Load'
+      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+  ),
   ar_percentage AS (
     SELECT
-      ROUND(
-        SAFE_DIVIDE(
-          (SELECT SUM(total_events) FROM event_counts WHERE event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')),
-          (SELECT total_events FROM event_counts WHERE event_name = 'charpstAR_Load')
-        ) * 100,
-        2
+      LEAST(
+        ROUND(
+          SAFE_DIVIDE(
+            (SELECT total_ar_users FROM ar_user_count),
+            (SELECT total_ar_load_users FROM ar_load_user_count)
+          ) * 100,
+          2
+        ),
+        100.00
       ) AS percentage_ar_users
   ),
   avg_engagement_time AS (
