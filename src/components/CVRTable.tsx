@@ -147,20 +147,9 @@ export default function CVRTable({
       },
     });
 
-  if (showColumns.total_purchases)
-    columns.push({
-      header: "Total Purchases",
-      accessorKey: "total_purchases",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "Total Purchases of the product",
-      },
-    });
-
   if (showColumns.purchases_with_service)
     columns.push({
-      header: "Total Purchases (CharpstAR)",
+      header: "Purchases with AR/3D",
       accessorKey: "purchases_with_service",
       enableSorting: true,
       meta: {
