@@ -12,10 +12,10 @@ export function compToBq(date: string) {
 export function buildDateRange(startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs) {
   return {
     startDate: dayjsToComp(
-      startDate ?? customShortcutsDayJs.last15days!.period.start,
+      startDate ?? customShortcutsDayJs.last30days!.period.start,
     ),
     endDate: dayjsToComp(
-      endDate ?? customShortcutsDayJs.last15days!.period.end,
+      endDate ?? customShortcutsDayJs.last30days!.period.end,
     ),
   };
 }

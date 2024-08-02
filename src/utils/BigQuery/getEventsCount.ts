@@ -14,7 +14,6 @@ export async function getEventsCount({
   endTableName: string;
 }): Promise<Record<string, number>> {
   const bigqueryClient  = getBigQueryClient({ projectId });
-
   const query = `
   WITH
   total_views AS (
@@ -27,6 +26,7 @@ export async function getEventsCount({
       event_name = 'page_view'
       AND ep.key = 'page_title'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
   total_purchases AS (
     SELECT
@@ -36,6 +36,7 @@ export async function getEventsCount({
     WHERE
       event_name = 'purchase'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
   ar_clicks AS (
     SELECT
@@ -46,6 +47,7 @@ export async function getEventsCount({
     WHERE
       event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
   purchases AS (
     SELECT
@@ -57,6 +59,7 @@ export async function getEventsCount({
     WHERE
       event_name = 'purchase'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
   total_views_with_ar AS (
     SELECT
@@ -92,6 +95,7 @@ export async function getEventsCount({
     WHERE
       event_name = 'charpstAR_Load'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
     UNION ALL
     SELECT
       'charpstAR_AR_Button_Click' AS event_name,
@@ -101,6 +105,7 @@ export async function getEventsCount({
     WHERE
       event_name = 'charpstAR_AR_Button_Click'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
     UNION ALL
     SELECT
       'charpstAR_3D_Button_Click' AS event_name,
@@ -110,6 +115,7 @@ export async function getEventsCount({
     WHERE
       event_name = 'charpstAR_3D_Button_Click'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
   ar_user_count AS (
     SELECT
@@ -119,6 +125,7 @@ export async function getEventsCount({
     WHERE
       event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
   ar_load_user_count AS (
     SELECT
@@ -128,6 +135,7 @@ export async function getEventsCount({
     WHERE
       event_name = 'charpstAR_Load'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
   ar_percentage AS (
     SELECT
@@ -148,30 +156,32 @@ export async function getEventsCount({
            FROM UNNEST(event_params) ep 
            WHERE ep.key = 'engagement_time_msec') / 1000.0) AS avg_session_duration_seconds
     FROM
-    \`${projectId}.${datasetId}.events_*\`
+      \`${projectId}.${datasetId}.events_*\`
     WHERE
       event_name IN ('page_view', 'user_engagement')
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
   ),
  ar_events AS (
   SELECT
     user_pseudo_id,
-    event_timestamp,
+    event_timestamp
   FROM
-  \`${projectId}.${datasetId}.events_*\`
+    \`${projectId}.${datasetId}.events_*\`
   WHERE
     event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
     AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+    AND user_pseudo_id IS NOT NULL
 ),
 next_events AS (
   SELECT
     ar.user_pseudo_id,
     ar.event_timestamp AS ar_event_timestamp,
-    MIN(e.event_timestamp) / 1000 AS next_event_timestamp,
+    MIN(e.event_timestamp) / 1000 AS next_event_timestamp
   FROM
     ar_events AS ar
   JOIN
-  \`${projectId}.${datasetId}.events_*\` AS e
+    \`${projectId}.${datasetId}.events_*\` AS e
   ON
     ar.user_pseudo_id = e.user_pseudo_id
     AND e.event_timestamp > ar.event_timestamp
@@ -198,46 +208,45 @@ avg_ar_duration AS (
   FROM
     ar_durations
 ),
-
 combined_durations AS (
   SELECT
     (SELECT avg_ar_session_duration_seconds FROM avg_ar_duration) + 
     (SELECT avg_session_duration_seconds FROM avg_engagement_time) AS total_avg_session_duration
 )
   
-  SELECT
-    'overall_conv_rate' AS event_name,
-    overall_avg_conversion_rate AS count
-  FROM
-    conversion_rates
+SELECT
+  'overall_conv_rate' AS event_name,
+  overall_avg_conversion_rate AS count
+FROM
+  conversion_rates
   
-  UNION ALL
+UNION ALL
   
-  SELECT
-    'overall_conv_rate_CharpstAR' AS event_name,
-    overall_avg_conversion_rate_with_ar AS count
-  FROM
-    conversion_rates
+SELECT
+  'overall_conv_rate_CharpstAR' AS event_name,
+  overall_avg_conversion_rate_with_ar AS count
+FROM
+  conversion_rates
   
-  UNION ALL
+UNION ALL
   
-  SELECT
-    event_name AS event_name,
-    total_events AS count
-  FROM
-    event_counts
+SELECT
+  event_name AS event_name,
+  total_events AS count
+FROM
+  event_counts
   
-  UNION ALL
+UNION ALL
   
-  SELECT
-    'percentage_charpstAR' AS event_name,
-    percentage_ar_users AS count 
-  FROM
-    ar_percentage
+SELECT
+  'percentage_charpstAR' AS event_name,
+  percentage_ar_users AS count 
+FROM
+  ar_percentage
   
-  UNION ALL
+UNION ALL
 
-  SELECT
+SELECT
   'session_time_charpstAR' AS event_name,
   ROUND(avg_ar_session_duration_seconds, 2) AS count
 FROM
@@ -258,10 +267,8 @@ SELECT
   ROUND(total_avg_session_duration, 2) AS count
 FROM
   combined_durations;
+`;
 
-
-  `;
-  
 
   const options = {
     query: query,
