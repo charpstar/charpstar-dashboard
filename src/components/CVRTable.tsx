@@ -1,47 +1,42 @@
 "use client";
 
 import React from "react";
-
 import {
   type ColumnDef,
-  createColumnHelper,
-  filterFns,
   flexRender,
   getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  type SortingState,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
+import { ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-  RiArrowDownSLine,
-  RiArrowLeftSLine,
-  RiArrowRightSLine,
-  RiArrowUpSLine,
-} from "@remixicon/react";
-
-import {
-  Card,
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableHeaderCell,
+  TableHeader,
   TableRow,
-  TextInput,
-} from "@tremor/react";
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { type executeClientQuery } from "@/utils/BigQuery/CVR";
-import { classNames } from "@/utils/uiUtils";
-import { Button } from "./Button";
-import { TableSkeleton } from "./Skeleton";
-import { Tooltip } from "./TremorRawTooltip";
+import { cn } from "@/lib/utils";
 
 interface CVRTableProps {
   isLoading: boolean;
   data: Awaited<ReturnType<typeof executeClientQuery>>;
-
   showColumns: {
     total_purchases: boolean;
     purchases_with_service: boolean;
@@ -49,13 +44,11 @@ interface CVRTableProps {
     ar_sessions: boolean;
     avg_session_duration_seconds: boolean;
   };
-
   showPaginationControls?: boolean;
   showSearch?: boolean;
 }
 
 type Row = CVRTableProps["data"][number];
-const columnHelper = createColumnHelper<Row>();
 
 export default function CVRTable({
   showColumns,
@@ -64,266 +57,345 @@ export default function CVRTable({
   data,
   showSearch = false,
 }: CVRTableProps) {
-  const columns = [
-    {
-      header: "Product Name",
-      accessorKey: "product_name",
-      enableSorting: false,
-      filterFn: filterFns.includesString,
-      meta: {
-        align: "text-left",
-        width: "w-15 whitespace-normal",
-        tooltip: "The name of the product",
-      },
-    },
-    {
-      header: "Total Sessions (CharpstAR)",
-      accessorKey: "total_button_clicks",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "Total AR and 3D Button Clicks",
-      },
-    },
-    columnHelper.accessor("default_conv_rate", {
-      cell: (info) => info.getValue() + "%",
-      header: "CVR (Default)",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "Default Conversion Rate of the Product",
-      },
-    }),
-    columnHelper.accessor("product_conv_rate", {
-      cell: (info) => info.getValue() + "%",
-      header: "CVR (CharpstAR)",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "Conversion Rate of the product of users who have clicked either the AR or 3D Buttons",
-      },
-    }),
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
-    columnHelper.accessor("avg_session_duration_seconds", {
-      cell: (info) => info.getValue() + " seconds",
-      header: "Avg Session Duration",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "The product page average session time in seconds",
+  const columns = React.useMemo<ColumnDef<Row>[]>(() => {
+    const cols: ColumnDef<Row>[] = [
+      {
+        accessorKey: "product_name",
+        header: ({ column }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  className="w-full justify-between gap-2"
+                >
+                  Product Name
+                  {column.getIsSorted() === "asc" ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>The name of the product</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
       },
-    }),
-
-    columnHelper.accessor("avg_combined_session_duration", {
-      cell: (info) => info.getValue() + " seconds",
-      header: "Avg Session Duration (CharpstAR)",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "The average session duration in seconds of users who have visited a product page and clicked either the AR or 3D Button",
+      {
+        accessorKey: "total_button_clicks",
+        header: ({ column }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  className="w-full justify-between gap-2"
+                >
+                  Total Sessions
+                  {column.getIsSorted() === "asc" ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Total AR and 3D Button Clicks</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
+        cell: ({ row }) => (
+          <div className="text-right">{row.getValue("total_button_clicks")}</div>
+        ),
       },
-    }),
-  ] as ColumnDef<Row, unknown>[];
-
-  if (showColumns.ar_sessions)
-    columns.splice(1, 0, {
-      header: "AR Sessions",
-      accessorKey: "AR_Button_Clicks",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "Total AR Button Clicks",
+      {
+        accessorKey: "default_conv_rate",
+        header: ({ column }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  className="w-full justify-between gap-2"
+                >
+                  CVR (Default)
+                  {column.getIsSorted() === "asc" ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Default Conversion Rate of the Product</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
+        cell: ({ row }) => (
+          <div className="text-right">{row.getValue("default_conv_rate")}%</div>
+        ),
       },
-    });
-
-  if (showColumns._3d_sessions)
-    columns.splice(1, 0, {
-      header: "3D Sessions",
-      accessorKey: "_3D_Button_Clicks",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "Total 3D Button Clicks",
+      {
+        accessorKey: "product_conv_rate",
+        header: ({ column }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  className="w-full justify-between gap-2"
+                >
+                  CVR (CharpstAR)
+                  {column.getIsSorted() === "asc" ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Conversion Rate of the product of users who have clicked either the AR or 3D Buttons
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
+        cell: ({ row }) => (
+          <div className="text-right">{row.getValue("product_conv_rate")}%</div>
+        ),
       },
-    });
+    ];
 
-  if (showColumns.purchases_with_service)
-    columns.push({
-      header: "Purchases with AR/3D",
-      accessorKey: "purchases_with_service",
-      enableSorting: true,
-      meta: {
-        align: "text-right",
-        tooltip: "Total Purchases of the product by users who have clicked either the AR or 3D Buttons",
-      },
-    });
+    if (showColumns.ar_sessions) {
+      cols.splice(1, 0, {
+        accessorKey: "AR_Button_Clicks",
+        header: ({ column }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  className="w-full justify-between gap-2"
+                >
+                  AR Sessions
+                  {column.getIsSorted() === "asc" ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Total AR Button Clicks</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
+        cell: ({ row }) => (
+          <div className="text-right">{row.getValue("AR_Button_Clicks")}</div>
+        ),
+      });
+    }
 
+    if (showColumns._3d_sessions) {
+      cols.splice(1, 0, {
+        accessorKey: "_3D_Button_Clicks",
+        header: ({ column }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  className="w-full justify-between gap-2"
+                >
+                  3D Sessions
+                  {column.getIsSorted() === "asc" ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Total 3D Button Clicks</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
+        cell: ({ row }) => (
+          <div className="text-right">{row.getValue("_3D_Button_Clicks")}</div>
+        ),
+      });
+    }
 
+    if (showColumns.purchases_with_service) {
+      cols.push({
+        accessorKey: "purchases_with_service",
+        header: ({ column }) => (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                  className="w-full justify-between gap-2"
+                >
+                  Purchases with AR/3D
+                  {column.getIsSorted() === "asc" ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Total Purchases of the product by users who have clicked either the AR or 3D Buttons
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ),
+        cell: ({ row }) => (
+          <div className="text-right">{row.getValue("purchases_with_service")}</div>
+        ),
+      });
+    }
+
+    return cols;
+  }, [showColumns]);
 
   const table = useReactTable({
     data,
     columns,
-
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    state: {
+      sorting,
+      globalFilter,
+    },
     initialState: {
-      sorting: [
-        {
-          id: "product_conv_rate",
-          desc: true,
-        },
-      ],
-
       pagination: {
         pageSize: 15,
       },
     },
   });
 
-  if (isLoading) return <TableSkeleton />;
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="h-[400px] w-full animate-pulse bg-muted rounded-lg" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
-      {showSearch && ( // Conditionally render the search bar
-        <TextInput
-          placeholder="Search..."
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          value={table.getState().globalFilter}
-          onChange={(e) => table.setGlobalFilter(e.target.value)}
-          className="mb-5"
-        />
-      )}
-      <Table>
-        <TableHead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="border-b border-tremor-border dark:border-dark-tremor-border"
-            >
-              {headerGroup.headers.map((header) => (
-                <TableHeaderCell
-                  key={header.id}
-                  onClick={header.column.getToggleSortingHandler()}
-                  className={classNames(
-                    header.column.getCanSort()
-                      ? "cursor-pointer select-none text-right"
-                      : "",
-                    "px-0.5 py-1.5",
-                  )}
-                  tabIndex={header.column.getCanSort() ? 0 : -1}
-                >
-                  <Tooltip
-                    side="top"
-                    content={header.column.columnDef.meta?.tooltip}
-                  >
-                    <div
-                      className={classNames(
-                        header.column.columnDef.enableSorting === true
-                          ? "flex items-center justify-between gap-1 hover:bg-tremor-background-muted hover:dark:bg-dark-tremor-background-muted"
-                          : header.column.columnDef.meta?.align,
-                        " rounded-tremor-default px-1.5 py-1.5 text-xs",
-                        header.column.columnDef.meta?.width,
-                        "text-tremor-content-muted dark:text-dark-tremor-content-muted",
-                      )}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                      {header.column.getCanSort() ? (
-                        <div className="-space-y-2">
-                          <RiArrowUpSLine
-                            className={classNames(
-                              "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
-                              header.column.getIsSorted() === "desc"
-                                ? "opacity-30"
-                                : "",
-                            )}
-                            aria-hidden={true}
-                          />
-                          <RiArrowDownSLine
-                            className={classNames(
-                              "h-4 w-4 text-tremor-content-strong dark:text-dark-tremor-content-strong",
-                              header.column.getIsSorted() === "asc"
-                                ? "opacity-30"
-                                : "",
-                            )}
-                            aria-hidden={true}
-                          />
-                        </div>
-                      ) : null}
-                    </div>
-                  </Tooltip>
-                </TableHeaderCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableHead>
-
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell
-                  key={cell.id}
-                  className={classNames(
-                    cell.column.columnDef.meta?.align,
-                    cell.column.columnDef.meta?.width,
-                    "text-tremor-content-strong dark:text-dark-tremor-content-strong text-sm p-3",
-                  )}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-
-      {showPaginationControls && (
-        <div className="mt-10 flex items-center justify-between">
-          <p className="text-tremor-default tabular-nums text-tremor-content dark:text-dark-tremor-content">
-            Page{" "}
-            <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">{`${
-              table.getState().pagination.pageIndex + 1
-            }`}</span>{" "}
-            of
-            <span className="font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-              {" "}
-              {`${table.getPageCount()}`}
-            </span>
-          </p>
-          <div className="inline-flex items-center rounded-tremor-full shadow-tremor-input ring-1 ring-inset ring-tremor-ring dark:shadow-dark-tremor-input dark:ring-dark-tremor-ring">
-            <Button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Previous</span>
-              <RiArrowLeftSLine
-                className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
-                aria-hidden={true}
-              />
-            </Button>
-            <span
-              className="h-5 border-r border-tremor-border dark:border-dark-tremor-border"
-              aria-hidden={true}
+      <CardContent className="p-6">
+        {showSearch && (
+          <div className="flex items-center py-4">
+            <Input
+              placeholder="Search..."
+              value={globalFilter ?? ""}
+              onChange={(event) => setGlobalFilter(event.target.value)}
+              className="max-w-sm"
             />
-            <Button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Next</span>
-              <RiArrowRightSLine
-                className="h-5 w-5 text-tremor-content-emphasis group-hover:text-tremor-content-strong dark:text-dark-tremor-content-emphasis group-hover:dark:text-dark-tremor-content-strong"
-                aria-hidden={true}
-              />
-            </Button>
           </div>
-        </div>
-      )}
+        )}
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+        {showPaginationControls && (
+          <div className="flex items-center justify-between space-x-2 py-4">
+            <div className="flex-1 text-sm text-muted-foreground">
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              {table.getPageCount()}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
 }

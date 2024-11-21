@@ -1,74 +1,142 @@
+"use client";
+
 import { ListItem } from "./components";
+import { 
+  LayoutDashboard, 
+  BarChart3, 
+  FileText, 
+  LogOut, 
+  Sun, 
+  Moon,
+  Box,
+  Boxes,
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import Logo from "@/components/Logo";
+import { useQueryClient } from "@tanstack/react-query";
+import { useDateRange } from "@/contexts/DateRangeContext";
+import { buildDateRange } from "@/utils/uiUtils";
 
 export default function AppSide() {
+  const { setTheme, theme } = useTheme();
+  const router = useRouter();
+  const supabase = createClient();
+  const queryClient = useQueryClient();
+  const { setDateRange } = useDateRange();
+
+  const handleSignOut = async () => {
+    // Reset date range to default
+    setDateRange(buildDateRange());
+    
+    // Clear all queries from the cache
+    queryClient.clear();
+    
+    // Remove all query subscriptions
+    queryClient.removeQueries();
+    
+    // Sign out from Supabase
+    await supabase.auth.signOut();
+    
+    // Navigate to login page
+    router.push("/login");
+  };
+
   return (
     <aside
-      className="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-dark-tremor-background dark:border-gray-700"
+      className="fixed top-0 left-0 z-40 w-64 h-screen bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-r"
       aria-label="Sidenav"
-      id="drawer-navigation"
     >
-      <div className="overflow-y-auto py-5 px-3 h-full bg-white dark:bg-dark-tremor-background">
-        <ul className="space-y-2">
-          <ListItem
-            icon={
-              <svg
-                aria-hidden="true"
-                className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-              </svg>
-            }
-            title="Overview"
-            href="/"
-          />
+      {/* Header */}
+      <div className="p-4 mb-4 border-b">
+        <Logo />
+      </div>
 
-          <ListItem
-            icon={
-              <svg
-                aria-hidden="true"
-                className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 10a2 2 0 114 0 2 2 0 01-4 0z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            }
-            title="Detailed CharpstAR Stats"
-            href="/cvr"
-          /> 
-        </ul>
+      {/* Navigation */}
+      <div className="flex-1 px-3">
+        <nav className="space-y-6">
+          {/* Analytics Section */}
+          <div>
+            <div className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Analytics
+            </div>
+            <div className="space-y-1">
+              <ListItem
+                icon={<LayoutDashboard className="h-4 w-4" />}
+                title="Overview"
+                href="/"
+              />
+              <ListItem
+                icon={<BarChart3 className="h-4 w-4" />}
+                title="Detailed Stats"
+                href="/cvr"
+              />
+            </div>
+          </div>
 
-        <ul className="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
-          <ListItem
-            icon={
-              <svg
-                aria-hidden="true"
-                className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                <path
-                  fillRule="evenodd"
-                  d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            }
-            title="Documentation"
-            href="/docs"
-          />
-        </ul>
+          {/* 3D Service Section */}
+          <div>
+            <div className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              3D Service
+            </div>
+            <div className="space-y-1">
+              <ListItem
+                icon={<Box className="h-4 w-4" />}
+                title="Rendering"
+                href="/rendering"
+              />
+              <ListItem
+                icon={<Boxes className="h-4 w-4" />}
+                title="Product Status Control"
+                href="/product-status"
+              />
+            </div>
+          </div>
+
+          {/* Support Section */}
+          <div>
+            <div className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Support
+            </div>
+            <div className="space-y-1">
+              <ListItem
+                icon={<FileText className="h-4 w-4" />}
+                title="Documentation"
+                href="/docs"
+              />
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      {/* Footer */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-background/95">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start mb-2"
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
+          {theme === "light" ? (
+            <Sun className="h-4 w-4 mr-2" />
+          ) : (
+            <Moon className="h-4 w-4 mr-2" />
+          )}
+          {theme === "light" ? "Light Mode" : "Dark Mode"}
+        </Button>
+        <Separator className="my-2" />
+        <Button 
+          variant="ghost" 
+          size="sm"
+          className="w-full justify-start text-muted-foreground hover:text-foreground" 
+          onClick={handleSignOut}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </Button>
       </div>
     </aside>
   );

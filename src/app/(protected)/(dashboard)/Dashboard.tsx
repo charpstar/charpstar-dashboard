@@ -1,27 +1,36 @@
 "use client";
 
 import React from "react";
+import { LayoutGrid } from "lucide-react";
 
-import { buildDateRange, compToBq } from "@/utils/uiUtils";
+import { compToBq } from "@/utils/uiUtils";
 import DateRangePicker from "@/components/DateRangePicker";
-
 import EventCountCards from "./EventCountCards";
 import TechBreakdownPie from "./TechBreakdownPie";
-
+import PerformanceTrends from "./PerformanceTrends";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDateRange } from "@/contexts/DateRangeContext";
 
 export default function Dashboard({
   dateRangePickerMinDate,
 }: {
   dateRangePickerMinDate: string;
 }) {
-  const [dateRange, setDateRange] = React.useState(buildDateRange());
+  const { dateRange, setDateRange } = useDateRange();
 
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
 
   return (
-    <>
-      <div className="col-span-12 lg:col-span-3 lg:col-start-10 rounded-lg dark:border-gray-600">
+    <div className="space-y-6 h-screen">
+      {/* Header Section */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
+          <p className="text-muted-foreground">
+            Your CharpstAR analytics overview
+          </p>
+        </div>
         <DateRangePicker
           value={dateRange}
           onChange={setDateRange}
@@ -29,21 +38,36 @@ export default function Dashboard({
         />
       </div>
 
-      <div className="col-span-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      {/* Main Content */}
+      <div className="space-y-6">
+        {/* Analytics Cards */}
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <EventCountCards
             startTableName={startTableName}
             endTableName={endTableName}
           />
         </div>
-      </div>
 
-      <div className="col-span-12 lg:col-span-4">
-        <TechBreakdownPie
-          startTableName={startTableName}
-          endTableName={endTableName}
-        />
+        {/* Charts Section */}
+        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+          <PerformanceTrends />
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg font-medium">
+                <LayoutGrid className="h-4 w-4" />
+                Technology Distribution
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TechBreakdownPie
+                startTableName={startTableName}
+                endTableName={endTableName}
+              />
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

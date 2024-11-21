@@ -4,6 +4,7 @@ import AppLayout from "@/components/AppLayout";
 import { createClient } from "@/utils/supabase/server";
 import { getUser, getUserWithMetadata } from "@/utils/supabase/getUser";
 import { UserProvider } from "@/contexts/UserContext";
+import { DateRangeProvider } from "@/contexts/DateRangeContext";
 import Providers from "../Providers";
 
 export default async function ProtectedLayout({
@@ -18,10 +19,12 @@ export default async function ProtectedLayout({
   if (!userWithData) return redirect("/no-data");
 
   return (
-    <AppLayout>
+    <UserProvider user={userWithData}>
       <Providers>
-        <UserProvider user={userWithData}>{children}</UserProvider>
+        <DateRangeProvider>
+          <AppLayout>{children}</AppLayout>
+        </DateRangeProvider>
       </Providers>
-    </AppLayout>
+    </UserProvider>
   );
 }

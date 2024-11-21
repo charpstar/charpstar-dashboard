@@ -1,17 +1,13 @@
 import React, { Suspense } from "react";
-
 import AppSide from "./AppSide";
-import AppNav from "./AppNav";
 
 export default function AppLayout({ children }: React.PropsWithChildren) {
   return (
-    <>
-      <AppNav />
+    <div className="min-h-screen">
       <AppSide />
-
-      <main className="p-4 md:ml-64 h-auto pt-20">
+      <main className="ml-64">
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </main>
-    </>
+    </div>
   );
 }

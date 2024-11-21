@@ -1,9 +1,8 @@
 "use client";
 
-import { classNames } from "@/utils/uiUtils";
-
 import { usePathname } from "next/navigation";
 import { Link } from "nextjs13-progress";
+import { cn } from "@/lib/utils";
 
 export function ListItem({
   icon,
@@ -18,31 +17,17 @@ export function ListItem({
   const isActive = pathname === href;
 
   return (
-    <li>
-      <Link
-        prefetch={true}
-        href={href}
-        className={classNames(
-          "flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group",
-          isActive && "bg-gray-100 dark:bg-gray-700",
-        )}
-      >
-        {icon}
-        <span className="ml-3">{title}</span>
-      </Link>
-    </li>
-  );
-}
-
-export function MiniAction({ children }: React.PropsWithChildren) {
-  return (
     <Link
-      href="/"
-      type="button"
-      data-dropdown-toggle="language-dropdown"
-      className="inline-flex justify-center p-2 text-gray-500 rounded cursor-pointer dark:hover:text-white dark:text-gray-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-600"
+      prefetch={true}
+      href={href}
+      className={cn(
+        "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+        "transition-colors",
+        isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+      )}
     >
-      {children}
+      <span className="flex items-center">{icon}</span>
+      <span className="ml-3">{title}</span>
     </Link>
   );
 }

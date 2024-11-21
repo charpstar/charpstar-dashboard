@@ -1,4 +1,10 @@
-import Image from "next/image";
+"use client";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 import PendingFormLoader from "./PendingFormLoader";
 
 export default function LoginPage({
@@ -7,79 +13,47 @@ export default function LoginPage({
   formAction: (formData: FormData) => void;
 }) {
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center items-center px-6 py-36 lg:px-8">
-         <Image
-        src="/charpstar.svg"
-        alt="Charpstar Logo"
-        className="invert"
-        width={200}
-        height={100}
-        priority
-      />
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h3 className="mt-10 text-center text-3xl leading-9 tracking-tight text-white">
-          Client Area
-        </h3>
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
+      <div className="mb-8">
+        <Logo />
       </div>
-
-
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" action={formAction}>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6 text-white"
-            >
-              Email address
-            </label>
-
-            <div className="mt-2">
-              <input
+      
+      <Card className="w-full max-w-sm">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl text-center">Client Area</CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access the dashboard
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form className="space-y-4" action={formAction}>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
+                placeholder="name@company.com"
                 required
-                className="block w-full rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-white"
-              >
-                Password
-              </label>
-            </div>
-
-            <div className="mt-2">
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
                 required
-                className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              <div className="flex h-6 items-center justify-center">
+            <Button className="w-full" type="submit">
+              <div className="flex h-5 items-center justify-center">
                 <PendingFormLoader>Sign in</PendingFormLoader>
               </div>
-            </button>
-          </div>
-        </form>
-      </div>
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
