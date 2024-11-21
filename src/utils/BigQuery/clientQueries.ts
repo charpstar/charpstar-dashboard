@@ -1212,4 +1212,342 @@ WHERE
     AR_Button_Clicks > 0 OR _3D_Button_Clicks > 0
   `,
 
+  analytics_389903836: (eventsBetween: string) => `
+  WITH
+    purchases AS (
+      SELECT
+        TRIM(i.item_name) AS original_product_name,
+        REGEXP_REPLACE(
+          LOWER(TRIM(SPLIT(REGEXP_REPLACE(i.item_name, r'[/,]', '|'), '|')[SAFE_OFFSET(0)])),
+          r'[^a-z0-9\\s]', ''
+        ) AS product_name,
+        (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id' LIMIT 1) AS transaction_id,
+        user_pseudo_id,
+        event_timestamp
+      FROM
+        \`fast-lattice-421210.analytics_389903836.events_*\` AS e,
+        UNNEST(e.items) AS i
+      WHERE
+        e.event_name = 'purchase' AND ${eventsBetween}
+    ),
+
+    purchases_agg AS (
+      SELECT
+        product_name,
+        ANY_VALUE(original_product_name) AS original_product_name,
+        COUNT(DISTINCT transaction_id) AS total_purchases
+      FROM
+        purchases
+      GROUP BY
+        product_name
+    ),
+
+    click_events AS (
+      SELECT
+        event_timestamp AS click_timestamp,
+        user_pseudo_id,
+        event_name,
+        (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page_title' LIMIT 1) AS original_product_name,
+        -- Cleaned and standardized product name
+        REGEXP_REPLACE(
+          LOWER(TRIM(SPLIT(REGEXP_REPLACE(
+            (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page_title' LIMIT 1),
+            r'[/,]', '|'
+          ), '|')[SAFE_OFFSET(0)])),
+          r'[^a-z0-9\\s]', ''
+        ) AS product_name
+      FROM
+        \`fast-lattice-421210.analytics_389903836.events_*\` AS e
+      WHERE
+        e.event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click') AND ${eventsBetween}
+    ),
+
+    ar_clicks AS (
+      SELECT
+        product_name,
+        ANY_VALUE(original_product_name) AS original_product_name,
+        COUNT(DISTINCT click_timestamp) AS AR_Button_Clicks
+      FROM
+        click_events
+      WHERE
+        event_name = 'charpstAR_AR_Button_Click'
+      GROUP BY
+        product_name
+    ),
+
+    _3d_clicks AS (
+      SELECT
+        product_name,
+        ANY_VALUE(original_product_name) AS original_product_name,
+        COUNT(DISTINCT click_timestamp) AS _3D_Button_Clicks
+      FROM
+        click_events
+      WHERE
+        event_name = 'charpstAR_3D_Button_Click'
+      GROUP BY
+        product_name
+    ),
+
+    purchases_with_ar AS (
+      SELECT
+        p.user_pseudo_id,
+        p.transaction_id,
+        p.product_name,
+        IF(
+          EXISTS (
+            SELECT 1
+            FROM click_events AS c
+            WHERE c.user_pseudo_id = p.user_pseudo_id
+            AND c.click_timestamp < p.event_timestamp
+          ),
+          'yes',
+          'no'
+        ) AS purchased_after_ar
+      FROM
+        purchases AS p
+    ),
+
+    products_purchased_after_click_events AS (
+      SELECT
+        product_name,
+        COUNT(DISTINCT transaction_id) AS purchases_with_service
+      FROM
+        purchases_with_ar
+      WHERE
+        purchased_after_ar = 'yes'
+      GROUP BY
+        product_name
+    ),
+
+    total_views AS (
+      SELECT
+        REGEXP_REPLACE(
+          LOWER(TRIM(SPLIT(REGEXP_REPLACE(items.item_name, r'[/,]', '|'), '|')[SAFE_OFFSET(0)])),
+          r'[^a-z0-9\\s]', ''
+        ) AS product_name,
+        ANY_VALUE(TRIM(items.item_name)) AS original_product_name,
+        COUNT(DISTINCT CONCAT(param.value.int_value, user_pseudo_id)) AS total_views
+      FROM
+        \`fast-lattice-421210.analytics_389903836.events_*\` AS e,
+        UNNEST(e.event_params) AS param,
+        UNNEST(e.items) AS items
+      WHERE
+        param.key = 'ga_session_id' AND ${eventsBetween}
+      GROUP BY
+        product_name
+    ),
+
+    default_conversion_rate AS (
+      SELECT
+        v.product_name,
+        ANY_VALUE(v.original_product_name) AS original_product_name,
+        v.total_views,
+        p.total_purchases,
+        ROUND(SAFE_DIVIDE(p.total_purchases, v.total_views) * 100, 2) AS default_conv_rate
+      FROM
+        total_views AS v
+      JOIN
+        purchases_agg AS p
+      ON
+        v.product_name = p.product_name
+      GROUP BY
+        v.product_name, v.total_views, p.total_purchases
+    ),
+
+    avg_session_duration AS (
+      SELECT
+        -- Extract and standardize product name
+        REGEXP_REPLACE(
+          LOWER(TRIM(SPLIT(REGEXP_REPLACE(
+            (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page_title' LIMIT 1),
+            r'[/,]', '|'
+          ), '|')[SAFE_OFFSET(0)])),
+          r'[^a-z0-9\\s]', ''
+        ) AS product_name,
+        ANY_VALUE((SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page_title' LIMIT 1)) AS original_product_name,
+        AVG((SELECT value.int_value FROM UNNEST(event_params) WHERE key = 'engagement_time_msec' LIMIT 1)) / 1000 AS avg_session_duration_seconds
+      FROM
+        \`fast-lattice-421210.analytics_389903836.events_*\` AS e
+      WHERE
+        e.event_name IN ('page_view', 'scroll', 'user_engagement') AND ${eventsBetween}
+      GROUP BY
+        product_name
+    ),
+
+    avg_ar_duration AS (
+      SELECT
+        -- Extract and standardize product name
+        REGEXP_REPLACE(
+          LOWER(TRIM(SPLIT(REGEXP_REPLACE(
+            (SELECT value.string_value FROM UNNEST(e.event_params) WHERE key = 'page_title' LIMIT 1),
+            r'[/,]', '|'
+          ), '|')[SAFE_OFFSET(0)])),
+          r'[^a-z0-9\\s]', ''
+        ) AS product_name,
+        ANY_VALUE((SELECT value.string_value FROM UNNEST(e.event_params) WHERE key = 'page_title' LIMIT 1)) AS original_product_name,
+        AVG((SELECT value.int_value FROM UNNEST(e.event_params) WHERE key = 'engagement_time_msec' LIMIT 1)) / 1000 AS avg_ar_duration
+      FROM
+        \`fast-lattice-421210.analytics_389903836.events_*\` AS e
+      WHERE
+        e.event_name = 'charpstAR_AR_Button_Click' AND ${eventsBetween}
+      GROUP BY
+        product_name
+    ),
+
+    avg_3d_duration AS (
+      SELECT
+        -- Extract and standardize product name
+        REGEXP_REPLACE(
+          LOWER(TRIM(SPLIT(REGEXP_REPLACE(
+            (SELECT value.string_value FROM UNNEST(e.event_params) WHERE key = 'page_title' LIMIT 1),
+            r'[/,]', '|'
+          ), '|')[SAFE_OFFSET(0)])),
+          r'[^a-z0-9\\s]', ''
+        ) AS product_name,
+        ANY_VALUE((SELECT value.string_value FROM UNNEST(e.event_params) WHERE key = 'page_title' LIMIT 1)) AS original_product_name,
+        AVG((SELECT value.int_value FROM UNNEST(e.event_params) WHERE key = 'engagement_time_msec' LIMIT 1)) / 1000 AS avg_3d_duration
+      FROM
+        \`fast-lattice-421210.analytics_389903836.events_*\` AS e
+      WHERE
+        e.event_name = 'charpstAR_3D_Button_Click' AND ${eventsBetween}
+      GROUP BY
+        product_name
+    ),
+
+    product_names AS (
+      SELECT
+        product_name,
+        ANY_VALUE(original_product_name) AS original_product_name
+      FROM (
+        SELECT product_name, original_product_name FROM purchases_agg
+        UNION ALL
+        SELECT product_name, original_product_name FROM ar_clicks
+        UNION ALL
+        SELECT product_name, original_product_name FROM _3d_clicks
+        UNION ALL
+        SELECT product_name, original_product_name FROM total_views
+      )
+      GROUP BY
+        product_name
+    ),
+
+    avg_session_durations AS (
+      SELECT
+        all_products.product_name,
+        pn.original_product_name,
+        ROUND(COALESCE(ad.avg_session_duration_seconds, 0), 2) AS avg_session_duration_seconds,
+        ROUND(COALESCE(ar.avg_ar_duration, 0), 2) AS avg_ar_duration,
+        ROUND(COALESCE(td.avg_3d_duration, 0), 2) AS avg_3d_duration,
+        -- Modify avg_ar_session_duration: only add base session duration if avg_ar_duration > 0
+        CASE
+          WHEN COALESCE(ar.avg_ar_duration, 0) > 0 THEN
+            ROUND(COALESCE(ad.avg_session_duration_seconds, 0) + COALESCE(ar.avg_ar_duration, 0), 2)
+          ELSE
+            0
+        END AS avg_ar_session_duration,
+        -- Modify avg_3d_session_duration: only add base session duration if avg_3d_duration > 0
+        CASE
+          WHEN COALESCE(td.avg_3d_duration, 0) > 0 THEN
+            ROUND(COALESCE(ad.avg_session_duration_seconds, 0) + COALESCE(td.avg_3d_duration, 0), 2)
+          ELSE
+            0
+        END AS avg_3d_session_duration
+      FROM
+        (
+          SELECT product_name FROM purchases_agg
+          UNION DISTINCT
+          SELECT product_name FROM ar_clicks
+          UNION DISTINCT
+          SELECT product_name FROM _3d_clicks
+          UNION DISTINCT
+          SELECT product_name FROM total_views
+        ) AS all_products
+      LEFT JOIN
+        product_names AS pn ON all_products.product_name = pn.product_name
+      LEFT JOIN
+        avg_session_duration AS ad ON all_products.product_name = ad.product_name
+      LEFT JOIN
+        avg_ar_duration AS ar ON all_products.product_name = ar.product_name
+      LEFT JOIN
+        avg_3d_duration AS td ON all_products.product_name = td.product_name
+    ),
+
+    avg_combined_duration AS (
+      SELECT
+        product_name,
+        CASE
+          WHEN COALESCE(avg_ar_duration, 0) > 0 AND COALESCE(avg_3d_duration, 0) > 0 THEN
+            ROUND(avg_session_duration_seconds + ((avg_ar_duration + avg_3d_duration) / 2), 2)
+          WHEN COALESCE(avg_ar_duration, 0) > 0 THEN
+            ROUND(avg_session_duration_seconds + avg_ar_duration, 2)
+          WHEN COALESCE(avg_3d_duration, 0) > 0 THEN
+            ROUND(avg_session_duration_seconds + avg_3d_duration, 2)
+          ELSE
+            0
+        END AS avg_combined_session_duration
+      FROM
+        avg_session_durations
+    ),
+
+    final AS (
+      SELECT
+        pn.original_product_name AS product_name,
+        COALESCE(c._3D_Button_Clicks, 0) AS _3D_Button_Clicks,
+        COALESCE(a.AR_Button_Clicks, 0) AS AR_Button_Clicks,
+        COALESCE(d.purchases_with_service, 0) AS purchases_with_service,
+        COALESCE(pu.total_purchases, 0) AS total_purchases,
+        COALESCE(c._3D_Button_Clicks, 0) + COALESCE(a.AR_Button_Clicks, 0) AS total_button_clicks,
+        ROUND(
+          SAFE_DIVIDE(
+            COALESCE(d.purchases_with_service, 0),
+            NULLIF(COALESCE(c._3D_Button_Clicks, 0) + COALESCE(a.AR_Button_Clicks, 0), 0)
+          ) * 100,
+          2
+        ) AS product_conv_rate,
+        COALESCE(t.total_views, 0) AS total_views,
+        COALESCE(dc.default_conv_rate, 0) AS default_conv_rate,
+        sd.avg_session_duration_seconds,
+        sd.avg_ar_duration,
+        sd.avg_3d_duration,
+        sd.avg_ar_session_duration,
+        sd.avg_3d_session_duration,
+        cd.avg_combined_session_duration
+      FROM
+        (
+          SELECT product_name FROM purchases_agg
+          UNION DISTINCT
+          SELECT product_name FROM ar_clicks
+          UNION DISTINCT
+          SELECT product_name FROM _3d_clicks
+          UNION DISTINCT
+          SELECT product_name FROM total_views
+        ) AS all_products
+      LEFT JOIN
+        product_names AS pn ON all_products.product_name = pn.product_name
+      LEFT JOIN
+        purchases_agg AS pu ON all_products.product_name = pu.product_name
+      LEFT JOIN
+        ar_clicks AS a ON all_products.product_name = a.product_name
+      LEFT JOIN
+        _3d_clicks AS c ON all_products.product_name = c.product_name
+      LEFT JOIN
+        products_purchased_after_click_events AS d ON all_products.product_name = d.product_name
+      LEFT JOIN
+        total_views AS t ON all_products.product_name = t.product_name
+      LEFT JOIN
+        default_conversion_rate AS dc ON all_products.product_name = dc.product_name
+      LEFT JOIN
+        avg_session_durations AS sd ON all_products.product_name = sd.product_name
+      LEFT JOIN
+        avg_combined_duration AS cd ON all_products.product_name = cd.product_name
+    )
+
+  SELECT
+    *
+  FROM
+    final
+  WHERE
+    AR_Button_Clicks > 0 OR _3D_Button_Clicks > 0
+  `,
+
 };
