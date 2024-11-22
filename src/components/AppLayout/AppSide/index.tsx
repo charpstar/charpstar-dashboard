@@ -121,11 +121,11 @@ export default function AppSide() {
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
         >
           {theme === "light" ? (
-            <Sun className="h-4 w-4 mr-2" />
-          ) : (
             <Moon className="h-4 w-4 mr-2" />
+          ) : (
+            <Sun className="h-4 w-4 mr-2" />
           )}
-          {theme === "light" ? "Light Mode" : "Dark Mode"}
+          {theme === "light" ? "Dark Mode" : "Light Mode"}
         </Button>
         <Separator className="my-2" />
         <Button 
