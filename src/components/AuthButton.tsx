@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
-
 import { createClient } from "@/utils/supabase/server";
 import { getUserWithMetadata } from "@/utils/supabase/getUser";
 import PendingFormLoader from "./PendingFormLoader";
@@ -32,9 +30,7 @@ export default async function AuthButton() {
         <span className="sr-only">Sign out</span>
 
         <div className="flex h-8 items-center justify-center">
-          <PendingFormLoader>
-            <ArrowRightEndOnRectangleIcon className="h-6 w-6 rounded-full text-gray-400" />
-            </PendingFormLoader>
+
             <div className="text-gray-400">  Logout</div>
         
         </div>
