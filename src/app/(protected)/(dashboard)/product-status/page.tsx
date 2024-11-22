@@ -20,7 +20,7 @@ export default function ProductStatusPage() {
           <Construction className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
           <h2 className="text-2xl font-semibold mb-2">Coming Soon</h2>
           <p className="text-muted-foreground max-w-md">
-            We're developing a comprehensive product status control system. 
+            We&apos;re developing a comprehensive product status control system. 
             This feature will be available in a future update.
           </p>
         </CardContent>
