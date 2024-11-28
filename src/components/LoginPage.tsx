@@ -10,7 +10,7 @@ import PendingFormLoader from "./PendingFormLoader";
 export default function LoginPage({
   formAction,
 }: {
-  formAction: (formData: FormData) => void;
+  formAction: (formData: FormData) => Promise<void>;
 }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
@@ -35,6 +35,8 @@ export default function LoginPage({
                 type="email"
                 placeholder="name@company.com"
                 required
+                autoComplete="email"
+                autoFocus
               />
             </div>
             <div className="space-y-2">
@@ -44,6 +46,7 @@ export default function LoginPage({
                 name="password"
                 type="password"
                 required
+                autoComplete="current-password"
               />
             </div>
             <Button className="w-full" type="submit">

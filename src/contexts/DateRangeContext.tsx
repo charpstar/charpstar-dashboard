@@ -18,8 +18,10 @@ const DateRangeContext = createContext<DateRangeContextType | undefined>(undefin
 
 export function DateRangeProvider({ children }: { children: React.ReactNode }) {
   const user = useUser();
-  const [dateRange, setDateRange] = useState<DateRange>(
-    buildDateRange(user.metadata.monitoredSince)
+  const monitoredSince = user?.metadata?.monitoredSince;
+  
+  const [dateRange, setDateRange] = useState<DateRange>(() => 
+    buildDateRange(monitoredSince)
   );
 
   return (
