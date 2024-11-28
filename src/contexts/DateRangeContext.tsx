@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { buildDateRange } from "@/utils/uiUtils";
+import { useUser } from "./UserContext";
 
 interface DateRange {
   startDate: string;
@@ -16,7 +17,10 @@ interface DateRangeContextType {
 const DateRangeContext = createContext<DateRangeContextType | undefined>(undefined);
 
 export function DateRangeProvider({ children }: { children: React.ReactNode }) {
-  const [dateRange, setDateRange] = useState<DateRange>(buildDateRange());
+  const user = useUser();
+  const [dateRange, setDateRange] = useState<DateRange>(
+    buildDateRange(user.metadata.monitoredSince)
+  );
 
   return (
     <DateRangeContext.Provider value={{ dateRange, setDateRange }}>

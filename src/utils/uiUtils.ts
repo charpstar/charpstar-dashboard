@@ -9,14 +9,23 @@ export function compToBq(date: string) {
   return date.replace(/-/g, "");
 }
 
-export function buildDateRange(startDate?: dayjs.Dayjs, endDate?: dayjs.Dayjs) {
+export function buildDateRange(monitoredSince?: string) {
+  const end = dayjs().add(-1, "day");
+  const defaultStart = end.add(-15, "day");
+  
+  if (monitoredSince) {
+    const monitoredSinceDate = dayjs(monitoredSince);
+    // Use the later date between monitoredSince and defaultStart
+    const start = dayjs.max(monitoredSinceDate, defaultStart);
+    return {
+      startDate: dayjsToComp(start),
+      endDate: dayjsToComp(end),
+    };
+  }
+
   return {
-    startDate: dayjsToComp(
-      startDate ?? customShortcutsDayJs.last15days!.period.start,
-    ),
-    endDate: dayjsToComp(
-      endDate ?? customShortcutsDayJs.last15days!.period.end,
-    ),
+    startDate: dayjsToComp(defaultStart),
+    endDate: dayjsToComp(end),
   };
 }
 
