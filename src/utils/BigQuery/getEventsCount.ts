@@ -16,28 +16,48 @@ export async function getEventsCount({
   const bigqueryClient  = getBigQueryClient({ projectId });
   const query = `
   WITH
+
+  
+  users_with_charpstar_load AS (
+  SELECT DISTINCT user_pseudo_id
+  FROM
+    \`${projectId}.${datasetId}.events_*\`
+  WHERE
+    event_name = 'charpstAR_Load'
+    AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+    AND user_pseudo_id IS NOT NULL
+),
+
   total_views AS (
     SELECT
-      COUNT(DISTINCT user_pseudo_id) AS total_views
+      COUNT(DISTINCT e.user_pseudo_id) AS total_views
     FROM
-      \`${projectId}.${datasetId}.events_*\`,
-      UNNEST(event_params) AS ep
+     \`${projectId}.${datasetId}.events_*\` e
+      JOIN users_with_charpstar_load u
+        ON e.user_pseudo_id = u.user_pseudo_id,
+      UNNEST(e.event_params) AS ep
     WHERE
-      event_name = 'page_view'
+      e.event_name = 'page_view'
       AND ep.key = 'page_title'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
-      AND user_pseudo_id IS NOT NULL
+      AND e.user_pseudo_id IS NOT NULL
   ),
+
   total_purchases AS (
     SELECT
-      COUNT(DISTINCT (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id')) AS total_purchases
+      COUNT(DISTINCT (SELECT value.string_value FROM UNNEST(p.event_params) WHERE key = 'transaction_id')) AS total_purchases
     FROM
-      \`${projectId}.${datasetId}.events_*\`
+      \`${projectId}.${datasetId}.events_*\` AS p
+    JOIN
+      users_with_charpstar_load AS u
+    ON
+      p.user_pseudo_id = u.user_pseudo_id
     WHERE
-      event_name = 'purchase'
+      p.event_name = 'purchase'
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
-      AND user_pseudo_id IS NOT NULL
+      AND p.user_pseudo_id IS NOT NULL
   ),
+
   ar_clicks AS (
     SELECT
       user_pseudo_id,
@@ -49,18 +69,53 @@ export async function getEventsCount({
       AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
       AND user_pseudo_id IS NOT NULL
   ),
-  purchases AS (
-    SELECT
-      user_pseudo_id,
-      event_timestamp,
-      (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id') AS transaction_id
-    FROM
-      \`${projectId}.${datasetId}.events_*\`
-    WHERE
-      event_name = 'purchase'
-      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
-      AND user_pseudo_id IS NOT NULL
-  ),
+purchases AS (
+  SELECT
+    user_pseudo_id,
+    event_timestamp,
+    (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id') AS transaction_id,
+    (SELECT value.double_value FROM UNNEST(event_params) WHERE key = 'value') AS purchase_value
+  FROM
+   \`${projectId}.${datasetId}.events_*\`
+  WHERE
+    event_name = 'purchase'
+    AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+    AND user_pseudo_id IS NOT NULL
+    AND (SELECT value.double_value FROM UNNEST(event_params) WHERE key = 'value') IS NOT NULL
+),
+purchases_by_all_users AS (
+  SELECT
+    p.user_pseudo_id,
+    p.transaction_id,
+    p.purchase_value
+  FROM
+    purchases AS p
+    JOIN users_with_charpstar_load AS u
+      ON p.user_pseudo_id = u.user_pseudo_id
+),
+total_purchase_value AS (
+  SELECT
+    SUM(purchase_value) AS total_purchase_value
+  FROM
+    purchases_by_all_users
+),
+purchases_by_ar_users AS (
+  SELECT DISTINCT
+    p.user_pseudo_id,
+    p.transaction_id,
+    p.purchase_value
+  FROM
+    ar_clicks AS ar
+    JOIN purchases AS p
+      ON ar.user_pseudo_id = p.user_pseudo_id
+      AND p.event_timestamp > ar.event_timestamp
+),
+total_purchase_value_ar_users AS (
+  SELECT
+    SUM(purchase_value) AS total_purchase_value_ar_users
+  FROM
+    purchases_by_ar_users
+),
   total_views_with_ar AS (
     SELECT
       COUNT(DISTINCT ar.user_pseudo_id) AS total_views_with_ar
@@ -76,6 +131,18 @@ export async function getEventsCount({
       ON ar.user_pseudo_id = p.user_pseudo_id
       AND p.event_timestamp > ar.event_timestamp
   ),
+  avg_order_value_all_users AS (
+  SELECT
+    ROUND(SUM(purchase_value) / COUNT(DISTINCT transaction_id), 2) AS avg_order_value
+  FROM
+    purchases_by_all_users
+),
+avg_order_value_ar_users AS (
+  SELECT
+    ROUND(SUM(purchase_value) / COUNT(DISTINCT transaction_id), 2) AS avg_order_value
+  FROM
+    purchases_by_ar_users
+),
   conversion_rates AS (
     SELECT
       ROUND(SAFE_DIVIDE(tp.total_purchases, tv.total_views) * 100, 2) AS overall_avg_conversion_rate,
@@ -150,18 +217,48 @@ export async function getEventsCount({
         100.00
       ) AS percentage_ar_users
   ),
-  avg_engagement_time AS (
-    SELECT
-      AVG((SELECT value.int_value 
-           FROM UNNEST(event_params) ep 
-           WHERE ep.key = 'engagement_time_msec') / 1000.0) AS avg_session_duration_seconds
-    FROM
-      \`${projectId}.${datasetId}.events_*\`
-    WHERE
-      event_name IN ('page_view', 'user_engagement')
-      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
-      AND user_pseudo_id IS NOT NULL
-  ),
+  pages_after_ar AS (
+  SELECT
+    ar.user_pseudo_id,
+    ar.event_timestamp AS ar_event_timestamp,
+    COUNT(DISTINCT pv.event_timestamp) AS pages_viewed_after_ar
+  FROM
+    ar_clicks AS ar
+  JOIN
+     \`${projectId}.${datasetId}.events_*\` AS pv
+  ON
+    ar.user_pseudo_id = pv.user_pseudo_id
+    AND pv.event_timestamp > ar.event_timestamp
+  WHERE
+    pv.event_name = 'page_view'
+    AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+    AND pv.user_pseudo_id IS NOT NULL
+  GROUP BY
+    ar.user_pseudo_id,
+    ar.event_timestamp
+),
+average_pages_after_ar AS (
+  SELECT
+    AVG(pages_viewed_after_ar) AS avg_pages_after_ar
+  FROM
+    pages_after_ar
+),
+
+
+avg_engagement_time AS (
+  SELECT
+    AVG((SELECT value.int_value 
+         FROM UNNEST(e.event_params) ep 
+         WHERE ep.key = 'engagement_time_msec') / 1000.0) AS avg_session_duration_seconds
+  FROM
+      \`${projectId}.${datasetId}.events_*\` e
+    JOIN users_with_charpstar_load u
+      ON e.user_pseudo_id = u.user_pseudo_id
+  WHERE
+    e.event_name IN ('page_view', 'user_engagement')
+    AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+    AND e.user_pseudo_id IS NOT NULL
+),
  ar_events AS (
   SELECT
     user_pseudo_id,
@@ -212,7 +309,77 @@ combined_durations AS (
   SELECT
     (SELECT avg_ar_session_duration_seconds FROM avg_ar_duration) + 
     (SELECT avg_session_duration_seconds FROM avg_engagement_time) AS total_avg_session_duration
-)
+),
+  non_ar_users AS (
+    SELECT DISTINCT a.user_pseudo_id
+    FROM \`${projectId}.${datasetId}.events_*\` a
+    WHERE a.event_name = 'charpstAR_Load'
+      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND a.user_pseudo_id IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1
+        FROM \`${projectId}.${datasetId}.events_*\` b
+        WHERE b.user_pseudo_id = a.user_pseudo_id
+          AND b.event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
+          AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      )
+  ),
+  
+  add_to_cart_after_ar AS (
+    SELECT
+      COUNT(DISTINCT ac.user_pseudo_id) AS users_with_cart_after_ar
+    FROM
+      ar_clicks ar
+    JOIN
+      \`${projectId}.${datasetId}.events_*\` ac
+    ON
+      ar.user_pseudo_id = ac.user_pseudo_id
+      AND ac.event_timestamp > ar.event_timestamp
+      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+    WHERE
+      ac.event_name = 'add_to_cart'
+  ),
+
+ -- Modified CTE for total users who used AR or 3D features
+  total_activated_users AS (
+    SELECT
+      COUNT(DISTINCT user_pseudo_id) AS total_users
+    FROM
+      \`${projectId}.${datasetId}.events_*\`
+    WHERE
+      event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
+      AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+      AND user_pseudo_id IS NOT NULL
+  ),
+
+  
+cart_default_percentage AS (
+    SELECT 
+      ROUND(
+        SAFE_DIVIDE(
+          (SELECT COUNT(DISTINCT ac.user_pseudo_id)
+           FROM non_ar_users nar
+           JOIN \`${projectId}.${datasetId}.events_*\` ac
+             ON nar.user_pseudo_id = ac.user_pseudo_id
+             AND _TABLE_SUFFIX BETWEEN '${startTableName}' AND '${endTableName}'
+           WHERE ac.event_name = 'add_to_cart'),
+          (SELECT COUNT(DISTINCT user_pseudo_id) FROM non_ar_users)
+        ) * 100,
+        2
+      ) AS default_cart_percentage
+  ),
+
+  -- New CTE for cart percentage calculation
+  cart_percentage AS (
+    SELECT
+      ROUND(
+        SAFE_DIVIDE(
+          (SELECT users_with_cart_after_ar FROM add_to_cart_after_ar),
+          (SELECT COUNT(DISTINCT user_pseudo_id) FROM ar_clicks)
+        ) * 100,
+        2
+      ) AS percentage_cart_after_ar
+  )
   
 SELECT
   'overall_conv_rate' AS event_name,
@@ -266,7 +433,82 @@ SELECT
   'combined_session_time' AS event_name,
   ROUND(total_avg_session_duration, 2) AS count
 FROM
-  combined_durations;
+  combined_durations
+
+UNION ALL
+
+SELECT
+  'cart_after_ar_percentage' AS event_name,
+  percentage_cart_after_ar AS count
+FROM
+  cart_percentage
+
+UNION ALL
+
+SELECT
+  'total_purchases' AS event_name,
+  CAST(tp.total_purchases AS FLOAT64) AS count
+FROM
+  total_purchases tp
+
+UNION ALL
+  
+-- New row for Unique Users for charpstAR_Load
+SELECT
+  'total_unique_users' AS event_name,
+  CAST(ar_load_user_count.total_ar_load_users AS FLOAT64) AS count
+FROM
+  ar_load_user_count
+
+UNION ALL
+
+SELECT
+  'total_activated_users' AS event_name,
+  CAST(total_users AS FLOAT64) AS count
+FROM
+  total_activated_users
+  
+UNION ALL
+
+SELECT
+  'cart_percentage_default' AS event_name,
+  default_cart_percentage AS count
+FROM
+  cart_default_percentage
+
+UNION ALL
+
+SELECT
+  'average_order_value_all_users' AS event_name,
+  avg_order_value AS count
+FROM
+  avg_order_value_all_users
+
+UNION ALL
+
+-- New metric: Average pages viewed after AR/3D activation
+SELECT
+  'average_pages_after_ar' AS event_name,
+  ROUND(avg_pages_after_ar, 2) AS count
+FROM
+  average_pages_after_ar
+  
+UNION ALL
+
+SELECT
+  'average_order_value_ar_users' AS event_name,
+  avg_order_value AS count
+FROM
+  avg_order_value_ar_users
+
+
+UNION ALL
+
+SELECT
+  'total_purchases_after_ar' AS event_name,
+  CAST(tp_ar.total_purchases_with_ar AS FLOAT64) AS count
+FROM
+  total_purchases_with_ar tp_ar;
 `;
 
 
