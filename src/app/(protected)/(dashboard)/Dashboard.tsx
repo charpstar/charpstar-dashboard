@@ -10,6 +10,7 @@ import TechBreakdownPie from "./TechBreakdownPie";
 import PerformanceTrends from "./PerformanceTrends";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDateRange } from "@/contexts/DateRangeContext";
+import { useClientQuery } from "@/queries/useClientQuery";
 
 export default function Dashboard({
   dateRangePickerMinDate,
@@ -20,6 +21,12 @@ export default function Dashboard({
 
   const startTableName = compToBq(dateRange.startDate);
   const endTableName = compToBq(dateRange.endDate);
+
+  const { eventsCount, isQueryLoading } = useClientQuery({
+    startTableName,
+    endTableName,
+    limit: 10,
+  });
 
   return (
     <div className="space-y-6 h-screen">
@@ -43,8 +50,8 @@ export default function Dashboard({
         {/* Analytics Cards */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <EventCountCards
-            startTableName={startTableName}
-            endTableName={endTableName}
+            eventsCount={eventsCount}
+            isLoading={isQueryLoading}
           />
         </div>
 
@@ -61,8 +68,8 @@ export default function Dashboard({
             </CardHeader>
             <CardContent>
               <TechBreakdownPie
-                startTableName={startTableName}
-                endTableName={endTableName}
+                eventsCount={eventsCount}
+                isLoading={isQueryLoading}
               />
             </CardContent>
           </Card>

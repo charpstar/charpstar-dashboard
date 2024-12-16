@@ -11,14 +11,20 @@ export function compToBq(date: string) {
 
 export function buildDateRange(monitoredSince?: string) {
   const end = dayjs().add(-1, "day");
-  const defaultStart = end.add(-15, "day");
+  const defaultStart = end.add(-30, "day"); // Changed to 30 days by default
   
   if (monitoredSince) {
     const monitoredSinceDate = dayjs(monitoredSince);
-    // Use the later date between monitoredSince and defaultStart
-    const start = dayjs.max(monitoredSinceDate, defaultStart);
+    // Check if we have at least 30 days of data
+    if (end.diff(monitoredSinceDate, 'day') >= 30) {
+      return {
+        startDate: dayjsToComp(defaultStart),
+        endDate: dayjsToComp(end),
+      };
+    }
+    // If not, use the monitored since date
     return {
-      startDate: dayjsToComp(start),
+      startDate: dayjsToComp(monitoredSinceDate),
       endDate: dayjsToComp(end),
     };
   }
@@ -27,6 +33,13 @@ export function buildDateRange(monitoredSince?: string) {
     startDate: dayjsToComp(defaultStart),
     endDate: dayjsToComp(end),
   };
+}
+
+export function isMonthlyView(startDate: string, endDate: string): boolean {
+  const start = dayjs(startDate);
+  const end = dayjs(endDate);
+  const daysDiff = end.diff(start, 'day');
+  return daysDiff >= 28 && daysDiff <= 31;
 }
 
 export function classNames(...classes: (string | boolean | undefined)[]) {

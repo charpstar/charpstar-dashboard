@@ -61,7 +61,7 @@ export default function AppSide() {
           {/* Analytics Section */}
           <div>
             <div className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Analytics
+              Analytics (BETA)
             </div>
             <div className="space-y-1">
               <ListItem

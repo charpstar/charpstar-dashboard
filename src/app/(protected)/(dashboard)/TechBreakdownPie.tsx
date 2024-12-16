@@ -1,27 +1,22 @@
 "use client";
 
-import { useEventsCount } from "@/queries/useEventsCount";
+import { type EventsData } from "@/utils/defaultEvents";
 
 export default function TechBreakdownPie({
-  startTableName,
-  endTableName,
+  eventsCount,
+  isLoading,
 }: {
-  startTableName: string;
-  endTableName: string;
+  eventsCount: EventsData;
+  isLoading: boolean;
 }) {
-  const { eventsCount, isEventsCountLoading } = useEventsCount({
-    startTableName,
-    endTableName,
-  });
-
-  const arClicks = eventsCount.charpstAR_AR_Button_Click?.count ?? 0;
-  const threeDClicks = eventsCount.charpstAR_3D_Button_Click?.count ?? 0;
+  const arClicks = eventsCount?.charpstAR_AR_Button_Click ?? 0;
+  const threeDClicks = eventsCount?.charpstAR_3D_Button_Click ?? 0;
   const total = arClicks + threeDClicks;
 
   const arPercentage = total > 0 ? (arClicks / total) * 100 : 0;
   const threeDPercentage = total > 0 ? (threeDClicks / total) * 100 : 0;
 
-  if (isEventsCountLoading) {
+  if (isLoading) {
     return (
       <div className="h-[280px] w-full animate-pulse bg-muted rounded-lg" />
     );

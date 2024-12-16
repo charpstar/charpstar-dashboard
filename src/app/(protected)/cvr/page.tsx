@@ -3,7 +3,7 @@
 import React from "react";
 import { useUser } from "@/contexts/UserContext";
 import { compToBq } from "@/utils/uiUtils";
-import CVRTable from "@/components/CVRTable";
+import CVRTable from "@/components/CVRTable";  // Updated import path
 import DateRangePicker from "@/components/DateRangePicker";
 import { useClientQuery } from "@/queries/useClientQuery";
 import { useDateRange } from "@/contexts/DateRangeContext";
@@ -44,8 +44,8 @@ export default function CVRPage() {
         isLoading={isQueryLoading}
         data={clientQueryResult}
         showColumns={{
-          ar_sessions: false,
-          _3d_sessions: false,
+          ar_sessions: true,
+          _3d_sessions: true,
           total_purchases: true,
           purchases_with_service: true,
           avg_session_duration_seconds: true,

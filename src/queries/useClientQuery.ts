@@ -1,8 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
-
-import { executeClientQuery } from "@/utils/BigQuery/CVR";
+import { transformProductMetrics, transformOverallMetrics } from "@/utils/BigQuery/transformers";
 import { useUser } from "@/contexts/UserContext";
-import { type TDatasets } from "@/utils/BigQuery/clientQueries";
+import type { TDatasets } from "@/utils/BigQuery/clientQueries";
+import type { BigQueryResponse } from "@/utils/BigQuery/types";
+
+async function fetchAnalytics(config: {
+  projectId: string;
+  datasetId: string;
+  startTableName: string;
+  endTableName: string;
+}): Promise<BigQueryResponse[]> {
+  const response = await fetch("/api/analytics", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(config),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch analytics data");
+  }
+
+  return response.json();
+}
 
 export function useClientQuery({
   startTableName,
@@ -17,7 +38,7 @@ export function useClientQuery({
 
   const shouldEnableFetching = Boolean(user && startTableName && endTableName);
 
-  const { data: _clientQueryResult, isLoading: isQueryLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [
       "clientQuery",
       projectId,
@@ -25,27 +46,25 @@ export function useClientQuery({
       startTableName,
       endTableName,
     ],
-    queryFn: executeClientQueryFn,
+    queryFn: () => fetchAnalytics({
+      projectId,
+      datasetId,
+      startTableName,
+      endTableName,
+    }),
     enabled: shouldEnableFetching,
   });
 
-  const clientQueryResult = _clientQueryResult ?? [];
+  // Split and transform the data
+  const productMetrics = data?.filter(item => item.data_type === 'product') ?? [];
+  const overallMetrics = data?.filter(item => item.data_type === 'overall') ?? [];
 
-  return { clientQueryResult, isQueryLoading };
-}
+  const clientQueryResult = transformProductMetrics(productMetrics);
+  const eventsCount = transformOverallMetrics(overallMetrics);
 
-export function executeClientQueryFn({
-  queryKey,
-}: {
-  queryKey: [string, string, TDatasets, string, string];
-}) {
-  const [, projectId, datasetId, startTableName, endTableName] = queryKey;
-
-  return executeClientQuery({
-    projectId,
-    datasetId,
-
-    startTableName,
-    endTableName,
-  });
+  return { 
+    clientQueryResult, 
+    eventsCount,
+    isQueryLoading: isLoading 
+  };
 }
