@@ -1,16 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { type RenderStatus } from "@/types/render";
 import { useRenderImages } from "./useRenderImages";
-
-const STORAGE_PREFIX = "render_job_";
 
 export function useRenderStatus(articleId: string, isRendering: boolean) {
   const [status, setStatus] = useState<RenderStatus>("idle");
   const [progress, setProgress] = useState(0);
   const [jobId, setJobId] = useState<string | null>(null);
   const { images, isLoading: isLoadingImages } = useRenderImages(articleId);
+
+  // Memoize checkProgress to avoid ESLint exhaustive-deps warning
+  const checkProgress = useCallback(async (jobId: string) => {
+    try {
+      const response = await fetch(`/api/render/progress/${jobId}`);
+      if (!response.ok) return;
+      const data = await response.json();
+
+      setProgress(data.progress || 0);
+      
+      if (data.status === "COMPLETED" || data.modelStatus === "COMPLETED") {
+        setJobId(null);
+        setStatus("complete");
+      } else if (data.status === "FAILED" || data.status === "ERROR" || data.modelStatus === "FAILED") {
+        setJobId(null);
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error("Error checking progress:", error);
+    }
+  }, []);
 
   // Check for existing job on mount
   useEffect(() => {
@@ -37,29 +56,12 @@ export function useRenderStatus(articleId: string, isRendering: boolean) {
   useEffect(() => {
     if (!jobId) return;
 
-    const checkProgress = async () => {
-      try {
-        const response = await fetch(`/api/render/progress/${jobId}`);
-        if (!response.ok) return;
-        const data = await response.json();
+    const interval = setInterval(() => {
+      void checkProgress(jobId);
+    }, 1000);
 
-        setProgress(data.progress || 0);
-        
-        if (data.status === "COMPLETED" || data.modelStatus === "COMPLETED") {
-          setJobId(null);
-          setStatus("complete");
-        } else if (data.status === "FAILED" || data.status === "ERROR" || data.modelStatus === "FAILED") {
-          setJobId(null);
-          setStatus("error");
-        }
-      } catch (error) {
-        console.error("Error checking progress:", error);
-      }
-    };
-
-    const interval = setInterval(checkProgress, 1000);
     return () => clearInterval(interval);
-  }, [jobId]);
+  }, [jobId, checkProgress]);
 
   // Update status based on current state
   useEffect(() => {
