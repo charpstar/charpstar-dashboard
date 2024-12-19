@@ -3,7 +3,7 @@
 import React from "react";
 import { useUser } from "@/contexts/UserContext";
 import { compToBq } from "@/utils/uiUtils";
-import CVRTable from "@/components/CVRTable";  // Updated import path
+import CVRTable from "@/components/CVRTable";
 import DateRangePicker from "@/components/DateRangePicker";
 import { useClientQuery } from "@/queries/useClientQuery";
 import { useDateRange } from "@/contexts/DateRangeContext";
@@ -24,12 +24,11 @@ export default function CVRPage() {
 
   return (
     <div className="flex-1 space-y-4 p-4 pt-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Detailed Stats</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Detailed product performance statistics
+            Comprehensive product performance statistics and conversion rates
           </p>
         </div>
         <DateRangePicker
@@ -39,7 +38,6 @@ export default function CVRPage() {
         />
       </div>
 
-      {/* Table Section */}
       <CVRTable
         isLoading={isQueryLoading}
         data={clientQueryResult}

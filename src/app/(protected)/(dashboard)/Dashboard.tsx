@@ -29,7 +29,7 @@ export default function Dashboard({
   });
 
   return (
-    <div className="space-y-6 h-screen">
+    <div className="space-y-6">
       {/* Header Section */}
       <div className="flex justify-between items-center">
         <div>
