@@ -485,7 +485,6 @@ analytics_351120479: (eventsBetween: string) => `
   ORDER BY data_type, metric_name`
 ,
 
-
 analytics_389903836: (eventsBetween: string) => `
   WITH
     base_events AS (

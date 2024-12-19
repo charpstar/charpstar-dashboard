@@ -1,6 +1,7 @@
 // src/app/api/analytics/route.ts
 import { NextResponse } from "next/server";
-import { getBigQueryClient } from "@/utils/BigQuery/client";
+import { BigQuery } from "@google-cloud/bigquery";
+import { getGCPCredentials } from "@/utils/getGCPCredentials";
 import { queries } from "@/utils/BigQuery/clientQueries";
 import { getEventsBetween } from "@/utils/BigQuery/utils";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
@@ -10,6 +11,15 @@ const TIMEOUT_MS = 180000; // 3 minutes
 const BYTES_LIMIT = 6000000000; // 6GB
 
 export const maxDuration = 300; // 5 minutes
+
+function getBigQueryClient({ projectId }: { projectId: string }) {
+  const { credentials, projectId: envProjectId } = getGCPCredentials();
+  
+  return new BigQuery({
+    projectId: projectId || envProjectId,
+    credentials,
+  });
+}
 
 async function executeQueryWithRetry(
   bigqueryClient: BigQuery,
