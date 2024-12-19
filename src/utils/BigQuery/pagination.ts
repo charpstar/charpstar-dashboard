@@ -28,7 +28,7 @@ export async function executePagedQuery(
     const jobResponse = await client.createQueryJob({
       query,
       maximumBytesBilled: "10000000000", // 1GB limit
-      timeoutMs,
+      jobTimeoutMs: timeoutMs, // Changed from timeoutMs to jobTimeoutMs
       useLegacySql: false
     });
 
@@ -39,7 +39,7 @@ export async function executePagedQuery(
     const [rows, metadata] = await job.getQueryResults({
       maxResults: pageSize,
       pageToken: pageToken || undefined,
-      timeoutMs
+      timeoutMs // This is correct for getQueryResults
     });
 
     return {
