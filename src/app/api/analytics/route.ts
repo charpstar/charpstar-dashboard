@@ -1,6 +1,6 @@
 // src/app/api/analytics/route.ts
 import { NextResponse } from "next/server";
-import { BigQuery, JobOptions, QueryRowsResponse } from "@google-cloud/bigquery";
+import { BigQuery, Job, QueryRowsResponse } from "@google-cloud/bigquery";
 import { getBigQueryClient } from "@/utils/BigQuery/client";
 import { queries } from "@/utils/BigQuery/clientQueries";
 import { getEventsBetween } from "@/utils/BigQuery/utils";
@@ -10,7 +10,7 @@ const MAX_RETRIES = 3;
 const TIMEOUT_MS = 180000; // 3 minutes
 const BYTES_LIMIT = 6000000000; // 6GB
 
-interface QueryOptions extends JobOptions {
+interface QueryOptions {
   query: string;
   projectId: string;
   timeoutMs?: number;
@@ -23,11 +23,17 @@ async function executeQueryWithRetry(
   attempt = 1
 ): Promise<QueryRowsResponse> {
   try {
-    const [job] = await bigqueryClient.createQueryJob(options);
-    const [response] = await job.getQueryResults({
+    // Properly type the createQueryJob response
+    const jobResponse = await bigqueryClient.createQueryJob(options);
+    const job = jobResponse[0] as Job;
+    
+    // Properly type the query results
+    const queryResponse = await job.getQueryResults({
       timeoutMs: TIMEOUT_MS,
     });
-    return response;
+    const rows = queryResponse[0];
+    
+    return rows;
   } catch (error) {
     if (attempt === MAX_RETRIES) throw error;
     
@@ -38,9 +44,18 @@ async function executeQueryWithRetry(
   }
 }
 
+interface QueryRequestBody {
+  projectId: string;
+  datasetId: string;
+  startTableName: string;
+  endTableName: string;
+}
+
 export async function POST(request: Request) {
   try {
-    const { projectId, datasetId, startTableName, endTableName } = await request.json();
+    // Type the request body
+    const body = await request.json() as QueryRequestBody;
+    const { projectId, datasetId, startTableName, endTableName } = body;
     
     const bigqueryClient = getBigQueryClient({ projectId });
 
@@ -63,25 +78,40 @@ export async function POST(request: Request) {
     };
 
     const response = await executeQueryWithRetry(bigqueryClient, options);
-    return NextResponse.json(response as BigQueryResponse[]);
+    
+    // Ensure response matches expected BigQueryResponse type
+    const typedResponse = response as unknown as BigQueryResponse[];
+    return NextResponse.json(typedResponse);
 
   } catch (error) {
-    if (error instanceof Error && error.message?.includes('bytes billed')) {
+    // Type guard for error handling
+    if (error instanceof Error) {
+      if (error.message.includes('bytes billed')) {
+        return NextResponse.json(
+          { 
+            error: "Query too large for current settings. Please try a smaller date range.",
+            details: error.message 
+          },
+          { status: 400 }
+        );
+      }
+
+      console.error("BigQuery API Error:", error);
       return NextResponse.json(
         { 
-          error: "Query too large for current settings. Please try a smaller date range.",
+          error: "Failed to fetch analytics data",
           details: error.message 
         },
-        { status: 400 }
+        { status: 500 }
       );
     }
 
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error("BigQuery API Error:", error);
+    // Handle non-Error objects
+    console.error("Unknown BigQuery Error:", error);
     return NextResponse.json(
       { 
         error: "Failed to fetch analytics data",
-        details: errorMessage 
+        details: "An unknown error occurred" 
       },
       { status: 500 }
     );
