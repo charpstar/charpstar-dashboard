@@ -1,12 +1,11 @@
-// src/app/api/analytics/route.ts
 import { NextResponse } from "next/server";
 import { getBigQueryClient } from "@/utils/BigQuery/client";
 import { queries } from "@/utils/BigQuery/clientQueries";
 import { getEventsBetween } from "@/utils/BigQuery/utils";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
 
-// Set a reasonable timeout
-const QUERY_TIMEOUT = 600000; // 60 seconds
+// Increase timeout to 2 minutes
+const QUERY_TIMEOUT = 120000; 
 
 export async function POST(request: Request) {
   try {
@@ -34,19 +33,18 @@ export async function POST(request: Request) {
     const options = {
       query,
       projectId,
-      timeout: QUERY_TIMEOUT,
-      maximumBytesBilled: "50000000000", // 1GB
+      maximumBytesBilled: "6000000000", // 1GB
     };
 
     const [job] = await bigqueryClient.createQueryJob(options);
     
-    // Use Promise.race to implement timeout
+    // Use Promise.race with increased timeout
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('Query timeout')), QUERY_TIMEOUT);
     });
 
     const [response] = await Promise.race([
-      job.getQueryResults(),
+      job.getQueryResults({ maxResults: 1000 }), // Add maxResults to limit data
       timeoutPromise
     ]) as [BigQueryResponse[]];
 
