@@ -19,13 +19,8 @@ function getBigQueryClient({ projectId }: { projectId: string }) {
   return new BigQuery({
     projectId: projectId || envProjectId,
     credentials,
-    retryOptions: {
-      retryDelayMultiplier: 2,
-      totalTimeout: TIMEOUT_MS,
-    },
   });
 }
-
 async function executeQueryWithRetry(
   bigqueryClient: BigQuery,
   options: any,
@@ -40,9 +35,9 @@ async function executeQueryWithRetry(
   } catch (error) {
     if (attempt === MAX_RETRIES) throw error;
     
-    await new Promise(resolve => 
-      setTimeout(resolve, Math.pow(2, attempt) * 1000)
-    );
+    // Implement retry delay here instead
+    const delay = Math.min(Math.pow(2, attempt) * 1000, 30000); // Cap at 30 seconds
+    await new Promise(resolve => setTimeout(resolve, delay));
     
     return executeQueryWithRetry(bigqueryClient, options, attempt + 1);
   }
@@ -68,15 +63,14 @@ export async function POST(request: Request) {
     const options = {
       query,
       projectId,
-      timeout: TIMEOUT_MS,
-      maximumBytesBilled: BYTES_LIMIT, // Increased from 1GB to 6GB
+      timeoutMs: TIMEOUT_MS,
+      maximumBytesBilled: BYTES_LIMIT,
     };
 
     const response = await executeQueryWithRetry(bigqueryClient, options);
     return NextResponse.json(response);
 
   } catch (error: any) {
-    // If it's still a bytes billed error, return a more specific error message
     if (error.message?.includes('bytes billed')) {
       return NextResponse.json(
         { 
