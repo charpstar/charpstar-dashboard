@@ -478,7 +478,6 @@ analytics_351120479: (eventsBetween: string) => `
            ) AS FLOAT64) as count
   ) m
   )
-
   SELECT * FROM product_metrics
   UNION ALL
   SELECT * FROM overall_metrics
