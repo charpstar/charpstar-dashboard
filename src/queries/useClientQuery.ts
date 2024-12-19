@@ -1,7 +1,7 @@
+// hooks/useClientQuery.ts
 import { useQuery } from "@tanstack/react-query";
 import { transformProductMetrics, transformOverallMetrics } from "@/utils/BigQuery/transformers";
 import { useUser } from "@/contexts/UserContext";
-import type { TDatasets } from "@/utils/BigQuery/clientQueries";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
 
 async function fetchAnalytics(config: {
@@ -28,6 +28,7 @@ async function fetchAnalytics(config: {
 export function useClientQuery({
   startTableName,
   endTableName,
+  limit,
 }: {
   startTableName: string;
   endTableName: string;
@@ -35,10 +36,9 @@ export function useClientQuery({
 }) {
   const user = useUser();
   const { projectId, datasetId } = user.metadata;
-
   const shouldEnableFetching = Boolean(user && startTableName && endTableName);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: [
       "clientQuery",
       projectId,
@@ -53,18 +53,22 @@ export function useClientQuery({
       endTableName,
     }),
     enabled: shouldEnableFetching,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 30 * 60 * 1000, // 30 minutes
   });
 
-  // Split and transform the data
   const productMetrics = data?.filter(item => item.data_type === 'product') ?? [];
   const overallMetrics = data?.filter(item => item.data_type === 'overall') ?? [];
-
+  
   const clientQueryResult = transformProductMetrics(productMetrics);
   const eventsCount = transformOverallMetrics(overallMetrics);
 
   return { 
     clientQueryResult, 
     eventsCount,
-    isQueryLoading: isLoading 
+    isQueryLoading: isLoading,
+    error 
   };
 }
