@@ -1,5 +1,7 @@
-"use server";
+"use client";
 
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@/contexts/UserContext";
 import { getBigQueryClient } from "@/utils/BigQuery/client";
 import { type EventsData, type EventName, defaultEvents } from "@/utils/defaultEvents";
 
