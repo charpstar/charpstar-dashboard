@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       query,
       projectId,
       timeout: QUERY_TIMEOUT,
-      maximumBytesBilled: "2000000000", // 1GB
+      maximumBytesBilled: "50000000000", // 1GB
     };
 
     const [job] = await bigqueryClient.createQueryJob(options);
