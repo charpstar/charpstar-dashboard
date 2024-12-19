@@ -478,6 +478,7 @@ analytics_351120479: (eventsBetween: string) => `
            ) AS FLOAT64) as count
   ) m
   )
+
   SELECT * FROM product_metrics
   UNION ALL
   SELECT * FROM overall_metrics
@@ -2882,7 +2883,7 @@ analytics_296845812: (eventsBetween: string) => `
   LEFT JOIN total_views v ON LOWER(a.product_name) = LOWER(v.product_name)
   LEFT JOIN default_conversion_rate dc ON LOWER(a.product_name) = LOWER(dc.product_name)
   WHERE COALESCE(ar.AR_Button_Clicks, 0) + COALESCE(td._3D_Button_Clicks, 0) > 0 
-  ),
+),
 
 
   conversion_rates AS (
