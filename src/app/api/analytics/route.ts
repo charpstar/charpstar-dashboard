@@ -4,9 +4,6 @@ import { queries } from "@/utils/BigQuery/clientQueries";
 import { getEventsBetween } from "@/utils/BigQuery/utils";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
 
-const MAX_RESULTS = 10000; // Limit maximum results
-const TIMEOUT = 60000; // 60 second timeout
-
 export async function POST(request: Request) {
   try {
     const { projectId, datasetId, startTableName, endTableName } = await request.json();
@@ -24,19 +21,12 @@ export async function POST(request: Request) {
     }
 
     const options = {
-      query,
+      query: query,
       projectId,
-      maximumBytesBilled: "10000000000", // 1GB limit
-      timeoutMs: TIMEOUT,
-      maxResults: MAX_RESULTS,
-      useLegacySql: false
     };
 
     const [job] = await bigqueryClient.createQueryJob(options);
-    const [response] = await job.getQueryResults({
-      maxResults: MAX_RESULTS,
-      timeoutMs: TIMEOUT
-    });
+    const [response] = await job.getQueryResults();
 
     return NextResponse.json(response as BigQueryResponse[]);
   } catch (error) {
