@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { type RenderImage } from "@/types/render";
 import { useQuery } from "@tanstack/react-query";
 
@@ -15,7 +14,7 @@ export function useRenderImages(articleId: string) {
     queryKey: ["renders", articleId],
     queryFn: () => checkRendersExist(articleId),
     staleTime: 30000, // Cache for 30 seconds
-    cacheTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
+    gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes (renamed from cacheTime)
   });
 
   const images = exists 
