@@ -412,9 +412,76 @@ analytics_351120479: (eventsBetween: string) => `
       (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.purchases_with_service') AS INT64)) FROM product_metrics),
       (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_button_clicks') AS INT64)) FROM product_metrics)
     ) * 100, 2) AS overall_avg_conversion_rate_with_ar
+  ),
+
+  overall_metrics AS (
+  SELECT 'overall' AS data_type, m.event_name AS metric_name,
+  JSON_OBJECT('value', CAST(m.count AS STRING)) AS metrics
+  FROM (
+    SELECT 'total_views' AS event_name,
+         CAST((SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_views') AS INT64)) 
+              FROM product_metrics) AS FLOAT64) as count
+    UNION ALL
+    SELECT 'overall_conv_rate' AS event_name, overall_avg_conversion_rate AS count 
+    FROM conversion_rates
+    UNION ALL
+    SELECT 'overall_conv_rate_CharpstAR', overall_avg_conversion_rate_with_ar 
+    FROM conversion_rates
+    UNION ALL
+    SELECT 'charpstAR_AR_Button_Click' AS event_name,
+           CAST((SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.AR_Button_Clicks') AS INT64)) 
+                FROM product_metrics) AS FLOAT64) as count
+    UNION ALL
+    SELECT 'charpstAR_3D_Button_Click' AS event_name,
+           CAST((SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$._3D_Button_Clicks') AS INT64)) 
+                FROM product_metrics) AS FLOAT64) as count
+    UNION ALL
+    SELECT 'charpstAR_Load', total_events FROM event_counts 
+    WHERE event_name = 'charpstAR_Load'
+    UNION ALL
+    SELECT 'percentage_charpstAR', percentage_ar_users FROM ar_percentage
+    UNION ALL
+    SELECT 'session_time_charpstAR', ROUND(avg_ar_session_duration_seconds, 2) 
+    FROM avg_ar_duration
+    UNION ALL
+    SELECT 'session_time_default', ROUND(avg_session_duration_seconds, 2) 
+    FROM avg_engagement_time
+    UNION ALL
+    SELECT 'combined_session_time', ROUND(total_avg_session_duration, 2) 
+    FROM combined_durations
+    UNION ALL
+    SELECT 'cart_after_ar_percentage', percentage_cart_after_ar 
+    FROM cart_percentage
+    UNION ALL
+    SELECT 'total_purchases', CAST(total_purchases AS FLOAT64) 
+    FROM total_purchases_overall
+    UNION ALL
+    SELECT 'total_unique_users', CAST(total_ar_load_users AS FLOAT64) 
+    FROM ar_load_user_count
+    UNION ALL
+    SELECT 'total_activated_users', CAST(total_users AS FLOAT64) 
+    FROM total_activated_users
+    UNION ALL
+    SELECT 'cart_percentage_default', default_cart_percentage 
+    FROM cart_default_percentage
+    UNION ALL
+    SELECT 'average_order_value_all_users', avg_order_value 
+    FROM avg_order_value_all_users
+    UNION ALL
+    SELECT 'average_order_value_ar_users', avg_order_value 
+    FROM avg_order_value_ar_users
+    UNION ALL
+    SELECT 'total_purchases_after_ar' AS event_name, 
+           CAST((
+             SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.purchases_with_service') AS INT64)) 
+             FROM product_metrics
+           ) AS FLOAT64) as count
+  ) m
   )
 
   SELECT * FROM product_metrics
+  UNION ALL
+  SELECT * FROM overall_metrics
   ORDER BY data_type, metric_name`
 ,
 
