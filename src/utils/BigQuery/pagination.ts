@@ -23,7 +23,7 @@ export async function executePagedQuery(
     timeoutMs = 60000
   } = options;
 
-  try {
+  try { 
     // Create and wait for the query job
     const [job] = await client.createQueryJob({
       query,

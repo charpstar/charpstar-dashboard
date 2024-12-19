@@ -21,5 +21,5 @@ export async function fetchAnalytics(config: {
     throw new Error("Failed to fetch analytics data");
   }
 
-  return response.json();
+  return response.json(); 
 }
