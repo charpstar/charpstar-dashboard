@@ -1,9 +1,50 @@
-import { useQuery } from "@tanstack/react-query";
+"use server";
 
-import { getEventsCount } from "@/utils/BigQuery/getEventsCount";
-import { useUser } from "@/contexts/UserContext";
+import { getBigQueryClient } from "@/utils/BigQuery/client";
+import { type EventsData, type EventName, defaultEvents } from "@/utils/defaultEvents";
 
-import { defaultEvents } from "@/utils/defaultEvents";
+export async function getEventsCount({
+  projectId,
+  datasetId,
+  startTableName,
+  endTableName,
+}: {
+  projectId: string;
+  datasetId: string;
+  startTableName: string;
+  endTableName: string;
+}): Promise<Record<EventName, number>> {
+  const bigqueryClient = getBigQueryClient({ projectId });
+  const query = `/* Your existing query */`;
+
+  const options = {
+    query: query,
+    projectId,
+  };
+
+  const [job] = await bigqueryClient.createQueryJob(options);
+  const response = await job.getQueryResults();
+
+  const result = response[0] as unknown as {
+    event_name: EventName;
+    count: number;
+  }[];
+
+  // Create a map of event counts with default values
+  const eventCounts: Partial<Record<EventName, number>> = {};
+  
+  // Initialize all events with 0
+  Object.keys(defaultEvents).forEach((key) => {
+    eventCounts[key as EventName] = 0;
+  });
+
+  // Update with actual values from query
+  result.forEach(({ event_name, count }) => {
+    eventCounts[event_name] = count;
+  });
+
+  return eventCounts as Record<EventName, number>;
+}
 
 export function useEventsCount({
   startTableName,
@@ -17,7 +58,7 @@ export function useEventsCount({
 
   const shouldEnableFetching = Boolean(user && startTableName && endTableName);
 
-  const { data: _eventsCount, isLoading: isEventsCountLoading } = useQuery({
+  const { data: eventsCount = defaultEvents, isLoading: isEventsCountLoading } = useQuery({
     queryKey: [
       "eventsCount",
       projectId,
@@ -28,8 +69,6 @@ export function useEventsCount({
     queryFn: getEventsCountFn,
     enabled: shouldEnableFetching,
   });
-
-  const eventsCount = _eventsCount ?? defaultEvents;
 
   return { eventsCount, isEventsCountLoading };
 }
@@ -47,23 +86,19 @@ export async function getEventsCountFn({
 }) {
   const [, projectId, datasetId, startTableName, endTableName] = queryKey;
 
-  const idk = await getEventsCount({
+  const counts = await getEventsCount({
     projectId,
     datasetId,
-
     startTableName,
     endTableName,
   });
 
-  const result: typeof defaultEvents = Object.fromEntries(
-    Object.entries(defaultEvents).map(([event_name, data]) => [
-      event_name,
-      {
-        ...data,
-        count: idk[event_name] ?? 0,
-      },
-    ]),
-  );
+  // Transform the counts into the expected format
+  const result: EventsData = {};
+  
+  Object.entries(defaultEvents).forEach(([eventName, metadata]) => {
+    result[eventName as EventName] = counts[eventName as EventName] || 0;
+  });
 
   return result;
 }
