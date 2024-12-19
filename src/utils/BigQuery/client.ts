@@ -7,12 +7,15 @@ export function getBigQueryClient({ projectId }: { projectId: string }) {
   return new BigQuery({
     projectId: projectId || envProjectId,
     credentials,
-    // Add timeout and retry settings
-    timeout: 60000, // 60 seconds
     retryOptions: {
       retryDelayMultiplier: 2,
       totalTimeout: 90000, // 90 seconds total including retries
       maxRetries: 3
+    },
+    queryOptions: {
+      maximumBytesBilled: "1000000000", // 1GB
+      useQueryCache: true,
+      priority: "INTERACTIVE"
     }
   });
 }
