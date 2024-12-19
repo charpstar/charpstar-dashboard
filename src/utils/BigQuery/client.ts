@@ -8,9 +8,5 @@ export function getBigQueryClient({ projectId }: { projectId: string }) {
   return new BigQuery({
     projectId: projectId || envProjectId,
     credentials,
-    retryOptions: {
-      retryDelayMultiplier: 2,
-      totalTimeout: 180000, // 3 minutes
-    },
   });
 }
