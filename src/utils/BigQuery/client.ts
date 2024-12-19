@@ -1,4 +1,3 @@
-// utils/BigQuery/client.ts
 import { BigQuery } from "@google-cloud/bigquery";
 import { getGCPCredentials } from "@/utils/getGCPCredentials";
 
