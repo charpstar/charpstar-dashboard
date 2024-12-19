@@ -2,19 +2,14 @@ import { NextResponse } from "next/server";
 import { getBigQueryClient } from "@/utils/BigQuery/client";
 import { queries } from "@/utils/BigQuery/clientQueries";
 import { getEventsBetween } from "@/utils/BigQuery/utils";
-import { executePagedQuery } from "@/utils/BigQuery/pagination";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
+
+const MAX_RESULTS = 10000; // Limit maximum results
+const TIMEOUT = 60000; // 60 second timeout
 
 export async function POST(request: Request) {
   try {
-    const { 
-      projectId, 
-      datasetId, 
-      startTableName, 
-      endTableName,
-      pageToken,
-      pageSize = 1000
-    } = await request.json();
+    const { projectId, datasetId, startTableName, endTableName } = await request.json();
 
     const bigqueryClient = getBigQueryClient({ projectId });
     const query = queries[datasetId as keyof typeof queries](
@@ -28,17 +23,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await executePagedQuery(bigqueryClient, query, {
-      pageSize,
-      pageToken,
-      timeoutMs: 60000
+    const options = {
+      query,
+      projectId,
+      maximumBytesBilled: "10000000000", // 1GB limit
+      timeoutMs: TIMEOUT,
+      maxResults: MAX_RESULTS,
+      useLegacySql: false
+    };
+
+    const [job] = await bigqueryClient.createQueryJob(options);
+    const [response] = await job.getQueryResults({
+      maxResults: MAX_RESULTS,
+      timeoutMs: TIMEOUT
     });
 
-    return NextResponse.json({
-      data: result.rows as BigQueryResponse[],
-      nextPageToken: result.nextPageToken,
-      totalRows: result.totalRows
-    });
+    return NextResponse.json(response as BigQueryResponse[]);
   } catch (error) {
     console.error("BigQuery API Error:", error);
     return NextResponse.json(

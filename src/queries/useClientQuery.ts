@@ -1,13 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { transformProductMetrics, transformOverallMetrics } from "@/utils/BigQuery/transformers";
 import { useUser } from "@/contexts/UserContext";
-import { fetchAnalytics } from "@/utils/analytics/fetcher";
+import type { TDatasets } from "@/utils/BigQuery/clientQueries";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
+
+async function fetchAnalytics(config: {
+  projectId: string;
+  datasetId: string;
+  startTableName: string;
+  endTableName: string;
+}): Promise<BigQueryResponse[]> {
+  const response = await fetch("/api/analytics", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(config),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch analytics data");
+  }
+
+  return response.json();
+}
 
 export function useClientQuery({
   startTableName,
   endTableName,
-  limit = 1000,
 }: {
   startTableName: string;
   endTableName: string;
@@ -25,25 +45,19 @@ export function useClientQuery({
       datasetId,
       startTableName,
       endTableName,
-      limit,
     ],
-    queryFn: async () => {
-      const response = await fetchAnalytics({
-        projectId,
-        datasetId,
-        startTableName,
-        endTableName,
-        pageSize: limit,
-      });
-      
-      return response;
-    },
+    queryFn: () => fetchAnalytics({
+      projectId,
+      datasetId,
+      startTableName,
+      endTableName,
+    }),
     enabled: shouldEnableFetching,
   });
 
   // Split and transform the data
-  const productMetrics = data?.data?.filter(item => item.data_type === 'product') ?? [];
-  const overallMetrics = data?.data?.filter(item => item.data_type === 'overall') ?? [];
+  const productMetrics = data?.filter(item => item.data_type === 'product') ?? [];
+  const overallMetrics = data?.filter(item => item.data_type === 'overall') ?? [];
 
   const clientQueryResult = transformProductMetrics(productMetrics);
   const eventsCount = transformOverallMetrics(overallMetrics);
@@ -51,10 +65,6 @@ export function useClientQuery({
   return { 
     clientQueryResult, 
     eventsCount,
-    isQueryLoading: isLoading,
-    pagination: {
-      nextPageToken: data?.nextPageToken,
-      totalRows: data?.totalRows
-    }
+    isQueryLoading: isLoading 
   };
 }
