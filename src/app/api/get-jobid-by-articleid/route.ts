@@ -1,6 +1,6 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { NextResponse } from "next/response";
+import { NextResponse } from "next/server";
 import { isJobActive } from "@/lib/render/status";
 import { type JobProgress } from "@/types/render";
 
