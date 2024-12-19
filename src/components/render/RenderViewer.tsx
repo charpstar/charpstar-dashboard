@@ -8,7 +8,6 @@ import RenderGrid from "./gallery/RenderGrid";
 import RenderSettings from "./settings/RenderSettings";
 import RenderProgress from "./progress/RenderProgress";
 import ProductDetails from "./details/ProductDetails";
-import { startRender } from "@/lib/render/actions";
 import JSZip from "jszip";
 
 export default function RenderViewer({ articleId }: { articleId: string }) {
@@ -17,26 +16,28 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   const { images, isLoading: isLoadingImages } = useRenderImages(articleId);
   const { products } = useProducts();
   const product = products.find(p => p.articleID === articleId);
-  
-  const [settings] = useState({
-    resolution: "1920x1080",
-    sampleMultiplier: "1x",
-    maxTime: "24"
-  });
-
-  useEffect(() => {
-    if (jobId) {
-      setIsRendering(true);
-    }
-  }, [jobId]);
 
   const handleRender = async () => {
     try {
       setIsRendering(true);
-      const newJobId = await startRender(articleId);
-      setJobId(newJobId);
+      const response = await fetch(`https://cdn.charpstar.net/SharkGaming/Android/${articleId}.glb`);
+      const blob = await response.blob();
+      const formData = new FormData();
+      formData.append('file', blob, `${articleId}.glb`);
+  
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const uploadData = await uploadResponse.json();
+      if (uploadResponse.ok) {
+        setJobId(uploadData.jobId);
+      } else {
+        console.error('Error uploading file:', uploadData.error);
+        setIsRendering(false);
+      }
     } catch (error) {
-      console.error("Failed to start render:", error);
+      console.error('Error fetching file:', error);
       setIsRendering(false);
     }
   };
@@ -47,7 +48,6 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
     try {
       const zip = new JSZip();
       
-      // Download all images
       const imagePromises = images.map(async (image, index) => {
         const response = await fetch(image.url);
         const blob = await response.blob();
@@ -55,8 +55,6 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
       });
 
       await Promise.all(imagePromises);
-
-      // Generate and download the zip file
       const content = await zip.generateAsync({ type: "blob" });
       const url = window.URL.createObjectURL(content);
       const link = document.createElement('a');
@@ -89,7 +87,6 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
         />
 
         <RenderSettings 
-          settings={settings}
           onRender={handleRender}
           onDownloadAll={handleDownloadAll}
           isRendering={isRendering}
@@ -97,7 +94,7 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
           showRenderButton={showRenderButton}
         />
 
-        {isRendering && (
+        {(isRendering || jobId) && (
           <RenderProgress 
             progress={progress} 
             status={status} 
