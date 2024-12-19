@@ -4,8 +4,7 @@ import { queries } from "@/utils/BigQuery/clientQueries";
 import { getEventsBetween } from "@/utils/BigQuery/utils";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
 
-// Set a reasonable timeout
-const QUERY_TIMEOUT = 30000; // 30 seconds
+const QUERY_TIMEOUT = 60000; // 60 seconds
 
 export async function POST(request: Request) {
   try {
@@ -33,29 +32,45 @@ export async function POST(request: Request) {
     const options = {
       query,
       projectId,
-      timeout: QUERY_TIMEOUT,
       maximumBytesBilled: "1000000000", // 1GB
+      // Add query optimization hints
+      configuration: {
+        query: {
+          maximumBytesBilled: "1000000000",
+          useQueryCache: true,
+          priority: "INTERACTIVE",
+          useLegacySql: false
+        }
+      }
     };
 
-    const [job] = await bigqueryClient.createQueryJob(options);
-    
-    // Use Promise.race to implement timeout
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Query timeout')), QUERY_TIMEOUT);
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), QUERY_TIMEOUT);
 
-    const [response] = await Promise.race([
-      job.getQueryResults(),
-      timeoutPromise
-    ]) as [BigQueryResponse[]];
+    try {
+      const [job] = await bigqueryClient.createQueryJob(options);
+      const [response] = await job.getQueryResults({
+        maxResults: 1000,
+        timeoutMs: QUERY_TIMEOUT
+      });
 
-    return NextResponse.json(response);
+      clearTimeout(timeout);
+      return NextResponse.json(response);
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        return NextResponse.json(
+          { error: "Query timeout exceeded" },
+          { status: 504 }
+        );
+      }
+      throw error;
+    }
   } catch (error) {
     console.error("BigQuery API Error:", error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { error: "Failed to fetch analytics data", details: errorMessage },
-      { status: error instanceof Error && error.message === 'Query timeout' ? 504 : 500 }
+      { status: 500 }
     );
   }
 }
