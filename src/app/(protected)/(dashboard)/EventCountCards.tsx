@@ -48,9 +48,12 @@ function TrendIndicator({ value }: { value: number }) {
   
   const isPositive = value > 0;
   return (
-    <div className={`flex items-center text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-      {isPositive ? <ArrowUpIcon className="w-4 h-4" /> : <ArrowDownIcon className="w-4 h-4" />}
-      <span>{Math.abs(value).toFixed(1)}%</span>
+    <div className="flex flex-col items-end">
+      <div className={`flex items-center text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+        {isPositive ? <ArrowUpIcon className="w-4 h-4" /> : <ArrowDownIcon className="w-4 h-4" />}
+        <span>{Math.abs(value).toFixed(1)}%</span>
+      </div>
+      <span className="text-xs text-muted-foreground">vs previous 30 days</span>
     </div>
   );
 }
