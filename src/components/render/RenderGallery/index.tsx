@@ -13,16 +13,24 @@ export default function RenderGallery({ images }: { images: RenderImage[] }) {
     return null;
   }
 
+  // Ensure we have a valid selected index
+  const currentIndex = Math.min(selectedIndex, images.length - 1);
+  const selectedImage = images[currentIndex];
+
+  if (!selectedImage) {
+    return null;
+  }
+
   return (
     <Card>
       <CardContent className="p-6 space-y-4">
         <MainImage
-          image={images[selectedIndex]}
-          alt={`Render view ${selectedIndex + 1}`}
+          image={selectedImage}
+          alt={`Render view ${currentIndex + 1}`}
         />
         <ThumbnailStrip
           images={images}
-          selectedIndex={selectedIndex}
+          selectedIndex={currentIndex}
           onSelect={setSelectedIndex}
         />
       </CardContent>
