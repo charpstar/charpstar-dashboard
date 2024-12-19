@@ -1,5 +1,4 @@
 import type { BigQuery, Job } from "@google-cloud/bigquery";
-import type { BigQueryMetadata, BigQueryOptions } from "@/types/bigquery";
 
 export interface PaginationOptions {
   pageSize?: number;
@@ -25,32 +24,28 @@ export async function executePagedQuery(
   } = options;
 
   try {
+    // Create query job with proper typing
     const jobResponse = await client.createQueryJob({
       query,
-      maximumBytesBilled: "100000000000", // 1GB limit
-      jobTimeoutMs: timeoutMs,
+      maximumBytesBilled: "10000000000", // 1GB limit
+      jobTimeoutMs: timeoutMs, // Changed from timeoutMs to jobTimeoutMs
       useLegacySql: false
     });
 
+    // Extract the job from the response
     const job: Job = jobResponse[0];
 
-    const queryOptions: BigQueryOptions = {
+    // Get query results with pagination
+    const [rows, metadata] = await job.getQueryResults({
       maxResults: pageSize,
-      timeoutMs
-    };
-
-    if (pageToken) {
-      queryOptions.pageToken = pageToken;
-    }
-
-    const [rows, metadata] = await job.getQueryResults(queryOptions);
-
-    const queryMetadata = metadata as BigQueryMetadata;
+      pageToken: pageToken || undefined,
+      timeoutMs // This is correct for getQueryResults
+    });
 
     return {
       rows: rows || [],
-      nextPageToken: queryMetadata?.pageToken || null,
-      totalRows: queryMetadata?.totalRows || null
+      nextPageToken: metadata?.pageToken || null,
+      totalRows: metadata?.totalRows || null
     };
   } catch (error) {
     console.error("Error executing paged query:", error);
