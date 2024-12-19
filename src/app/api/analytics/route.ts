@@ -1,6 +1,6 @@
 // src/app/api/analytics/route.ts
 import { NextResponse } from "next/server";
-import { BigQuery, Job, QueryRowsResponse } from "@google-cloud/bigquery";
+import { BigQuery, Job, QueryRowsResponse, Query } from "@google-cloud/bigquery";
 import { getBigQueryClient } from "@/utils/BigQuery/client";
 import { queries } from "@/utils/BigQuery/clientQueries";
 import { getEventsBetween } from "@/utils/BigQuery/utils";
@@ -8,30 +8,30 @@ import type { BigQueryResponse } from "@/utils/BigQuery/types";
 
 const MAX_RETRIES = 3;
 const TIMEOUT_MS = 180000; // 3 minutes
-const BYTES_LIMIT = 6000000000; // 6GB
+const BYTES_LIMIT = "6000000000"; // 6GB as string since BigQuery expects string
 
-interface QueryOptions {
-  query: string;
+interface QueryConfig extends Query {
   projectId: string;
+  query: string;
   timeoutMs?: number;
-  maximumBytesBilled?: string | number;
+  maximumBytesBilled?: string;
 }
 
 async function executeQueryWithRetry(
   bigqueryClient: BigQuery,
-  options: QueryOptions,
+  options: QueryConfig,
   attempt = 1
 ): Promise<QueryRowsResponse> {
   try {
-    // Properly type the createQueryJob response
-    const jobResponse = await bigqueryClient.createQueryJob(options);
-    const job = jobResponse[0] as Job;
+    const [job] = await bigqueryClient.createQueryJob({
+      query: options.query,
+      maximumBytesBilled: options.maximumBytesBilled,
+      timeoutMs: options.timeoutMs,
+    });
     
-    // Properly type the query results
-    const queryResponse = await job.getQueryResults({
+    const [rows] = await job.getQueryResults({
       timeoutMs: TIMEOUT_MS,
     });
-    const rows = queryResponse[0];
     
     return rows;
   } catch (error) {
@@ -53,7 +53,6 @@ interface QueryRequestBody {
 
 export async function POST(request: Request) {
   try {
-    // Type the request body
     const body = await request.json() as QueryRequestBody;
     const { projectId, datasetId, startTableName, endTableName } = body;
     
@@ -70,7 +69,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const options: QueryOptions = {
+    const options: QueryConfig = {
       query,
       projectId,
       timeoutMs: TIMEOUT_MS,
@@ -78,13 +77,9 @@ export async function POST(request: Request) {
     };
 
     const response = await executeQueryWithRetry(bigqueryClient, options);
-    
-    // Ensure response matches expected BigQueryResponse type
-    const typedResponse = response as unknown as BigQueryResponse[];
-    return NextResponse.json(typedResponse);
+    return NextResponse.json(response as BigQueryResponse[]);
 
   } catch (error) {
-    // Type guard for error handling
     if (error instanceof Error) {
       if (error.message.includes('bytes billed')) {
         return NextResponse.json(
@@ -106,7 +101,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Handle non-Error objects
     console.error("Unknown BigQuery Error:", error);
     return NextResponse.json(
       { 
