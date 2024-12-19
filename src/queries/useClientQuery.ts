@@ -1,4 +1,4 @@
-// hooks/useClientQuery.ts
+// src/queries/useClientQuery.ts
 import { useQuery } from "@tanstack/react-query";
 import { transformProductMetrics, transformOverallMetrics } from "@/utils/BigQuery/transformers";
 import { useUser } from "@/contexts/UserContext";
@@ -56,7 +56,7 @@ export function useClientQuery({
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * Math.pow(2, attemptIndex), 30000),
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 30 * 60 * 1000,   // Changed from cacheTime to gcTime
   });
 
   const productMetrics = data?.filter(item => item.data_type === 'product') ?? [];
