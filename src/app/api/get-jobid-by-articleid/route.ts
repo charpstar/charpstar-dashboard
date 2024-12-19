@@ -1,7 +1,8 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/response";
 import { isJobActive } from "@/lib/render/status";
+import { type JobProgress } from "@/types/render";
 
 const dynamoClient = new DynamoDBClient({ 
   region: process.env.AWS_REGION,
@@ -38,7 +39,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'No job found' }, { status: 404 });
     }
 
-    const job = Items[0];
+    const job = Items[0] as JobProgress;
     
     // Only return active jobs
     if (!isJobActive(job)) {

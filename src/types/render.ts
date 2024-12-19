@@ -11,6 +11,8 @@ export interface RenderImage {
 }
 
 export interface JobProgress {
+  jobId: string;
+  articleID: string;
   progress: number;
   status: 'PENDING' | 'RUNNING' | 'FAILED' | 'ERROR' | 'COMPLETED';
   modelStatus: 'PENDING' | 'PROCESSING' | 'FAILED' | 'COMPLETED';
