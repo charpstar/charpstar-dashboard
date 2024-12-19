@@ -7,6 +7,5 @@ export function getBigQueryClient({ projectId }: { projectId: string }) {
   return new BigQuery({
     projectId: projectId || envProjectId,
     credentials,
-    maximumBytesBilled: "3000000000" // 1GB
   });
 }
