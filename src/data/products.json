@@ -1,0 +1,1017 @@
+{
+  "clients": {
+    "SoffaDirekt": [
+
+  {
+    "articleID": "92694",
+    "name": "NINNI Stol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ninni-stol-vitoljad-ek.html",
+    "glbLink": "https://sd.charpstar.net/Android/92694.glb"
+  },
+  {
+    "articleID": "XNR125-NAT",
+    "name": "LUNDA Karmstol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/lunda-karmstol-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/XNR125-NAT.glb"
+  },
+  {
+    "articleID": "XNR101-BL",
+    "name": "LUNDA 11 Karmstol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/lunda-11-karmstol-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/XNR101-BL.glb"
+  },
+  {
+    "articleID": "XNR101-NAT",
+    "name": "LUNDA 11 Karmstol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/lunda-11-karmstol-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/XNR101-NAT.glb"
+  },
+  {
+    "articleID": "22085-5",
+    "name": "YRSA Stol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/yrsa-stol-vit.html",
+    "glbLink": "https://sd.charpstar.net/Android/22085-5.glb"
+  },
+  {
+    "articleID": "22338-5",
+    "name": "GINA Stol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/gina-stol-vitoljad-ek.html",
+    "glbLink": "https://sd.charpstar.net/Android/22338-5.glb"
+  },
+  {
+    "articleID": "XNRMED-BL",
+    "name": "MEDVIK Karmstol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/medvik-karmstol-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/XNRMED-BL.glb"
+  },
+  {
+    "articleID": "2086MAR-0000092694",
+    "name": "SELINE/NINNI Matgrupp 4",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/seline-ninni-matgrupp-4-stolar-marmor.html",
+    "glbLink": "https://sd.charpstar.net/Android/2086MAR-0000092694.glb"
+  },
+  {
+    "articleID": "64580-0000092694",
+    "name": "MADS/NINNI Matgrupp 6",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/mads-ninni-matgrupp-6-stolar.html",
+    "glbLink": "https://sd.charpstar.net/Android/64580-0000092694.glb"
+  },
+  {
+    "articleID": "2093NAT-XNR101NAT-4",
+    "name": "RIBERA/LUNDA 11 Matgrupp 4 Stolar",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ribera-lunda-11-matgrupp-4-stolar-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/2093NAT-XNR101NAT-4.glb"
+  },
+  {
+    "articleID": "2093NAT-XNR101BL-4",
+    "name": "RIBERA/LUNDA 11 Matgrupp 4 Stolar",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ribera-lunda-11-matgrupp-4-stolar-natur-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/2093NAT-XNR101BL-4.glb"
+  },
+  {
+    "articleID": "RIBERA-0000092694",
+    "name": "RIBERA/NINNI Matgrupp 4",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ribera-ninni-matgrupp-4-stolar-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/RIBERA-0000092694.glb"
+  },
+  {
+    "articleID": "RIBERA-22085-5",
+    "name": "RIBERA/YRSA Matgrupp 4",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ribera-yrsa-matgrupp-4-stolar-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/RIBERA-22085-5.glb"
+  },
+  {
+    "articleID": "2093NAT-XNRMEDBL-4",
+    "name": "RIBERA/MEDVIK Matgrupp 4",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ribera-medvik-matgrupp-4-stolar-natur-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/2093NAT-XNRMEDBL-4.glb"
+  },
+  {
+    "articleID": "2093BL-XNR343BL-4",
+    "name": "RIBERA/CHIRELL Matgrupp 4",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ribera-chirell-matgrupp-4-stolar-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/2093BL-XNR343BL-4.glb"
+  },
+  {
+    "articleID": "64580-22338-5",
+    "name": "MADS/GINA Matgrupp 6 Stolar",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/mads-gina-matgrupp-6-stolar-.html",
+    "glbLink": "https://sd.charpstar.net/Android/64580-22338-5.glb"
+  },
+  {
+    "articleID": "1434",
+    "name": "FALSTERBO Soffa Rotting",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/falsterbo-soffa-rotting-.html",
+    "glbLink": "https://sd.charpstar.net/Android/1434.glb"
+  },
+  {
+    "articleID": "1440",
+    "name": "FALSTERBO F\u00e5t\u00f6lj Rotting",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/falsterbo-fatolj-rotting.html",
+    "glbLink": "https://sd.charpstar.net/Android/1440.glb"
+  },
+  {
+    "articleID": "2737",
+    "name": "FALSTERBO S\u00e4nggavel 160 Rotting Classic",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/falsterbo-sanggavel-160-rotting-classic.html",
+    "glbLink": "https://sd.charpstar.net/Android/2737.glb"
+  },
+  {
+    "articleID": "1442",
+    "name": "FALSTERBO S\u00e4nggavel 180 Rotting Classic",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/falsterbo-sanggavel-180-rotting-classic-.html",
+    "glbLink": "https://sd.charpstar.net/Android/1442.glb"
+  },
+  {
+    "articleID": "5043",
+    "name": "FALSTERBO Stol Rotting",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/falsterbo-stol-rotting.html",
+    "glbLink": "https://sd.charpstar.net/Android/5043.glb"
+  },
+  {
+    "articleID": "5044",
+    "name": "FALSTERBO Duo Dagb\u00e4dd Rotting",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/falsterbo-duo-dagbadd-rotting.html",
+    "glbLink": "https://sd.charpstar.net/Android/5044.glb"
+  },
+  {
+    "articleID": "180206",
+    "name": "MAGGIO Soffbord 100",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/maggio-soffbord-100.html",
+    "glbLink": "https://sd.charpstar.net/Android/180206.glb"
+  },
+  {
+    "articleID": "180213",
+    "name": "PORTER Soffbord x2",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/porter-soffbord-x2.html",
+    "glbLink": "https://sd.charpstar.net/Android/180213.glb"
+  },
+  {
+    "articleID": "20190089",
+    "name": "SARA Matstol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/sara-matstol-gra-2.html",
+    "glbLink": "https://sd.charpstar.net/Android/20190089.glb"
+  },
+  {
+    "articleID": "20190089-2018000063",
+    "name": "BERGEN/SARA Matgrupp 4 Stolar",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/bergen-sara-matgrupp-4-stolar-svart-gra.html",
+    "glbLink": "https://sd.charpstar.net/Android/20190089-2018000063.glb"
+  },
+  {
+    "articleID": "2328-HLR-21",
+    "name": "WINDSOR Chesterfield B\u00e4ddsoffa Velvet",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/windsor-chesterfield-baddsoffa-velvet-gra-.html",
+    "glbLink": "https://sd.charpstar.net/Android/2328-HLR-21.glb"
+  },
+  {
+    "articleID": "2328-HLR-8",
+    "name": "WINDSOR Chesterfield B\u00e4ddsoffa Velvet",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/windsor-chesterfield-baddsoffa-velvet-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2328-HLR-8.glb"
+  },
+  {
+    "articleID": "259390200",
+    "name": "NADI B\u00e4nk",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/nadi-bank.html",
+    "glbLink": "https://sd.charpstar.net/Android/259390200.glb"
+  },
+  {
+    "articleID": "259390202",
+    "name": "NADI B\u00e4nk L",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/nadi-bank-natur-l.html",
+    "glbLink": "https://sd.charpstar.net/Android/259390202.glb"
+  },
+  {
+    "articleID": "260840400",
+    "name": "OUT Bord M",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/out-bord-gra-m.html",
+    "glbLink": "https://sd.charpstar.net/Android/260840400.glb"
+  },
+  {
+    "articleID": "2632-CORN-LHF-067-5D",
+    "name": "MILFORD B\u00e4ddsoffa Divan V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/milford-baddsoffa-divan-vanster-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2632-CORN-LHF-067-5D.glb"
+  },
+  {
+    "articleID": "2632-CORN-RHF-067-5D",
+    "name": "MILFORD B\u00e4ddsoffa Divan H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/milford-baddsoffa-divan-hoger-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2632-CORN-RHF-067-5D.glb"
+  },
+  {
+    "articleID": "2632067-5D",
+    "name": "MILFORD B\u00e4ddsoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/milford-baddsoffa-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2632067-5D.glb"
+  },
+  {
+    "articleID": "2632129-7",
+    "name": "MILFORD B\u00e4ddsoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/milford-baddsoffa-gra.html",
+    "glbLink": "https://sd.charpstar.net/Android/2632129-7.glb"
+  },
+  {
+    "articleID": "MILF3S-067-5D",
+    "name": "MILFORD 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/milford-3-sitssoffa-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MILF3S-067-5D.glb"
+  },
+  {
+    "articleID": "2927",
+    "name": "PORTOFINO 3-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/portofino-3-sits-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2927.glb"
+  },
+  {
+    "articleID": "4809",
+    "name": "PORTOFINO 3-sitssoffa Velvet",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/portofino-3-sitssoffa-velvet-ljusgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/4809.glb"
+  },
+  {
+    "articleID": "2928",
+    "name": "PORTOFINO 2-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/portofino-2-sits-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2928.glb"
+  },
+  {
+    "articleID": "2929",
+    "name": "PORTOFINO F\u00e5t\u00f6lj",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/portofino-fatolj-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2929.glb"
+  },
+  {
+    "articleID": "2933",
+    "name": "ANCONA Divan V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ancona-divansoffa-vanster-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2933.glb"
+  },
+  {
+    "articleID": "2934",
+    "name": "ANCONA Divan H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ancona-divansoffa-hoger-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2934.glb"
+  },
+  {
+    "articleID": "4781",
+    "name": "ANCONA Divansoffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ancona-divansoffa-vanster-morkbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/4781.glb"
+  },
+  {
+    "articleID": "4782",
+    "name": "ANCONA Divansoffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ancona-divansoffa-hoger-morkbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/4782.glb"
+  },
+  {
+    "articleID": "2935",
+    "name": "ANCONA 4-Sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ancona-4-sits-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2935.glb"
+  },
+  {
+    "articleID": "2936",
+    "name": "ANCONA 3-Sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/ancona-3-sits-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/2936.glb"
+  },
+  {
+    "articleID": "40181569",
+    "name": "REKTANGUL\u00c4R Vinst\u00e4ll",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/rektangular-vinstall-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/40181569.glb"
+  },
+  {
+    "articleID": "4904",
+    "name": "WOODY Sidobord L\u00e5gt",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/woody-sidobord-lagt.html",
+    "glbLink": "https://sd.charpstar.net/Android/4904.glb"
+  },
+  {
+    "articleID": "6797",
+    "name": "WOODY Soffbord",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/woody-soffbord.html",
+    "glbLink": "https://sd.charpstar.net/Android/6797.glb"
+  },
+  {
+    "articleID": "P3-8307",
+    "name": "WOODY Sidobord 55",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/woody-sidobord-55.html",
+    "glbLink": "https://sd.charpstar.net/Android/P3-8307.glb"
+  },
+  {
+    "articleID": "P2-8306",
+    "name": "WOODY Sidobord 60",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/woody-sidobord-60.html",
+    "glbLink": "https://sd.charpstar.net/Android/P2-8306.glb"
+  },
+  {
+    "articleID": "P1-8305",
+    "name": "WOODY Sidobord 40",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/woody-sidobord-40.html",
+    "glbLink": "https://sd.charpstar.net/Android/P1-8305.glb"
+  },
+  {
+    "articleID": "527-TYL-FLW201A",
+    "name": "TYL\u00d6SAND 3-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/tylosand-3-sits-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/527-TYL-FLW201A.glb"
+  },
+  {
+    "articleID": "527-TYL-FLW5A",
+    "name": "TYL\u00d6SAND 3-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/tylosand-3-sits-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/527-TYL-FLW5A.glb"
+  },
+  {
+    "articleID": "527-TYL-LEFT-FLW5A",
+    "name": "TYL\u00d6SAND Tyl\u00f6sand Divansoffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/tylosand-divansoffa-vanster-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/527-TYL-LEFT-FLW5A.glb"
+  },
+  {
+    "articleID": "527-TYL-RIGHT-FLW5A",
+    "name": "TYL\u00d6SAND Tyl\u00f6sand Divansoffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/tylosand-divansoffa-hoger-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/527-TYL-RIGHT-FLW5A.glb"
+  },
+  {
+    "articleID": "5626",
+    "name": "BEAU Soffbord",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/beau-soffbord-brun.html",
+    "glbLink": "https://sd.charpstar.net/Android/5626.glb"
+  },
+  {
+    "articleID": "CSC1925-BROWN",
+    "name": "BEAU Karmstol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/beau-karmstol-brun.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC1925-BROWN.glb"
+  },
+  {
+    "articleID": "CSC20207-BROWN",
+    "name": "BEAU Loungestol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/beau-loungestol-brun.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC20207-BROWN.glb"
+  },
+  {
+    "articleID": "CSC20255-BROWN",
+    "name": "BEAU F\u00e5t\u00f6lj",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/beau-fatolj-brun.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC20255-BROWN.glb"
+  },
+  {
+    "articleID": "A001-LAM-2",
+    "name": "GIGI Snurrf\u00e5t\u00f6lj Boucl\u00e9",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/gigi-snurrfatolj-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/A001-LAM-2.glb"
+  },
+  {
+    "articleID": "APA-42138",
+    "name": "AMALIE Soffbord 100x45",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/amalie-soffbord-100x45.html",
+    "glbLink": "https://sd.charpstar.net/Android/APA-42138.glb"
+  },
+  {
+    "articleID": "APA-72794-B",
+    "name": "AMALIE Soffbord 80x80",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/amalie-soffbord-80x80.html",
+    "glbLink": "https://sd.charpstar.net/Android/APA-72794-B.glb"
+  },
+  {
+    "articleID": "COR-2-MITT-1-WH",
+    "name": "BROKLYN Modulsoffa 4-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/cor-2-mitt-1-wh.html",
+    "glbLink": "https://sd.charpstar.net/Android/COR-2-MITT-1-WH.glb"
+  },
+  {
+    "articleID": "Y1728ANA-LR-WH",
+    "name": "BROKLYN Modulsoffa 3-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/broklyn-modulsoffa-3-sits-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/Y1728ANA-LR-WH.glb"
+  },
+  {
+    "articleID": "CSC2001-BL-NAT",
+    "name": "CHOLET Stol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/cholet-stol-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC2001-BL-NAT.glb"
+  },
+  {
+    "articleID": "CSC2001-NAT",
+    "name": "CHOLET Stol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/cholet-stol-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC2001-NAT.glb"
+  },
+  {
+    "articleID": "CSC2008-NATURAL",
+    "name": "VIRA Stol",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/vira-stol-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC2008-NATURAL.glb"
+  },
+  {
+    "articleID": "CST1803-NAT",
+    "name": "ANGLET Soffbord",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/anglet-soffbord-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/CST1803-NAT.glb"
+  },
+  {
+    "articleID": "CST20201-BL-NAT",
+    "name": "ALEGRI Soffbord 100",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/alegri-soffbord-svart-100.html",
+    "glbLink": "https://sd.charpstar.net/Android/CST20201-BL-NAT.glb"
+  },
+  {
+    "articleID": "DAL-MOR120PKT",
+    "name": "DALAR\u00d6 120 S\u00e4ngpaket M\u00f6rk\u00f6",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/dalaro-120-sangpaket-morko-ljusgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/DAL-MOR120PKT.glb"
+  },
+  {
+    "articleID": "DAL-MOR160PKT",
+    "name": "DALAR\u00d6 160 S\u00e4ngpaket M\u00f6rk\u00f6",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/dalaro-160-sangpaket-morko-ljusgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/DAL-MOR160PKT.glb"
+  },
+  {
+    "articleID": "DAL-MOR90PKT",
+    "name": "DALAR\u00d6 90 S\u00e4ngpaket M\u00f6rk\u00f6",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/dalaro-90-sangpaket-morko-ljusgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/DAL-MOR90PKT.glb"
+  },
+  {
+    "articleID": "DAL-MOR90PKT-SV",
+    "name": "DALAR\u00d6 90 S\u00e4ngpaket M\u00f6rk\u00f6",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/dalaro-90-sangpaket-morko-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/DAL-MOR90PKT-SV.glb"
+  },
+  {
+    "articleID": "DJ4SSA02",
+    "name": "DJURSHOLM 4-sits Sammet",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/djursholm-4-sits-sammet-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/DJ4SSA02.glb"
+  },
+  {
+    "articleID": "DO3SBR001",
+    "name": "DOVER Grand Deluxe 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/dover-grand-deluxe-3-sitssoffa-sandbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/DO3SBR001.glb"
+  },
+  {
+    "articleID": "DO4SBR001",
+    "name": "DOVER Grand Deluxe 4-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/dover-grand-deluxe-4-sitssoffa-sandbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/DO4SBR001.glb"
+  },
+  {
+    "articleID": "EK2SES05",
+    "name": "EKSUND 2,5-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/eksund-2-sits-cognac.html",
+    "glbLink": "https://sd.charpstar.net/Android/EK2SES05.glb"
+  },
+  {
+    "articleID": "EK3SES05",
+    "name": "EKSUND 3-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/eksund-3-sits-cognac.html",
+    "glbLink": "https://sd.charpstar.net/Android/EK3SES05.glb"
+  },
+  {
+    "articleID": "GOD4ASA11",
+    "name": "GOTLAND U-Soffa XL H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/gotland-u-soffa-xl-hoger-ljusgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/GOD4ASA11.glb"
+  },
+  {
+    "articleID": "GOD3ASA11",
+    "name": "GOTLAND U-Soffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/gotland-u-soffa-hoger-ljusgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/GOD3ASA11.glb"
+  },
+  {
+    "articleID": "HS-196-30-19",
+    "name": "CROMWELL 3-sits soffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/cromwell-3-sits-soffa-sand.html",
+    "glbLink": "https://sd.charpstar.net/Android/HS-196-30-19.glb"
+  },
+  {
+    "articleID": "MO1SBE",
+    "name": "MONACO Premium F\u00e5t\u00f6lj",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-fatolj-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO1SBE.glb"
+  },
+  {
+    "articleID": "MO1SBR001",
+    "name": "MONACO Premium F\u00e5t\u00f6lj",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-fatolj-sandbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO1SBR001.glb"
+  },
+  {
+    "articleID": "MO1SVI",
+    "name": "MONACO Premium F\u00e5t\u00f6lj ",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-fatolj-vit.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO1SVI.glb"
+  },
+  {
+    "articleID": "MO2SBE",
+    "name": "MONACO Premium 2-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-2-sitssoffa-beige-.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO2SBE.glb"
+  },
+  {
+    "articleID": "MO2SVI",
+    "name": "MONACO Premium 2-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-2-sitssoffa-vit.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO2SVI.glb"
+  },
+  {
+    "articleID": "MO3SBE",
+    "name": "MONACO Premium 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-3-sits-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO3SBE.glb"
+  },
+  {
+    "articleID": "MO3SBR001",
+    "name": "MONACO Premium 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-3-sitssoffa-sandbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO3SBR001.glb"
+  },
+  {
+    "articleID": "MO3SKH",
+    "name": "MONACO Premium 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-3-sitssoffa-khaki.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO3SKH.glb"
+  },
+  {
+    "articleID": "MO3SVI",
+    "name": "MONACO Premium 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-3-sitssoffa-vit.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO3SVI.glb"
+  },
+  {
+    "articleID": "MO4SBE",
+    "name": "MONACO Premium 4-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-4-sitssoffa-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO4SBE.glb"
+  },
+  {
+    "articleID": "MO4SBR001",
+    "name": "MONACO Premium 4-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-4-sitssoffa-sandbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO4SBR001.glb"
+  },
+  {
+    "articleID": "MO4SKH",
+    "name": "MONACO Premium 4-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium4-sitssoffa-khaki.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO4SKH.glb"
+  },
+  {
+    "articleID": "MO3DBE",
+    "name": "MONACO Premium Divansoffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-divansoffa-hoger-beige-.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO3DBE.glb"
+  },
+  {
+    "articleID": "MO3DVI",
+    "name": "MONACO Premium Divansoffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-divansoffa-hoger-beige--2.html",
+    "glbLink": "https://sd.charpstar.net/Android/MO3DVI.glb"
+  },
+  {
+    "articleID": "MOD3BE",
+    "name": "MONACO Premium Divansoffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-divansoffa-vanster-beige-.html",
+    "glbLink": "https://sd.charpstar.net/Android/MOD3BE.glb"
+  },
+  {
+    "articleID": "MOD3VI",
+    "name": "MONACO Premium Divansoffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-divansoffa-vanster-vit.html",
+    "glbLink": "https://sd.charpstar.net/Android/MOD3VI.glb"
+  },
+  {
+    "articleID": "MOFSBE",
+    "name": "MONACO Premium Fotpall",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-fotpall-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MOFSBE.glb"
+  },
+  {
+    "articleID": "MOFSBR001",
+    "name": "MONACO Premium Fotpall",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/monaco-premium-fotpall-sandbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MOFSBR001.glb"
+  },
+  {
+    "articleID": "ms0200",
+    "name": "COAT Kl\u00e4dh\u00e4ngare",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/coat-kladhangare-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/ms0200.glb"
+  },
+  {
+    "articleID": "MX3SKH",
+    "name": "MAXIME 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/maxime-3-sitssoffa-khaki.html",
+    "glbLink": "https://sd.charpstar.net/Android/MX3SKH.glb"
+  },
+  {
+    "articleID": "MX3SVI",
+    "name": "MAXIME 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/maxime-3-sitssoffa-vit.html",
+    "glbLink": "https://sd.charpstar.net/Android/MX3SVI.glb"
+  },
+  {
+    "articleID": "MY3653D-17010211",
+    "name": "HAMILTON Divansoffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/hamilton-divansoffa-hoger-gra.html",
+    "glbLink": "https://sd.charpstar.net/Android/MY3653D-17010211.glb"
+  },
+  {
+    "articleID": "MY3653D-17010212",
+    "name": "HAMILTON Divansoffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/hamilton-divansoffa-hoger-graddvit.html",
+    "glbLink": "https://sd.charpstar.net/Android/MY3653D-17010212.glb"
+  },
+  {
+    "articleID": "MY365D3-17010212",
+    "name": "HAMILTON Divansoffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/hamilton-divansoffa-vanster-graddvit.html",
+    "glbLink": "https://sd.charpstar.net/Android/MY365D3-17010212.glb"
+  },
+  {
+    "articleID": "MY662-VB3211-10",
+    "name": "MALVINA 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/malvina-3-sitssoffa-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/MY662-VB3211-10.glb"
+  },
+  {
+    "articleID": "N-ST25SEZ4OL",
+    "name": "STOCKHOLM Leather 3-sits",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-leather-3-sits-cognac.html",
+    "glbLink": "https://sd.charpstar.net/Android/N-ST25SEZ4OL.glb"
+  },
+  {
+    "articleID": "ST25SA02",
+    "name": "STOCKHOLM 3-sits soffa Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-3-sits-soffa-velvet-edition-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/ST25SA02.glb"
+  },
+  {
+    "articleID": "STD3SA02",
+    "name": "STOCKHOLM Divansoffa H\u00f6ger Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-divansoffa-vanster-velvet-edition-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/STD3SA02.glb"
+  },
+  {
+    "articleID": "ST3DSA02",
+    "name": "STOCKHOLM Divansoffa V\u00e4nster Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-divansoffa-hoger-velvet-edition-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/ST3DSA02.glb"
+  },
+  {
+    "articleID": "STA3DRI38",
+    "name": "STOCKHOLM U-soffa V\u00e4nster Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-u-soffa-vanster-velvet-edition-gron.html",
+    "glbLink": "https://sd.charpstar.net/Android/STA3DRI38.glb"
+  },
+  {
+    "articleID": "STA3DRI91",
+    "name": "STOCKHOLM U-soffa V\u00e4nster Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-u-soffa-vanster-velvet-edition-ljusgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/STA3DRI91.glb"
+  },
+  {
+    "articleID": "STA3DRI96",
+    "name": "STOCKHOLM U-soffa V\u00e4nster Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-u-soffa-vanster-velvet-edition-morkgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/STA3DRI96.glb"
+  },
+  {
+    "articleID": "STA3DSA02",
+    "name": "STOCKHOLM U-soffa V\u00e4nster Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-u-soffa-vanster-velvet-edition-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/STA3DSA02.glb"
+  },
+  {
+    "articleID": "STA3DCA01",
+    "name": "STOCKHOLM Fusion U-soffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-fusion-u-soffa-vanster-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/STA3DCA01.glb"
+  },
+  {
+    "articleID": "STD3ARI96",
+    "name": "STOCKHOLM U-soffa H\u00f6ger Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-u-soffa-hoger-velvet-edition-morkgra.html",
+    "glbLink": "https://sd.charpstar.net/Android/STD3ARI96.glb"
+  },
+  {
+    "articleID": "STD3ASA02",
+    "name": "STOCKHOLM U-soffa H\u00f6ger Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-u-soffa-hoger-velvet-edition-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/STD3ASA02.glb"
+  },
+  {
+    "articleID": "STD3ARI38",
+    "name": "STOCKHOLM U-soffa H\u00f6ger Velvet Edition",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stockholm-u-soffa-hoger-velvet-edition-gron.html",
+    "glbLink": "https://sd.charpstar.net/Android/STD3ARI38.glb"
+  },
+  {
+    "articleID": "OL-1993CT-A-BL",
+    "name": "PRISMA Soffbord 80",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/prisma-soffbord-80-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-1993CT-A-BL.glb"
+  },
+  {
+    "articleID": "OL-1993CT-B-BL",
+    "name": "PRISMA Soffbord 120",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/prisma-soffbord-120-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-1993CT-B-BL.glb"
+  },
+  {
+    "articleID": "OL-2040CT-A-BL",
+    "name": "STAR Soffbord",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/star-soffbord-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-2040CT-A-BL.glb"
+  },
+  {
+    "articleID": "OL-2040CT-A-BR",
+    "name": "STAR Soffbord",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/star-soffbord-massing.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-2040CT-A-BR.glb"
+  },
+  {
+    "articleID": "OL-2073CT-A-NATURE",
+    "name": "ELSIE Soffbord",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/elsie-soffbord-natur.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-2073CT-A-NATURE.glb"
+  },
+  {
+    "articleID": "OL-2091CT-A",
+    "name": "CATANIA Soffbord 90",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/catania-soffbord-beige-90.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-2091CT-A.glb"
+  },
+  {
+    "articleID": "OL-2092CT-A-BE",
+    "name": "CATANIA Soffbord 95",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/catania-soffbord-beige-95.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-2092CT-A-BE.glb"
+  },
+  {
+    "articleID": "OL-2091CT-BE",
+    "name": "CATANIA Soffbord 120",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/catania-soffbord-beige-120.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-2091CT-BE.glb"
+  },
+  {
+    "articleID": "OL-2120CT-A-BR",
+    "name": "BRUNI Soffbord 110",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/bruni-soffbord-110.html",
+    "glbLink": "https://sd.charpstar.net/Android/OL-2120CT-A-BR.glb"
+  },
+  {
+    "articleID": "PAB-172N8-CD-1",
+    "name": "LEEDS B\u00e4ddsoffa Chesterfield",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/leeds-baddsoffa-chesterfield.html",
+    "glbLink": "https://sd.charpstar.net/Android/PAB-172N8-CD-1.glb"
+  },
+  {
+    "articleID": "PC-001",
+    "name": "VALETTA Soffbord 90",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/valetta-soffbord-90.html",
+    "glbLink": "https://sd.charpstar.net/Android/PC-001.glb"
+  },
+  {
+    "articleID": "SA3SSA03",
+    "name": "SANDHAMN 3-sitssoffa Velvet",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/sandhamn-3-sitssoffa-velvet-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/SA3SSA03.glb"
+  },
+  {
+    "articleID": "SA3SSO21",
+    "name": "SANDHAMN 3-sitssoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/sandhamn-3-sitssoffa-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/SA3SSO21.glb"
+  },
+  {
+    "articleID": "SAD3SO21",
+    "name": "SANDHAMN Divansoffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/sandhamn-divansoffa-vanster-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/SAD3SO21.glb"
+  },
+  {
+    "articleID": "SKA3C3IN22",
+    "name": "SKAGEN H\u00f6rnsoffa Howard",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/skagen-hornsoffa-howard-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/SKA3C3IN22.glb"
+  },
+  {
+    "articleID": "SKA3SIN22",
+    "name": "SKAGEN 3-sits Howardsoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/skagen-3-sits-howardsoffa-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/SKA3SIN22.glb"
+  },
+  {
+    "articleID": "STF067-5D",
+    "name": "STEDFORD B\u00e4ddsoffa",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/stedford-baddsoffa-beige.html",
+    "glbLink": "https://sd.charpstar.net/Android/STF067-5D.glb"
+  },
+  {
+    "articleID": "VAX3SSA2",
+    "name": "VAXHOLM 3-sits Sammet",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/vaxholm-3-sits-sammet-greige.html",
+    "glbLink": "https://sd.charpstar.net/Android/VAX3SSA2.glb"
+  },
+  {
+    "articleID": "BH-S163-XZT368-1",
+    "name": "LE-BON 3-sits Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/le-bon-3-sits-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/BH-S163-XZT368-1.glb"
+  },
+  {
+    "articleID": "BH-A233-XZT368-1",
+    "name": "LE-BON F\u00e5t\u00f6lj Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/le-bon-fatolj-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/BH-A233-XZT368-1.glb"
+  },
+  {
+    "articleID": "Y20392S-TEDDY04",
+    "name": "JODA Loveseat Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/joda-loveseat-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/Y20392S-TEDDY04.glb"
+  },
+  {
+    "articleID": "Y2039-3S-TEDDY04",
+    "name": "JODA 3-sitssoffa Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/joda-3-sitssoffa-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/Y2039-3S-TEDDY04.glb"
+  },
+  {
+    "articleID": "BH-A394-XZT368-1",
+    "name": "GATSY F\u00e5t\u00f6lj Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/gatsy-fatolj-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/BH-A394-XZT368-1.glb"
+  },
+  {
+    "articleID": "MAC-1S-OR8",
+    "name": "MACON F\u00e5t\u00f6lj Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/macon-fatolj-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/MAC-1S-OR8.glb"
+  },
+  {
+    "articleID": "MAC-3S-OR8",
+    "name": "MACON 3-sitssoffa Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/macon-3-sitssoffa-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/MAC-3S-OR8.glb"
+  },
+  {
+    "articleID": "Y20581S-TEDDY04",
+    "name": "NONA Snurrf\u00e5t\u00f6lj Teddy",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/nona-snurrfatolj-teddy-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/Y20581S-TEDDY04.glb"
+  },
+  {
+    "articleID": "CSC1939S-BR-BR",
+    "name": "NANTES F\u00e5t\u00f6lj",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/nantes-fatolj-brun.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC1939S-BR-BR.glb"
+  },
+  {
+    "articleID": "CSC1939S-BL-NAT",
+    "name": "NANTES F\u00e5t\u00f6lj",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/nantes-fatolj-svart.html",
+    "glbLink": "https://sd.charpstar.net/Android/CSC1939S-BL-NAT.glb"
+  },
+  {
+    "articleID": "A009-LOT-2",
+    "name": "BOOGI F\u00e5t\u00f6lj Boucl\u00e9",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/boogi-fatolj-boucle-offwhite.html",
+    "glbLink": "https://sd.charpstar.net/Android/A009-LOT-2.glb"
+  },
+  {
+    "articleID": "NO-SB-BR-110",
+    "name": "NOMA Soffbord Brunlaserad Ekfan\u00e9r 110x55x38",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/noma-soffbord-brunlaserad-ekfaner-110x55x38.html",
+    "glbLink": "https://sd.charpstar.net/Android/NO-SB-BR-110.glb"
+  },
+  {
+    "articleID": "NO-SB-BR-120",
+    "name": "NOMA Soffbord Brunlaserad Ekfan\u00e9r 120x60x38",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/noma-soffbord-brunlaserad-ekfaner-120x60x38.html",
+    "glbLink": "https://sd.charpstar.net/Android/NO-SB-BR-120.glb"
+  },
+  {
+    "articleID": "NO-SB-BR-135",
+    "name": "NOMA Soffbord Brunlaserad Ekfan\u00e9r 135x50x27",
+    "productLink": "https://www.soffadirekt.se/?search=NOMA%20Soffbord%20Brunlaserad%20Ekfan%C3%A9r%20135x50x27",
+    "glbLink": "https://sd.charpstar.net/Android/NO-SB-BR-135.glb"
+  },
+  {
+    "articleID": "NO-SB-VI-110",
+    "name": "NOMA Soffbord Vitlaserad Ekfan\u00e9r 110x55x38",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/noma-soffbord-vitlaserad-ekfaner-110x55x38.html",
+    "glbLink": "https://sd.charpstar.net/Android/NO-SB-VI-110.glb"
+  },
+  {
+    "articleID": "NO-SB-VI-120",
+    "name": "NOMA Soffbord Vitlaserad Ekfan\u00e9r 120x60x38",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/noma-soffbord-vitlaserad-ekfaner-120x60x38.html",
+    "glbLink": "https://sd.charpstar.net/Android/NO-SB-VI-120.glb"
+  },
+  {
+    "articleID": "NO-SB-VI-135",
+    "name": "NOMA Soffbord Vitlaserad Ekfan\u00e9r 135x50x27",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/noma-soffbord-vitlaserad-ekfaner-135x50x27.html",
+    "glbLink": "https://sd.charpstar.net/Android/NO-SB-VI-135.glb"
+  },
+  {
+    "articleID": "632-1LA1RA-HOME4",
+    "name": "V\u00c4LA 3-sitssoffa Ljusbeige",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/vala-3-sitssoffa-ljusbeige-.html",
+    "glbLink": "https://sd.charpstar.net/Android/632-1LA1RA-HOME4.glb"
+  },
+  {
+    "articleID": "632-CLLA2RA-HOME4",
+    "name": "V\u00c4LA Divansoffa V\u00e4nster",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/vala-divansoffa-vanster-ljusbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/632-CLLA2RA-HOME4.glb"
+  },
+  {
+    "articleID": "632-2LACLRA-HOME4",
+    "name": "V\u00c4LA Divansoffa H\u00f6ger",
+    "productLink": "https://www.soffadirekt.se/sv/artiklar/vala-divansoffa-hoger-ljusbeige.html",
+    "glbLink": "https://sd.charpstar.net/Android/632-2LACLRA-HOME4.glb"
+  }
+],
+    "Kajakk-Fritid":[
+  {
+    "articleID": "101585",
+    "name": "Momas Jason",
+    "productLink": "https://www.kajakk-fritid.no/momas/101585/momas-jason-2022-250w-bewo-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/101585.glb"
+  },
+  {
+    "articleID": "101593",
+    "name": "Momas L2",
+    "productLink": "https://www.kajakk-fritid.no/momas/101593/momas-l2-dame-2022-250w-bewo-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/101593.glb"
+  },
+  {
+    "articleID": "103617",
+    "name": "Momas Focus",
+    "productLink": "https://www.kajakk-fritid.no/momas/103617/momas-focus-2022-250w-bewo-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/103617.glb"
+  },
+  {
+    "articleID": "105007",
+    "name": "Momas On Tour",
+    "productLink": "https://www.kajakk-fritid.no/momas/105007/momas-on-tour-2022-250w-bafang-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/105007.glb"
+  },
+  {
+    "articleID": "104521",
+    "name": "Momas Balance",
+    "productLink": "https://www.kajakk-fritid.no/momas/104521/momas-balance-2022-250w-bewo-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/104521.glb"
+  },
+  {
+    "articleID": "105276",
+    "name": "Momas Aurora",
+    "productLink": "https://www.kajakk-fritid.no/momas/105276/momas-aurora-2023-250w-vinka-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/105276.glb"
+  },
+  {
+    "articleID": "105212",
+    "name": "Momas Eywa",
+    "productLink": "https://www.kajakk-fritid.no/momas/105212/momas-eywa-2023-250w-ananda-110nm-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/105212.glb"
+  },
+  {
+    "articleID": "105217",
+    "name": "Momas Wayfarer",
+    "productLink": "https://www.kajakk-fritid.no/momas/105212/momas-eywa-2023-250w-ananda-110nm-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/105217.glb"
+  },
+  {
+    "articleID": "105270",
+    "name": "Momas Jason Urban+",
+    "productLink": "https://www.kajakk-fritid.no/momas/105270/momas-jason-urban-plus-2023-250w-vinka-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/105270.glb"
+  },
+  {
+    "articleID": "104908",
+    "name": "Momas Ultimate Carbon",
+    "productLink": "https://www.kajakk-fritid.no/momas/104908/momas-ultimate-carbon-2022-250w-bafang",
+    "glbLink": "https://skh.charpstar.net/Android/104908.glb"
+  },
+  {
+    "articleID": "105313",
+    "name": "Momas Outback",
+    "productLink": "https://www.kajakk-fritid.no/momas/105313/momas-outback-2023-250w-ananada-110nm-gratis-frakt",
+    "glbLink": "https://skh.charpstar.net/Android/105313.glb"
+  }
+]
+  }
+}

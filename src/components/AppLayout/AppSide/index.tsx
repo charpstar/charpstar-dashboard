@@ -80,13 +80,13 @@ export default function AppSide() {
           {/* 3D Service Section */}
           <div>
             <div className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              3D Service
+              3D Service (BETA)
             </div>
             <div className="space-y-1">
               <ListItem
                 icon={<Box className="h-4 w-4" />}
                 title="Rendering"
-                href="/rendering"
+                href="/render"
               />
               <ListItem
                 icon={<Boxes className="h-4 w-4" />}
@@ -99,7 +99,7 @@ export default function AppSide() {
           {/* Support Section */}
           <div>
             <div className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Support
+              Support (NYI)
             </div>
             <div className="space-y-1">
               <ListItem
