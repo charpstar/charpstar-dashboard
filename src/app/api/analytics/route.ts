@@ -6,7 +6,7 @@ import { getEventsBetween } from "@/utils/BigQuery/utils";
 import type { BigQueryResponse } from "@/utils/BigQuery/types";
 
 // Set a reasonable timeout
-const QUERY_TIMEOUT = 60000; // 60 seconds
+const QUERY_TIMEOUT = 600000; // 60 seconds
 
 export async function POST(request: Request) {
   try {
