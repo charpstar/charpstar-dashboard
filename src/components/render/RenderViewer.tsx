@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRenderStatus } from "@/hooks/useRenderStatus";
 import { useRenderImages } from "@/hooks/useRenderImages";
 import { useProducts } from "@/hooks/useProducts";
@@ -8,6 +8,7 @@ import RenderGrid from "./gallery/RenderGrid";
 import RenderSettings from "./settings/RenderSettings";
 import RenderProgress from "./progress/RenderProgress";
 import ProductDetails from "./details/ProductDetails";
+import { getGlbUrl } from "@/config/glbUrls";
 import JSZip from "jszip";
 
 export default function RenderViewer({ articleId }: { articleId: string }) {
@@ -20,25 +21,60 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   const handleRender = async () => {
     try {
       setIsRendering(true);
-      const response = await fetch(`https://cdn.charpstar.net/SharkGaming/Android/${articleId}.glb`);
+      console.log(`Fetching GLB for article ${articleId}...`);
+      
+      const company = products[0]?.glbLink?.split('/')[2]?.split('.')[0];
+      if (!company) {
+        throw new Error('Could not determine company from product data');
+      }
+      
+      console.log(`Fetching GLB for article ${articleId} from company ${company}...`);
+      
+      // Get the correct GLB URL for this client
+      const glbUrl = getGlbUrl(company, articleId);
+      
+      // Fetch the GLB file
+      const response = await fetch(glbUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch GLB file: ${response.statusText}`);
+      }
+      
       const blob = await response.blob();
+      console.log(`GLB file size: ${blob.size} bytes`);
+      
+      // Validate file
+      if (blob.size === 0) {
+        throw new Error('GLB file is empty');
+      }
+      
+      if (blob.type !== 'model/gltf-binary' && blob.type !== 'application/octet-stream') {
+        console.warn(`Unexpected GLB mime type: ${blob.type}`);
+      }
+
+      // Prepare form data
       const formData = new FormData();
       formData.append('file', blob, `${articleId}.glb`);
-  
-      const uploadResponse = await fetch('/api/upload', {
+      formData.append('articleId', articleId);
+
+      console.log('Starting render process...');
+      const renderResponse = await fetch('/api/render/start', {
         method: 'POST',
         body: formData,
       });
-      const uploadData = await uploadResponse.json();
-      if (uploadResponse.ok) {
-        setJobId(uploadData.jobId);
-      } else {
-        console.error('Error uploading file:', uploadData.error);
-        setIsRendering(false);
+
+      if (!renderResponse.ok) {
+        const error = await renderResponse.json();
+        throw new Error(error.error || 'Failed to start render job');
       }
+
+      const data = await renderResponse.json();
+      console.log('Render job started:', data.jobId);
+      setJobId(data.jobId);
     } catch (error) {
-      console.error('Error fetching file:', error);
+      console.error('Error in render process:', error);
       setIsRendering(false);
+      // You might want to show this error to the user
+      alert(error instanceof Error ? error.message : 'Failed to start render process');
     }
   };
 
