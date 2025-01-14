@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { S3Client, PutObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 const s3Client = new S3Client({ 
@@ -58,19 +58,6 @@ export async function POST(request: Request) {
     await s3Client.send(uploadCommand);
     console.log(`Uploaded GLB to S3: ${s3Key}`);
 
-    // Verify the upload
-    try {
-      const headCommand = new HeadObjectCommand({
-        Bucket: process.env.S3_BUCKET_NAME!,
-        Key: s3Key
-      });
-      const headResponse = await s3Client.send(headCommand);
-      console.log(`Verified S3 upload: ${s3Key}, Size: ${headResponse.ContentLength} bytes`);
-    } catch (error) {
-      console.error('Failed to verify S3 upload:', error);
-      throw new Error('Failed to verify file upload to S3');
-    }
-
     // Invoke Lambda function
     console.log('Invoking Lambda function...');
     const command = new InvokeCommand({
@@ -84,24 +71,35 @@ export async function POST(request: Request) {
     const response = await lambdaClient.send(command);
     
     if (!response.Payload) {
-      throw new Error('No payload received from Lambda');
+      return NextResponse.json(
+        { error: 'No response from Lambda' },
+        { status: 500 }
+      );
     }
 
-    const payload = JSON.parse(new TextDecoder().decode(response.Payload));
+    const payloadText = new TextDecoder().decode(response.Payload);
     
-    if (response.FunctionError) {
-      console.error('Lambda execution failed:', response.FunctionError);
-      throw new Error(`Lambda execution failed: ${response.FunctionError}`);
+    try {
+      const payload = JSON.parse(payloadText);
+      const body = JSON.parse(payload.body);
+
+      if (!body.jobId) {
+        return NextResponse.json(
+          { error: 'No jobId received from Lambda' },
+          { status: 500 }
+        );
+      }
+
+      console.log(`Render job started successfully: ${body.jobId}`);
+      return NextResponse.json({ jobId: body.jobId });
+    } catch (parseError) {
+      console.error('Failed to parse Lambda response:', payloadText);
+      return NextResponse.json(
+        { error: 'Invalid response from Lambda' },
+        { status: 500 }
+      );
     }
 
-    const { jobId } = JSON.parse(payload.body);
-
-    if (!jobId) {
-      throw new Error('No jobId received from Lambda');
-    }
-
-    console.log(`Render job started successfully: ${jobId}`);
-    return NextResponse.json({ jobId });
   } catch (error) {
     console.error("Error starting render:", error);
     return NextResponse.json(
