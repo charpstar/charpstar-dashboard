@@ -34,14 +34,8 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
       const glbUrl = getGlbUrl(companyName, articleId);
       console.log(`Fetching GLB from: ${glbUrl}`);
       
-      // Fetch with additional headers and error handling
-      const response = await fetch(glbUrl, {
-        headers: {
-          'Accept': 'application/octet-stream',
-          'Cache-Control': 'no-cache',
-        },
-        cache: 'no-store',
-      });
+      // Simple fetch without custom headers
+      const response = await fetch(glbUrl);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch GLB file: ${response.status} ${response.statusText}`);

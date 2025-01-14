@@ -4,15 +4,15 @@ interface ClientGLBConfig {
 }
 
 const glbUrlConfig: Record<string, ClientGLBConfig> = {
-  "sd": {
+  "SoffaDirekt": {
     baseUrl: "https://sd.charpstar.net",
     pathTemplate: "Android/{articleId}.glb"
   },
-  "sg": {
+  "SharkGaming": {
     baseUrl: "https://cdn.charpstar.net/SharkGaming",
     pathTemplate: "Android/{articleId}.glb"
   },
-  "skh": {
+  "Kajakk-Fritid": {
     baseUrl: "https://skh.charpstar.net",
     pathTemplate: "Android/{articleId}.glb"
   }
