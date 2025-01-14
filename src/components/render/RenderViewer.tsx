@@ -8,8 +8,8 @@ import RenderGrid from "./gallery/RenderGrid";
 import RenderSettings from "./settings/RenderSettings";
 import RenderProgress from "./progress/RenderProgress";
 import ProductDetails from "./details/ProductDetails";
-import { getGlbUrl } from "@/config/glbUrls";
 import JSZip from "jszip";
+import { getGlbUrl } from "@/config/glbUrls";
 
 export default function RenderViewer({ articleId }: { articleId: string }) {
   const [isRendering, setIsRendering] = useState(false);
@@ -21,22 +21,30 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   const handleRender = async () => {
     try {
       setIsRendering(true);
-      console.log(`Fetching GLB for article ${articleId}...`);
       
-      const company = products[0]?.glbLink?.split('/')[2]?.split('.')[0];
-      if (!company) {
-        throw new Error('Could not determine company from product data');
+      if (!product) {
+        throw new Error('Product not found');
       }
+
+      // Get the company name from the product link
+      const companyName = product.productLink.includes('soffadirekt.se') ? 'SoffaDirekt' :
+                         product.productLink.includes('kajakk-fritid.no') ? 'Kajakk-Fritid' :
+                         'SharkGaming';
+
+      const glbUrl = getGlbUrl(companyName, articleId);
+      console.log(`Fetching GLB from: ${glbUrl}`);
       
-      console.log(`Fetching GLB for article ${articleId} from company ${company}...`);
-      
-      // Get the correct GLB URL for this client
-      const glbUrl = getGlbUrl(company, articleId);
-      
-      // Fetch the GLB file
-      const response = await fetch(glbUrl);
+      // Fetch with additional headers and error handling
+      const response = await fetch(glbUrl, {
+        headers: {
+          'Accept': 'application/octet-stream',
+          'Cache-Control': 'no-cache',
+        },
+        cache: 'no-store',
+      });
+
       if (!response.ok) {
-        throw new Error(`Failed to fetch GLB file: ${response.statusText}`);
+        throw new Error(`Failed to fetch GLB file: ${response.status} ${response.statusText}`);
       }
       
       const blob = await response.blob();
@@ -45,10 +53,6 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
       // Validate file
       if (blob.size === 0) {
         throw new Error('GLB file is empty');
-      }
-      
-      if (blob.type !== 'model/gltf-binary' && blob.type !== 'application/octet-stream') {
-        console.warn(`Unexpected GLB mime type: ${blob.type}`);
       }
 
       // Prepare form data
@@ -73,7 +77,6 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
     } catch (error) {
       console.error('Error in render process:', error);
       setIsRendering(false);
-      // You might want to show this error to the user
       alert(error instanceof Error ? error.message : 'Failed to start render process');
     }
   };
