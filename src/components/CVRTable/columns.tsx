@@ -224,6 +224,37 @@ export const createColumns = (showColumns: {
         <div className="text-right">{row.getValue("purchases_with_service")}</div>
       ),
     });
+     baseColumns.push({
+      accessorKey: "total_purchases",
+      header: ({ column }) => (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="w-full justify-between gap-2"
+              >
+                Purchases  
+                {column.getIsSorted() === "asc" ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronsUpDown className="h-4 w-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Total Purchases 
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right">{row.getValue("total_purchases")}</div>
+      ),
+    });
   }
 
   return baseColumns;
