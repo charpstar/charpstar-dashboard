@@ -73,7 +73,7 @@ function formatCount(eventName: EventName, count: number): React.ReactNode {
 
   // Currency metrics
   if (["average_order_value_all_users", "average_order_value_ar_users"].includes(eventName)) {
-    return <><span>{count.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></>;
+    return <><span>{count.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></> ;
   }
 
   // Large number metrics
