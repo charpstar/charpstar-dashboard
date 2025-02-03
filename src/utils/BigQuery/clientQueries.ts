@@ -178,11 +178,10 @@ analytics_274422295: (eventsBetween: string) => `
         ),
 
         total_views_with_ar AS (
-          SELECT COUNT(DISTINCT user_pseudo_id) AS total_views_with_ar
-          FROM \`fast-lattice-421210.analytics_274422295.events_*\`
-          WHERE event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
-            AND ${eventsBetween}
-        ),
+        SELECT COUNT(*) AS total_views_with_ar  -- Count total clicks, not unique users
+        FROM base_events
+        WHERE event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
+      ),
 
         total_purchases_with_ar AS (
         SELECT COUNT(DISTINCT p.transaction_id) AS total_purchases_with_ar
@@ -214,18 +213,15 @@ analytics_274422295: (eventsBetween: string) => `
         ),
 
         conversion_rates AS (
-          SELECT
-              ROUND(SAFE_DIVIDE(
-                  (SELECT COUNT(DISTINCT transaction_id) FROM purchases), 
-                  (SELECT COUNT(DISTINCT user_pseudo_id) 
-                   FROM base_events 
-                   WHERE event_name = 'page_view')
-              ) * 100, 2) AS overall_avg_conversion_rate,
-              -- Keep AR conversion rate as is
-              ROUND(SAFE_DIVIDE(tp_ar.total_purchases_with_ar, tv_ar.total_views_with_ar) * 100, 2) AS overall_avg_conversion_rate_with_ar
-          FROM
-              total_views_with_ar AS tv_ar,
-              total_purchases_with_ar AS tp_ar
+        SELECT
+            ROUND(SAFE_DIVIDE(
+                (SELECT COUNT(DISTINCT transaction_id) FROM purchases), 
+                (SELECT COUNT(*) FROM base_events WHERE event_name = 'view_item')
+            ) * 100, 2) AS overall_avg_conversion_rate,
+            ROUND(SAFE_DIVIDE(tp_ar.total_purchases_with_ar, tv_ar.total_views_with_ar) * 100, 2) AS overall_avg_conversion_rate_with_ar
+        FROM
+            total_views_with_ar AS tv_ar,
+            total_purchases_with_ar AS tp_ar
       ),
 
         cart_events AS (
@@ -1600,7 +1596,6 @@ analytics_389903836: (eventsBetween: string) => `
             EXISTS (
               SELECT 1
               FROM click_events_with_products AS c
-              WHERE c.user_pseudo_id = p.user_pseudo_id 
             ),
             'yes',
             'no'
@@ -1916,25 +1911,19 @@ analytics_389903836: (eventsBetween: string) => `
 
     conversion_rates AS (
     SELECT
-      -- Keep this as is for non-AR conversion rate
-          ROUND(SAFE_DIVIDE(
-        (SELECT COUNT(DISTINCT p.transaction_id) 
-         FROM purchases p
-         INNER JOIN non_ar_users n ON p.user_pseudo_id = n.user_pseudo_id),
-        (SELECT COUNT(DISTINCT e.user_pseudo_id) 
-         FROM base_events e 
-         WHERE e.event_name = 'page_view'  
-         AND EXISTS (
-           SELECT 1 FROM non_ar_users n
-           WHERE n.user_pseudo_id = e.user_pseudo_id
-         ))
-      ) * 100, 2) AS overall_avg_conversion_rate,
-      
-      -- Modified to use total_button_clicks instead of unique users
-      ROUND(SAFE_DIVIDE(
-        (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.purchases_with_service') AS INT64)) FROM product_metrics),
-        (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_button_clicks') AS INT64)) FROM product_metrics)
-      ) * 100, 2) AS overall_avg_conversion_rate_with_ar
+        -- Modified to use all users for overall conversion rate
+        ROUND(SAFE_DIVIDE(
+            (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
+            (SELECT COUNT(DISTINCT user_pseudo_id) 
+             FROM base_events 
+             WHERE event_name = 'page_view')
+        ) * 100, 2) AS overall_avg_conversion_rate,
+        
+        -- Keep AR conversion rate as is
+        ROUND(SAFE_DIVIDE(
+            (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.purchases_with_service') AS INT64)) FROM product_metrics),
+            (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_button_clicks') AS INT64)) FROM product_metrics)
+        ) * 100, 2) AS overall_avg_conversion_rate_with_ar
     ),
 
     overall_metrics AS (
@@ -3367,10 +3356,10 @@ analytics_371791627: (eventsBetween: string) => `
     SELECT
         -- Modified to use all users for overall conversion rate
         ROUND(SAFE_DIVIDE(
-            (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
-            (SELECT COUNT(DISTINCT user_pseudo_id) 
-             FROM base_events 
-             WHERE event_name = 'page_view')
+          (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
+          (SELECT COUNT(*) 
+           FROM base_events 
+           WHERE event_name = 'view_item')
         ) * 100, 2) AS overall_avg_conversion_rate,
         
         -- Keep AR conversion rate as is
