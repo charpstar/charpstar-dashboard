@@ -2,13 +2,6 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { defaultEvents, type EventName, type EventsData } from "@/utils/defaultEvents";
 import { isMonthlyView } from "@/utils/uiUtils";
 import { useDateRange } from "@/contexts/DateRangeContext";
@@ -40,51 +33,24 @@ interface EventCountCardProps {
   tooltip: string;
   count: number;
   formattedCount: React.ReactNode;
-  trend?: number;
-}
-
-function TrendIndicator({ value }: { value: number }) {
-  if (value === 0) return null;
-  
-  const isPositive = value > 0;
-  return (
-    <div className="flex flex-col items-end">
-      <div className={`flex items-center text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-        {isPositive ? <ArrowUpIcon className="w-4 h-4" /> : <ArrowDownIcon className="w-4 h-4" />}
-        <span>{Math.abs(value).toFixed(1)}%</span>
-      </div>
-      <span className="text-xs text-muted-foreground">vs previous 30 days</span>
-    </div>
-  );
 }
 
 export function EventCountCard({
   title,
   tooltip,
   formattedCount,
-  trend,
 }: EventCountCardProps) {
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Card className="w-full">
-            <CardContent className="p-6">
-              <div className="text-sm font-medium text-muted-foreground mb-2">
-                {title}
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="text-2xl font-bold">{formattedCount}</div>
-                {trend !== undefined && <TrendIndicator value={trend} />}
-              </div>
-            </CardContent>
-          </Card>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Card className="w-full">
+      <CardContent className="p-6">
+        <div className="text-sm font-medium text-muted-foreground mb-2">
+          {title}
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="text-2xl font-bold">{formattedCount}</div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -133,19 +99,6 @@ export default function EventCountCards({
   eventsCount: EventsData;
   isLoading: boolean;
 }) {
-  const { dateRange } = useDateRange();
-  const isMonthly = isMonthlyView(dateRange.startDate, dateRange.endDate);
-
-  // Fetch previous period data for comparison if viewing monthly
-  const previousStart = dayjs(dateRange.startDate).subtract(30, 'days').format('YYYY-MM-DD');
-  const previousEnd = dayjs(dateRange.endDate).subtract(30, 'days').format('YYYY-MM-DD');
-  
-  const { eventsCount: previousEventsCount } = useClientQuery({
-    startTableName: previousStart.replace(/-/g, ''),
-    endTableName: previousEnd.replace(/-/g, ''),
-    limit: 10,
-  });
-
   if (isLoading) {
     return (
       <>
@@ -169,15 +122,6 @@ export default function EventCountCards({
     
     if (count === undefined || !eventMetadata) return null;
 
-    // Calculate trend if viewing monthly data
-    let trend: number | undefined;
-    if (isMonthly && previousEventsCount) {
-      const previousCount = previousEventsCount[eventName];
-      if (previousCount !== undefined && previousCount !== 0) {
-        trend = ((count - previousCount) / previousCount) * 100;
-      }
-    }
-
     return (
       <EventCountCard 
         key={eventName}
@@ -185,7 +129,6 @@ export default function EventCountCards({
         tooltip={eventMetadata.tooltip}
         count={count}
         formattedCount={formatCount(eventName, count)}
-        trend={trend}
       />
     );
   }).filter(Boolean);
