@@ -1,11 +1,21 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import LoginPage from "@/components/LoginPage";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const { isLoading, signIn } = useAuth();
+  const { isLoading, isAuthenticated, signIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+      router.refresh();
+    }
+  }, [isAuthenticated, router]);
 
   const handleLoginAction = async (formData: FormData) => {
     try {

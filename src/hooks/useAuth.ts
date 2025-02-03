@@ -20,22 +20,24 @@ export function useAuth() {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (mounted) {
-          if (session) {
-            setIsAuthenticated(true);
-            router.push("/");
-          }
+          setIsAuthenticated(!!session);
           setIsLoading(false);
         }
 
         // Setup auth listener
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           if (!mounted) return;
 
           if (event === "SIGNED_IN" && session) {
             setIsAuthenticated(true);
+            // Add a small delay to ensure state is updated
+            await new Promise(resolve => setTimeout(resolve, 100));
             router.push("/");
+            router.refresh();
           } else if (event === "SIGNED_OUT") {
             setIsAuthenticated(false);
+            // Clear any cached data
+            router.refresh();
           }
         });
 
@@ -44,6 +46,7 @@ export function useAuth() {
         console.error("Auth initialization error:", error);
         if (mounted) {
           setIsLoading(false);
+          setIsAuthenticated(false);
         }
       }
     }
