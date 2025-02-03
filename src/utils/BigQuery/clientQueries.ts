@@ -2119,7 +2119,6 @@ analytics_320210445: (eventsBetween: string) => `
             EXISTS (
               SELECT 1
               FROM click_events_with_products AS c
-              WHERE c.user_pseudo_id = p.user_pseudo_id 
             ),
             'yes',
             'no'
@@ -2437,17 +2436,11 @@ analytics_320210445: (eventsBetween: string) => `
     SELECT
       -- Keep this as is for non-AR conversion rate
           ROUND(SAFE_DIVIDE(
-        (SELECT COUNT(DISTINCT p.transaction_id) 
-         FROM purchases p
-         INNER JOIN non_ar_users n ON p.user_pseudo_id = n.user_pseudo_id),
-        (SELECT COUNT(DISTINCT e.user_pseudo_id) 
-         FROM base_events e 
-         WHERE e.event_name = 'page_view'  
-         AND EXISTS (
-           SELECT 1 FROM non_ar_users n
-           WHERE n.user_pseudo_id = e.user_pseudo_id
-         ))
-      ) * 100, 2) AS overall_avg_conversion_rate,
+            (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
+            (SELECT COUNT(DISTINCT user_pseudo_id) 
+             FROM base_events 
+             WHERE event_name = 'page_view')
+        ) * 100, 2) AS overall_avg_conversion_rate,
       
       -- Modified to use total_button_clicks instead of unique users
       ROUND(SAFE_DIVIDE(
