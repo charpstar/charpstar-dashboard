@@ -84,7 +84,6 @@ analytics_274422295: (eventsBetween: string) => `
               SELECT 1
               FROM click_events_with_products c 
               WHERE c.user_pseudo_id = p.user_pseudo_id
-              AND c.click_timestamp < p.event_timestamp
             ),
             'yes',
             'no'
@@ -339,7 +338,6 @@ analytics_274422295: (eventsBetween: string) => `
         FROM ar_events ar
         JOIN purchases p 
           ON ar.user_pseudo_id = p.user_pseudo_id
-          AND p.event_timestamp > ar.event_timestamp  -- Only count purchases after AR interaction
         WHERE 
           p.transaction_id IS NOT NULL 
           AND p.purchase_value IS NOT NULL 
