@@ -487,7 +487,6 @@ analytics_274422295: (eventsBetween: string) => `
 ,
 
 
-/*
 ewheelsGA4: (eventsBetween: string) => `
         WITH
        base_events AS (
@@ -3993,7 +3992,6 @@ analytics_296845812: (eventsBetween: string) => `
   SELECT * FROM overall_metrics
   ORDER BY data_type, metric_name`
 ,
-*/
 
 
 };
