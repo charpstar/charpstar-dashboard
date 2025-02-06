@@ -216,7 +216,7 @@ analytics_274422295: (eventsBetween: string) => `
         SELECT
             ROUND(SAFE_DIVIDE(
                 (SELECT COUNT(DISTINCT transaction_id) FROM purchases), 
-                (SELECT COUNT(*) FROM base_events WHERE event_name = 'view_item')
+                (SELECT COUNT(*) FROM base_events WHERE event_name = 'page_view')
             ) * 100, 2) AS overall_avg_conversion_rate,
             ROUND(SAFE_DIVIDE(tp_ar.total_purchases_with_ar, tv_ar.total_views_with_ar) * 100, 2) AS overall_avg_conversion_rate_with_ar
         FROM
@@ -2048,7 +2048,7 @@ analytics_320210445: (eventsBetween: string) => `
         event_timestamp,
         (SELECT value.int_value FROM UNNEST(event_params) WHERE key = 'ga_session_id') AS ga_session_id,
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'transaction_id') AS transaction_id,
-        (SELECT value.double_value FROM UNNEST(event_params) WHERE key = 'value') AS purchase_value,
+        (SELECT value.int_value FROM UNNEST(event_params) WHERE key = 'value') AS purchase_value,
         REGEXP_REPLACE(
           LOWER(TRIM(SPLIT(REGEXP_REPLACE(
             (SELECT i.item_name FROM UNNEST(items) AS i LIMIT 1),
@@ -2106,6 +2106,7 @@ analytics_320210445: (eventsBetween: string) => `
             EXISTS (
               SELECT 1
               FROM click_events_with_products AS c
+              WHERE c.user_pseudo_id = p.user_pseudo_id
             ),
             'yes',
             'no'
@@ -2262,28 +2263,30 @@ analytics_320210445: (eventsBetween: string) => `
 
 
     avg_order_value_all_users AS (
-      SELECT 
-        ROUND(
-          SAFE_DIVIDE(
-            SUM(CAST(purchase_value AS FLOAT64)), 
-            NULLIF(COUNT(DISTINCT transaction_id), 0)
-          ), 
-          2
-        ) AS avg_order_value
-      FROM purchases_by_all_users
-    ),
+  SELECT 
+    ROUND(
+      SAFE_DIVIDE(
+        SUM(purchase_value), -- Remove CAST since we'll handle type in purchases CTE
+        NULLIF(COUNT(DISTINCT transaction_id), 0)
+      ), 
+      2
+    ) AS avg_order_value
+  FROM purchases_by_all_users
+  WHERE purchase_value IS NOT NULL
+),
 
-    avg_order_value_ar_users AS (
-      SELECT 
-        ROUND(
-          SAFE_DIVIDE(
-            SUM(CAST(purchase_value AS FLOAT64)), 
-            NULLIF(COUNT(DISTINCT transaction_id), 0)
-          ), 
-          2
-        ) AS avg_order_value
-      FROM purchases_by_ar_users
-    ),
+avg_order_value_ar_users AS (
+  SELECT 
+    ROUND(
+      SAFE_DIVIDE(
+        SUM(purchase_value), -- Remove CAST since we'll handle type in purchases CTE
+        NULLIF(COUNT(DISTINCT transaction_id), 0)
+      ), 
+      2
+    ) AS avg_order_value
+  FROM purchases_by_ar_users
+  WHERE purchase_value IS NOT NULL
+),
 
     next_events AS (
       SELECT ar.user_pseudo_id, ar.event_timestamp AS ar_event_timestamp,
@@ -2421,20 +2424,19 @@ analytics_320210445: (eventsBetween: string) => `
 
     conversion_rates AS (
     SELECT
-      -- Keep this as is for non-AR conversion rate
           ROUND(SAFE_DIVIDE(
-            (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
-            (SELECT COUNT(DISTINCT user_pseudo_id) 
-             FROM base_events 
-             WHERE event_name = 'page_view')
-        ) * 100, 2) AS overall_avg_conversion_rate,
-      
-      -- Modified to use total_button_clicks instead of unique users
-      ROUND(SAFE_DIVIDE(
-        (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.purchases_with_service') AS INT64)) FROM product_metrics),
-        (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_button_clicks') AS INT64)) FROM product_metrics)
-      ) * 100, 2) AS overall_avg_conversion_rate_with_ar
-    ),
+        (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
+        (SELECT COUNT(*) 
+         FROM base_events 
+         WHERE event_name = 'page_view')
+    ) * 100, 2) AS overall_avg_conversion_rate,
+          
+          -- Modified to use total_button_clicks instead of unique users
+          ROUND(SAFE_DIVIDE(
+            (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.purchases_with_service') AS INT64)) FROM product_metrics),
+            (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_button_clicks') AS INT64)) FROM product_metrics)
+          ) * 100, 2) AS overall_avg_conversion_rate_with_ar
+        ),
 
     overall_metrics AS (
     SELECT 'overall' AS data_type, m.event_name AS metric_name,
