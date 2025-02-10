@@ -11,12 +11,12 @@ export function compToBq(date: string) {
 
 export function buildDateRange(monitoredSince?: string) {
   const end = dayjs().add(-1, "day");
-  const defaultStart = end.add(-45, "day"); 
+  const defaultStart = end.add(-92, "day"); 
   
   if (monitoredSince) {
     const monitoredSinceDate = dayjs(monitoredSince);
     // Check if we have at least 30 days of data
-    if (end.diff(monitoredSinceDate, 'day') >= 45) {
+    if (end.diff(monitoredSinceDate, 'day') >= 92) {
       return {
         startDate: dayjsToComp(defaultStart),
         endDate: dayjsToComp(end),
