@@ -389,7 +389,7 @@ analytics_274422295: (eventsBetween: string) => `
           ) AS percentage_cart_after_ar
         ),
 
-        
+
              conversion_rates AS (
         SELECT
           -- Default CVR: unique purchasers / unique users
@@ -2115,6 +2115,15 @@ analytics_320210445: (eventsBetween: string) => `
         FROM purchases AS p
       ),
 
+      users_per_product AS (
+      SELECT 
+        product_name,
+        MAX(original_product_name) AS original_product_name,
+        COUNT(DISTINCT user_pseudo_id) as unique_users
+      FROM click_events_with_products
+      GROUP BY product_name
+    ),
+
       ar_clicks AS (
         SELECT
           product_name,
@@ -2382,62 +2391,63 @@ analytics_320210445: (eventsBetween: string) => `
     ),
 
     product_metrics AS (
-        SELECT
-          'product' AS data_type,
-          COALESCE(
-            ar.original_product_name,
-            td.original_product_name,
-            v.original_product_name
-          ) AS metric_name,
-          JSON_OBJECT(
-            'AR_Button_Clicks', CAST(COALESCE(ar.AR_Button_Clicks, 0) AS STRING),
-            '_3D_Button_Clicks', CAST(COALESCE(td._3D_Button_Clicks, 0) AS STRING),
-            'purchases_with_service', CAST(COALESCE(p.purchases_with_service, 0) AS STRING),
-            'total_purchases', CAST(COALESCE(tp.total_purchases, 0) AS STRING),
-            'total_button_clicks', CAST(COALESCE(td._3D_Button_Clicks, 0) + COALESCE(ar.AR_Button_Clicks, 0) AS STRING),
-            'product_conv_rate', CAST(
-              ROUND(
-                SAFE_DIVIDE(
-                  COALESCE(p.purchases_with_service, 0),
-                  NULLIF(COALESCE(td._3D_Button_Clicks, 0) + COALESCE(ar.AR_Button_Clicks, 0), 0)
-                ) * 100,
-                2
-              ) AS STRING
-            ),
-            'total_views', CAST(COALESCE(v.total_views, 0) AS STRING),
-            'default_conv_rate', CAST(COALESCE(dc.default_conv_rate, 0) AS STRING)
-          ) AS metrics
-        FROM (
-          SELECT product_name FROM ar_clicks
-          UNION DISTINCT
-          SELECT product_name FROM _3d_clicks
-          UNION DISTINCT
-          SELECT product_name FROM total_views
-        ) base
-        LEFT JOIN ar_clicks ar ON base.product_name = ar.product_name
-        LEFT JOIN _3d_clicks td ON base.product_name = td.product_name
-        LEFT JOIN products_purchased_after_click_events p ON base.product_name = p.product_name
-        LEFT JOIN total_purchases tp ON base.product_name = tp.product_name
-        LEFT JOIN total_views v ON base.product_name = v.product_name
-        LEFT JOIN default_conversion_rate dc ON base.product_name = dc.product_name
-        WHERE COALESCE(td._3D_Button_Clicks, 0) + COALESCE(ar.AR_Button_Clicks, 0) > 0
-      ),
+          SELECT
+            'product' AS data_type,
+            COALESCE(
+              ar.original_product_name,
+              td.original_product_name,
+              v.original_product_name
+            ) AS metric_name,
+            JSON_OBJECT(
+              'AR_Button_Clicks', CAST(COALESCE(ar.AR_Button_Clicks, 0) AS STRING),
+              '_3D_Button_Clicks', CAST(COALESCE(td._3D_Button_Clicks, 0) AS STRING),
+              'purchases_with_service', CAST(COALESCE(p.purchases_with_service, 0) AS STRING),
+              'total_purchases', CAST(COALESCE(tp.total_purchases, 0) AS STRING),
+              'total_button_clicks', CAST(COALESCE(td._3D_Button_Clicks, 0) + COALESCE(ar.AR_Button_Clicks, 0) AS STRING),
+              'product_conv_rate', CAST(
+                ROUND(
+                  SAFE_DIVIDE(
+                    COALESCE(p.purchases_with_service, 0),
+                    NULLIF(COALESCE(upp.unique_users, 0), 0)  -- Changed to use unique_users
+                  ) * 100,
+                  2
+                ) AS STRING
+              ),
+              'total_views', CAST(COALESCE(v.total_views, 0) AS STRING),
+              'default_conv_rate', CAST(COALESCE(dc.default_conv_rate, 0) AS STRING)
+            ) AS metrics
+          FROM (
+            SELECT product_name FROM ar_clicks
+            UNION DISTINCT
+            SELECT product_name FROM _3d_clicks
+            UNION DISTINCT
+            SELECT product_name FROM total_views
+          ) base
+          LEFT JOIN ar_clicks ar ON base.product_name = ar.product_name
+          LEFT JOIN _3d_clicks td ON base.product_name = td.product_name
+          LEFT JOIN products_purchased_after_click_events p ON base.product_name = p.product_name
+          LEFT JOIN total_purchases tp ON base.product_name = tp.product_name
+          LEFT JOIN total_views v ON base.product_name = v.product_name
+          LEFT JOIN default_conversion_rate dc ON base.product_name = dc.product_name
+          LEFT JOIN users_per_product upp ON base.product_name = upp.product_name  -- Added this JOIN
+          WHERE COALESCE(td._3D_Button_Clicks, 0) + COALESCE(ar.AR_Button_Clicks, 0) > 0
+        ),
 
     conversion_rates AS (
-    SELECT
+        SELECT
+          -- Default CVR: unique purchasers / unique users
           ROUND(SAFE_DIVIDE(
-        (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
-        (SELECT COUNT(*) 
-         FROM base_events 
-         WHERE event_name = 'page_view')
-    ) * 100, 2) AS overall_avg_conversion_rate,
+            (SELECT COUNT(DISTINCT transaction_id) FROM purchases),
+            (SELECT COUNT(DISTINCT user_pseudo_id) FROM base_events)
+          ) * 100, 2) AS overall_avg_conversion_rate,
           
-          -- Modified to use total_button_clicks instead of unique users
+          -- AR/3D CVR: purchases with AR / unique users who used AR
           ROUND(SAFE_DIVIDE(
-            (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.purchases_with_service') AS INT64)) FROM product_metrics),
-            (SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_button_clicks') AS INT64)) FROM product_metrics)
+            (SELECT COUNT(DISTINCT transaction_id) FROM purchases_with_ar WHERE purchased_after_ar = 'yes'),
+            (SELECT COUNT(DISTINCT user_pseudo_id) FROM base_events 
+             WHERE event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click'))
           ) * 100, 2) AS overall_avg_conversion_rate_with_ar
-        ),
+      ),
 
     overall_metrics AS (
     SELECT 'overall' AS data_type, m.event_name AS metric_name,
