@@ -178,24 +178,20 @@ analytics_274422295: (eventsBetween: string) => `
         ),
 
         total_views_with_ar AS (
-        SELECT COUNT(*) AS total_views_with_ar  -- Count total clicks, not unique users
+        SELECT COUNT(*) AS total_views_with_ar 
         FROM base_events
         WHERE event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
       ),
 
-        total_purchases_with_ar AS (
+       total_purchases_with_ar AS (
         SELECT COUNT(DISTINCT p.transaction_id) AS total_purchases_with_ar
         FROM purchases_with_ar p
-        JOIN (
-          SELECT DISTINCT LOWER(TRIM(product_name)) as product_name
-          FROM (
-            SELECT product_name FROM ar_clicks
-            UNION ALL
-            SELECT product_name FROM _3d_clicks
-          )
-        ) service_products
-        ON LOWER(TRIM(p.product_name)) = service_products.product_name
         WHERE p.purchased_after_ar = 'yes'
+        AND LOWER(TRIM(p.product_name)) IN (
+          SELECT LOWER(TRIM(product_name)) FROM ar_clicks
+          UNION DISTINCT
+          SELECT LOWER(TRIM(product_name)) FROM _3d_clicks
+        )
       ),
 
         ar_percentage AS (
@@ -211,18 +207,6 @@ analytics_274422295: (eventsBetween: string) => `
               100.00
             ) AS percentage_ar_users
         ),
-
-        conversion_rates AS (
-        SELECT
-            ROUND(SAFE_DIVIDE(
-                (SELECT COUNT(DISTINCT transaction_id) FROM purchases), 
-                (SELECT COUNT(*) FROM base_events WHERE event_name = 'page_view')
-            ) * 100, 2) AS overall_avg_conversion_rate,
-            ROUND(SAFE_DIVIDE(tp_ar.total_purchases_with_ar, tv_ar.total_views_with_ar) * 100, 2) AS overall_avg_conversion_rate_with_ar
-        FROM
-            total_views_with_ar AS tv_ar,
-            total_purchases_with_ar AS tp_ar
-      ),
 
         cart_events AS (
           SELECT
@@ -404,6 +388,23 @@ analytics_274422295: (eventsBetween: string) => `
             ) * 100, 2
           ) AS percentage_cart_after_ar
         ),
+
+        
+             conversion_rates AS (
+        SELECT
+          -- Default CVR: unique purchasers / unique users
+          ROUND(SAFE_DIVIDE(
+            (SELECT COUNT(DISTINCT transaction_id) FROM purchases), 
+            (SELECT COUNT(DISTINCT user_pseudo_id) FROM base_events)
+          ) * 100, 2) AS overall_avg_conversion_rate,
+          
+          -- AR/3D CVR: purchases after AR / unique users who used AR
+          ROUND(SAFE_DIVIDE(
+             (SELECT ta.total_purchases_with_ar FROM total_purchases_with_ar ta),
+            (SELECT total_users FROM total_activated_users)
+          ) * 100, 2) AS overall_avg_conversion_rate_with_ar
+      ),
+
 
         product_metrics AS (
         SELECT
@@ -2273,20 +2274,20 @@ analytics_320210445: (eventsBetween: string) => `
     ) AS avg_order_value
   FROM purchases_by_all_users
   WHERE purchase_value IS NOT NULL
-),
+        ),
 
-avg_order_value_ar_users AS (
-  SELECT 
-    ROUND(
-      SAFE_DIVIDE(
-        SUM(purchase_value), -- Remove CAST since we'll handle type in purchases CTE
-        NULLIF(COUNT(DISTINCT transaction_id), 0)
-      ), 
-      2
-    ) AS avg_order_value
-  FROM purchases_by_ar_users
-  WHERE purchase_value IS NOT NULL
-),
+    avg_order_value_ar_users AS (
+      SELECT 
+        ROUND(
+          SAFE_DIVIDE(
+            SUM(purchase_value), -- Remove CAST since we'll handle type in purchases CTE
+            NULLIF(COUNT(DISTINCT transaction_id), 0)
+          ), 
+          2
+        ) AS avg_order_value
+      FROM purchases_by_ar_users
+      WHERE purchase_value IS NOT NULL
+    ),
 
     next_events AS (
       SELECT ar.user_pseudo_id, ar.event_timestamp AS ar_event_timestamp,
