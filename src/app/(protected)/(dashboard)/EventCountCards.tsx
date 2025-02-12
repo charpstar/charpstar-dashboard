@@ -7,26 +7,12 @@ import { isMonthlyView } from "@/utils/uiUtils";
 import { useDateRange } from "@/contexts/DateRangeContext";
 import { useClientQuery } from "@/queries/useClientQuery";
 import dayjs from "@/utils/dayjs";
-
-// Define the order of metrics
-const METRICS_ORDER: EventName[] = [
-  "charpstAR_Load",
-  "total_unique_users",
-  "total_activated_users",
-  "percentage_charpstAR",
-  "overall_conv_rate",
-  "overall_conv_rate_CharpstAR",
-  "total_purchases_after_ar",
-  "cart_percentage_default",
-  "cart_after_ar_percentage",
-  "average_order_value_all_users",
-  "average_order_value_ar_users",
-  "charpstAR_AR_Button_Click",
-  "charpstAR_3D_Button_Click",
-  "session_time_default",
-  "combined_session_time",
-  "average_pages_after_ar"
-];
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface EventCountCardProps {
   title: string;
@@ -41,16 +27,25 @@ export function EventCountCard({
   formattedCount,
 }: EventCountCardProps) {
   return (
-    <Card className="w-full">
-      <CardContent className="p-6">
-        <div className="text-sm font-medium text-muted-foreground mb-2">
-          {title}
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="text-2xl font-bold">{formattedCount}</div>
-        </div>
-      </CardContent>
-    </Card>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Card className="w-full">
+            <CardContent className="p-6">
+              <div className="text-sm font-medium text-muted-foreground mb-2">
+                {title}
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="text-2xl font-bold">{formattedCount}</div>
+              </div>
+            </CardContent>
+          </Card>
+        </TooltipTrigger>
+       <TooltipContent>
+  <p dangerouslySetInnerHTML={{ __html: tooltip }} />
+</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -133,3 +128,23 @@ export default function EventCountCards({
     );
   }).filter(Boolean);
 }
+
+// Define the order of metrics
+const METRICS_ORDER: EventName[] = [
+  "charpstAR_Load",
+  "total_unique_users",
+  "total_activated_users",
+  "percentage_charpstAR",
+  "overall_conv_rate",
+  "overall_conv_rate_CharpstAR",
+  "total_purchases_after_ar",
+  "cart_percentage_default",
+  "cart_after_ar_percentage",
+  "average_order_value_all_users",
+  "average_order_value_ar_users",
+  "charpstAR_AR_Button_Click",
+  "charpstAR_3D_Button_Click",
+  "session_time_default",
+  "combined_session_time",
+  "average_pages_after_ar"
+];
