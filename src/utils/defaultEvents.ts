@@ -17,7 +17,7 @@ export const defaultEvents = {
     title: "Conversion rate with AR/3D activation",
     tooltip: `The average conversion rate of users when using either of our services<br/><br/>
       <strong>Formula:</strong><br/>
-      (Total Purchases with AR/3D / Total Unique Users with AR/3D uses) × 100`,
+      (Total Purchases with AR or 3D / Total Unique Users with AR or 3D uses) × 100`,
   },
   cart_percentage_default: {
     title: "Add to Cart Default",
@@ -29,13 +29,13 @@ export const defaultEvents = {
     title: "Add to Cart with CharpstAR",
     tooltip: `The percentage of users adding a product to cart after they have interacted with either of the AR/3D buttons<br/><br/>
       <strong>Formula:</strong><br/>
-      (Cart Additions with AR/3D / Total Unique Users with AR/3D) × 100`,
+      (Cart Additions with AR or 3D uses / Total Unique Users with AR or 3D uses) × 100`,
   },
   percentage_charpstAR: {
     title: "Percentage of users using our service",
     tooltip: `The percentage of users who have visited a page with our script and have clicked either the AR or 3D Button<br/><br/>
       <strong>Formula:</strong><br/>
-      (Total Unique Users with AR/3D uses / Total Unique Users on entire store) × 100`,
+      (Total Unique Users with AR or 3D uses / Total Unique Users on entire store) × 100`,
   },
   total_activated_users: {
     title: "Total Users who activate our services",
