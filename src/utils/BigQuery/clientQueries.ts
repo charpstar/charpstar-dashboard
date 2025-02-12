@@ -2,8 +2,6 @@ export type TDatasets = keyof typeof queries;
 
 export const queries = {
 
-<<<<<<< Updated upstream
-=======
 
 analytics_371791627: (eventsBetween: string) => `
   WITH
@@ -982,8 +980,6 @@ analytics_320210445: (eventsBetween: string) => `
     ORDER BY data_type, metric_name`
 ,
 
-
->>>>>>> Stashed changes
 analytics_274422295: (eventsBetween: string) => `
   WITH
     base_events AS (
@@ -2970,7 +2966,6 @@ analytics_389903836: (eventsBetween: string) => `
     ORDER BY data_type, metric_name`
 ,
 
-<<<<<<< Updated upstream
 analytics_320210445: (eventsBetween: string) => `
   WITH
     base_events AS (
@@ -3493,8 +3488,6 @@ analytics_320210445: (eventsBetween: string) => `
     ORDER BY data_type, metric_name`
 ,
 
-=======
->>>>>>> Stashed changes
 analytics_311675532: (eventsBetween : string) => `
    WITH
         base_events AS (
@@ -3977,7 +3970,6 @@ analytics_311675532: (eventsBetween : string) => `
   SELECT * FROM overall_metrics
   ORDER BY data_type, metric_name`
 ,
-
 
 
 analytics_296845812: (eventsBetween: string) => `
