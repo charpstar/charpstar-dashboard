@@ -20,50 +20,45 @@ const lambdaClient = new LambdaClient({
 
 export async function POST(request: Request) {
   try {
-
-      console.log('AWS Region:', process.env.AWS_REGION);
+    console.log('AWS Region:', process.env.AWS_REGION);
     console.log('S3 Bucket:', process.env.S3_BUCKET_NAME);
-    // Don't log the actual keys, just check if they exist
     console.log('Has AWS Access Key:', !!process.env.AWS_ACCESS_KEY_ID);
     console.log('Has AWS Secret Key:', !!process.env.AWS_SECRET_ACCESS_KEY);
+    console.log('Starting render process...');
 
-    // Get the GLB file from the request
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const articleId = formData.get('articleId') as string;
+    // Now expecting JSON instead of FormData
+    const { articleId } = await request.json();
+    console.log('Article ID:', articleId);
 
-    if (!file || !articleId) {
+    if (!articleId) {
+      console.log('Missing articleId');
       return NextResponse.json(
-        { error: "Missing file or articleId" },
+        { error: "Missing articleId" },
         { status: 400 }
       );
     }
 
-    // Validate file size
-    if (file.size === 0) {
+    // Test AWS connectivity
+    try {
+      console.log('Testing S3 connection...');
+      const testCommand = new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME!,
+        Key: 'test.txt',
+        Body: 'test',
+      });
+      await s3Client.send(testCommand);
+      console.log('S3 connection successful');
+    } catch (awsError) {
+      console.error('AWS Connection test failed:', awsError);
       return NextResponse.json(
-        { error: "GLB file is empty" },
-        { status: 400 }
+        { error: 'AWS Connection failed', details: String(awsError) },
+        { status: 500 }
       );
     }
 
-    console.log(`Processing render request for article ${articleId}`);
-    console.log(`File size: ${file.size} bytes`);
-
-    // Upload to S3
+    // We no longer need to handle file upload here as it's done directly to S3
     const s3Key = `${articleId}.glb`;
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    const uploadCommand = new PutObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME!,
-      Key: s3Key,
-      Body: buffer,
-      ContentType: 'model/gltf-binary'
-    });
-
-    await s3Client.send(uploadCommand);
-    console.log(`Uploaded GLB to S3: ${s3Key}`);
+    console.log(`Processing render request for article ${articleId}`);
 
     // Invoke Lambda function
     console.log('Invoking Lambda function...');
@@ -74,7 +69,6 @@ export async function POST(request: Request) {
         s3_key: s3Key
       }),
     });
-
     const response = await lambdaClient.send(command);
     
     if (!response.Payload) {
@@ -83,20 +77,17 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
     const payloadText = new TextDecoder().decode(response.Payload);
     
     try {
       const payload = JSON.parse(payloadText);
       const body = JSON.parse(payload.body);
-
       if (!body.jobId) {
         return NextResponse.json(
           { error: 'No jobId received from Lambda' },
           { status: 500 }
         );
       }
-
       console.log(`Render job started successfully: ${body.jobId}`);
       return NextResponse.json({ jobId: body.jobId });
     } catch (parseError) {
@@ -106,11 +97,13 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
   } catch (error) {
-    console.error("Error starting render:", error);
+    console.error("Detailed error in render process:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to start render" },
+      { 
+        error: error instanceof Error ? error.message : "Failed to start render",
+        details: String(error)
+      },
       { status: 500 }
     );
   }

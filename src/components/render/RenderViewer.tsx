@@ -26,7 +26,6 @@ const handleRender = async () => {
         throw new Error('Product not found');
       }
 
-      // Get the company name from the product link
       const companyName = product.productLink.includes('soffadirekt.se') ? 'SoffaDirekt' :
                          product.productLink.includes('kajakk-fritid.no') ? 'Kajakk-Fritid' :
                          'SharkGaming';
@@ -34,7 +33,6 @@ const handleRender = async () => {
       const glbUrl = getGlbUrl(companyName, articleId);
       console.log(`Fetching GLB from: ${glbUrl}`);
       
-      // Simple fetch without custom headers
       const response = await fetch(glbUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch GLB file: ${response.status} ${response.statusText}`);
@@ -43,24 +41,46 @@ const handleRender = async () => {
       const blob = await response.blob();
       console.log(`GLB file size: ${blob.size} bytes`);
       
-      // Validate file
       if (blob.size === 0) {
         throw new Error('GLB file is empty');
       }
 
-      // Prepare form data
-      const formData = new FormData();
-      formData.append('file', blob, `${articleId}.glb`);
-      formData.append('articleId', articleId);
-
-      console.log('Starting render process...');
-      const renderResponse = await fetch('/api/render/start', {
+      // Get signed URL for upload
+      const urlResponse = await fetch('/api/get-upload-url', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ articleId }),
       });
 
-      console.log('Response status:', renderResponse.status);
-      console.log('Response headers:', Object.fromEntries(renderResponse.headers));
+      if (!urlResponse.ok) {
+        throw new Error('Failed to get upload URL');
+      }
+
+      const { signedUrl } = await urlResponse.json();
+
+      // Upload directly to S3
+      const uploadResponse = await fetch(signedUrl, {
+        method: 'PUT',
+        body: blob,
+        headers: {
+          'Content-Type': 'model/gltf-binary',
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload file to S3');
+      }
+
+      // Start render job
+      const renderResponse = await fetch('/api/render/start', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ articleId }),
+      });
 
       if (!renderResponse.ok) {
         const responseText = await renderResponse.text();
