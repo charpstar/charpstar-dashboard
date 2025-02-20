@@ -18,7 +18,7 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   const { products } = useProducts();
   const product = products.find(p => p.articleID === articleId);
 
-  const handleRender = async () => {
+const handleRender = async () => {
     try {
       setIsRendering(true);
       
@@ -36,7 +36,6 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
       
       // Simple fetch without custom headers
       const response = await fetch(glbUrl);
-
       if (!response.ok) {
         throw new Error(`Failed to fetch GLB file: ${response.status} ${response.statusText}`);
       }
@@ -60,20 +59,33 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
         body: formData,
       });
 
+      console.log('Response status:', renderResponse.status);
+      console.log('Response headers:', Object.fromEntries(renderResponse.headers));
+
       if (!renderResponse.ok) {
-        const error = await renderResponse.json();
-        throw new Error(error.error || 'Failed to start render job');
+        const responseText = await renderResponse.text();
+        console.log('Error response text:', responseText);
+        
+        let errorMessage;
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorData.details || 'Unknown error';
+        } catch (e) {
+          errorMessage = `Failed to parse error response: ${responseText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await renderResponse.json();
-      console.log('Render job started:', data.jobId);
+      console.log('Render job started:', data);
       setJobId(data.jobId);
     } catch (error) {
-      console.error('Error in render process:', error);
+      console.error('Detailed error in render process:', error);
       setIsRendering(false);
       alert(error instanceof Error ? error.message : 'Failed to start render process');
     }
-  };
+};
 
   const handleDownloadAll = async () => {
       if (!images) return;

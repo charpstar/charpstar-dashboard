@@ -20,6 +20,13 @@ const lambdaClient = new LambdaClient({
 
 export async function POST(request: Request) {
   try {
+
+      console.log('AWS Region:', process.env.AWS_REGION);
+    console.log('S3 Bucket:', process.env.S3_BUCKET_NAME);
+    // Don't log the actual keys, just check if they exist
+    console.log('Has AWS Access Key:', !!process.env.AWS_ACCESS_KEY_ID);
+    console.log('Has AWS Secret Key:', !!process.env.AWS_SECRET_ACCESS_KEY);
+
     // Get the GLB file from the request
     const formData = await request.formData();
     const file = formData.get('file') as File;
