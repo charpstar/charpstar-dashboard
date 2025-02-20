@@ -17,3 +17,10 @@ export interface JobProgress {
   status: 'PENDING' | 'RUNNING' | 'FAILED' | 'ERROR' | 'COMPLETED';
   modelStatus: 'PENDING' | 'PROCESSING' | 'FAILED' | 'COMPLETED';
 }
+
+export interface RenderSettings {
+  margin: number;
+  backgroundColor: string;
+  resolution: string;
+  imageFormat: string;
+}

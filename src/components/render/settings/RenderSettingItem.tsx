@@ -1,8 +1,13 @@
 interface RenderSettingItemProps {
   icon: React.ReactNode;
   label: string;
-  value: string;
-  description?: string;
+  value: string | number;
+  onChange: (value: any) => void;
+  type: 'select' | 'range';
+  options?: { label: string; value: string }[];
+  min?: number;
+  max?: number;
+  step?: number;
   disabled?: boolean;
 }
 
@@ -10,7 +15,12 @@ export default function RenderSettingItem({
   icon,
   label,
   value,
-  description,
+  onChange,
+  type,
+  options = [],
+  min,
+  max,
+  step,
   disabled = false
 }: RenderSettingItemProps) {
   return (
@@ -20,9 +30,30 @@ export default function RenderSettingItem({
         <span className="text-sm text-muted-foreground">{label}</span>
       </div>
       <div className="text-sm">
-        {value}
-        {description && (
-          <span className="text-muted-foreground ml-1">{description}</span>
+        {type === 'select' ? (
+          <select 
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            disabled={disabled}
+            className="border rounded px-2 py-1"
+          >
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type="range"
+            value={value}
+            onChange={(e) => onChange(Number(e.target.value))}
+            min={min}
+            max={max}
+            step={step}
+            disabled={disabled}
+            className="w-24"
+          />
         )}
       </div>
     </div>

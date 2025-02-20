@@ -26,9 +26,9 @@ export async function POST(request: Request) {
     console.log('Has AWS Secret Key:', !!process.env.AWS_SECRET_ACCESS_KEY);
     console.log('Starting render process...');
 
-    // Now expecting JSON instead of FormData
-    const { articleId } = await request.json();
+    const { articleId, renderSettings } = await request.json();
     console.log('Article ID:', articleId);
+    console.log('Render Settings:', renderSettings);
 
     if (!articleId) {
       console.log('Missing articleId');
@@ -56,19 +56,25 @@ export async function POST(request: Request) {
       );
     }
 
-    // We no longer need to handle file upload here as it's done directly to S3
     const s3Key = `${articleId}.glb`;
     console.log(`Processing render request for article ${articleId}`);
 
-    // Invoke Lambda function
+    // Invoke Lambda function with render settings
     console.log('Invoking Lambda function...');
     const command = new InvokeCommand({
       FunctionName: "SubmitBatchJobGLB",
       Payload: JSON.stringify({ 
         s3_bucket: process.env.S3_BUCKET_NAME, 
-        s3_key: s3Key
+        s3_key: s3Key,
+        renderSettings: {
+          RENDER_MARGIN: renderSettings?.margin ?? 90,
+          BG_COLOR: renderSettings?.backgroundColor ?? "1,1,1",
+          RESOLUTION: renderSettings?.resolution ?? "1920x1080",
+          IMAGE_FORMAT: renderSettings?.imageFormat ?? "JPEG"
+        }
       }),
     });
+
     const response = await lambdaClient.send(command);
     
     if (!response.Payload) {

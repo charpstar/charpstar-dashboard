@@ -5,6 +5,7 @@ import { useRenderStatus } from "@/hooks/useRenderStatus";
 import { useRenderImages } from "@/hooks/useRenderImages";
 import { useProducts } from "@/hooks/useProducts";
 import RenderGrid from "./gallery/RenderGrid";
+import { type RenderSettings } from "@/types/render"; // Import the type
 import RenderSettings from "./settings/RenderSettings";
 import RenderProgress from "./progress/RenderProgress";
 import ProductDetails from "./details/ProductDetails";
@@ -18,7 +19,7 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   const { products } = useProducts();
   const product = products.find(p => p.articleID === articleId);
 
-const handleRender = async () => {
+const handleRender = async (settings: RenderSettings) => {
     try {
       setIsRendering(true);
       
@@ -73,13 +74,16 @@ const handleRender = async () => {
         throw new Error('Failed to upload file to S3');
       }
 
-      // Start render job
+      // Start render job with settings
       const renderResponse = await fetch('/api/render/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ articleId }),
+        body: JSON.stringify({ 
+          articleId,
+          renderSettings: settings // Pass the settings object
+        }),
       });
 
       if (!renderResponse.ok) {
@@ -149,7 +153,7 @@ const handleRender = async () => {
   if (isLoadingImages || !product) {
     return <div>Loading...</div>;
   }
-
+  
   return (
     <div className="grid gap-6 grid-cols-12">
       <div className="col-span-8">
@@ -164,7 +168,7 @@ const handleRender = async () => {
         />
 
         <RenderSettings 
-          onRender={handleRender}
+          onRender={handleRender} // This now expects a settings parameter
           onDownloadAll={handleDownloadAll}
           isRendering={isRendering}
           hasImages={!!images}
