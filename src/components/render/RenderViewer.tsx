@@ -76,30 +76,42 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   };
 
   const handleDownloadAll = async () => {
-    if (!images) return;
+      if (!images) return;
 
-    try {
-      const zip = new JSZip();
-      
-      const imagePromises = images.map(async (image, index) => {
-        const response = await fetch(image.url);
-        const blob = await response.blob();
-        zip.file(`${articleId}-${index + 1}.jpg`, blob);
-      });
+      try {
+          const zip = new JSZip();
+          
+          const imagePromises = images.map(async (image, index) => {
+              const response = await fetch('/api/proxy-image', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ url: image.url }),
+              });
+              
+              if (!response.ok) {
+                  throw new Error(`Failed to fetch image ${index + 1}`);
+              }
+              
+              const blob = await response.blob();
+              zip.file(`${articleId}-${index + 1}.jpg`, blob);
+          });
 
-      await Promise.all(imagePromises);
-      const content = await zip.generateAsync({ type: "blob" });
-      const url = window.URL.createObjectURL(content);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${articleId}-renders.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Failed to download renders:", error);
-    }
+          await Promise.all(imagePromises);
+          const content = await zip.generateAsync({ type: "blob" });
+          const url = window.URL.createObjectURL(content);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${articleId}-renders.zip`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+      } catch (error) {
+          console.error("Failed to download renders:", error);
+          alert('Failed to download images. Please try again.');
+      }
   };
 
   if (isLoadingImages || !product) {
