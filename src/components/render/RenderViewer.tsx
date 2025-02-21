@@ -5,7 +5,7 @@ import { useRenderStatus } from "@/hooks/useRenderStatus";
 import { useRenderImages } from "@/hooks/useRenderImages";
 import { useProducts } from "@/hooks/useProducts";
 import RenderGrid from "./gallery/RenderGrid";
-import { type RenderSettings } from "@/types/render"; // Import the type
+import { type RenderSettings as RenderSettingsType } from "@/types/render";
 import RenderSettings from "./settings/RenderSettings";
 import RenderProgress from "./progress/RenderProgress";
 import ProductDetails from "./details/ProductDetails";
