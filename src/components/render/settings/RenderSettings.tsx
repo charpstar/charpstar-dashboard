@@ -5,7 +5,7 @@ import { Settings, Download } from "lucide-react";
 import RenderSettingItem from "./RenderSettingItem";
 
 interface RenderSettingsProps {
-  onRender: (settings: RenderSettings) => void;
+  onRender: (settings: RenderSettingsType) => void;
   onDownloadAll: () => void;
   isRendering: boolean;
   hasImages: boolean;

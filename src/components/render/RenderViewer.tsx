@@ -19,7 +19,7 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   const { products } = useProducts();
   const product = products.find(p => p.articleID === articleId);
 
-const handleRender = async (settings: RenderSettings) => {
+const handleRender = async (settings: RenderSettingsType) => {
     try {
       setIsRendering(true);
       
