@@ -3,7 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings, Download } from "lucide-react";
 import RenderSettingItem from "./RenderSettingItem";
-import { type RenderSettings as RenderSettingsType } from "@/types/render";
+
+
+// Define the type for render settings
+export interface RenderSettingsType {
+  margin: number;
+  backgroundColor: string;
+  resolution: string;
+  imageFormat: string;
+}
 
 interface RenderSettingsProps {
   onRender: (settings: RenderSettingsType) => void;
@@ -27,7 +35,7 @@ export default function RenderSettings({
   hasImages,
   showRenderButton
 }: RenderSettingsProps) {
-  const [settings, setSettings] = useState<RenderSettings>({
+  const [settings, setSettings] = useState<RenderSettingsType>({
     margin: 50,
     backgroundColor: "1,1,1",
     resolution: "1920x1080",
