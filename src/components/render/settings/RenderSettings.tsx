@@ -12,13 +12,6 @@ interface RenderSettingsProps {
   showRenderButton: boolean;
 }
 
-interface RenderSettings {
-  margin: number;
-  backgroundColor: string;
-  resolution: string;
-  imageFormat: string;
-}
-
 export default function RenderSettings({
   onRender,
   onDownloadAll,
