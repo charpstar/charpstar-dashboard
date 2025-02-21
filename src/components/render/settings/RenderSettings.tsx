@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings, Download } from "lucide-react";
 import RenderSettingItem from "./RenderSettingItem";
+import { type RenderSettings as RenderSettingsType } from "@/types/render";
 
 interface RenderSettingsProps {
   onRender: (settings: RenderSettingsType) => void;
