@@ -5,7 +5,7 @@ import { useRenderStatus } from "@/hooks/useRenderStatus";
 import { useRenderImages } from "@/hooks/useRenderImages";
 import { useProducts } from "@/hooks/useProducts";
 import RenderGrid from "./gallery/RenderGrid";
-import { type RenderSettings as RenderSettingsType } from "@/types/render";
+import { type RenderSettings } from "@/types/render";
 import RenderSettings from "./settings/RenderSettings";
 import RenderProgress from "./progress/RenderProgress";
 import ProductDetails from "./details/ProductDetails";
@@ -19,7 +19,7 @@ export default function RenderViewer({ articleId }: { articleId: string }) {
   const { products } = useProducts();
   const product = products.find(p => p.articleID === articleId);
 
-const handleRender = async (settings: RenderSettingsType) => {
+ const handleRender = async (settings: RenderSettings) => {
     try {
       setIsRendering(true);
       

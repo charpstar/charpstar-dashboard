@@ -1,10 +1,18 @@
+// src/components/render/settings/RenderSettingItem.tsx
+import React from "react";
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
+
 interface RenderSettingItemProps {
   icon: React.ReactNode;
   label: string;
-  value: string | number;
-  onChange: (value: any) => void;
+  value: number | string;
+  onChange: (value: number | string) => void;
   type: 'select' | 'range';
-  options?: { label: string; value: string }[];
+  options?: SelectOption[];
   min?: number;
   max?: number;
   step?: number;
@@ -32,7 +40,7 @@ export default function RenderSettingItem({
       <div className="text-sm">
         {type === 'select' ? (
           <select 
-            value={value}
+            value={value.toString()}
             onChange={(e) => onChange(e.target.value)}
             disabled={disabled}
             className="border rounded px-2 py-1"
@@ -46,7 +54,7 @@ export default function RenderSettingItem({
         ) : (
           <input
             type="range"
-            value={value}
+            value={value.toString()}
             onChange={(e) => onChange(Number(e.target.value))}
             min={min}
             max={max}
