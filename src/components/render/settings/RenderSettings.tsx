@@ -34,23 +34,29 @@ export default function RenderSettings({
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">          
-          <RenderSettingItem
-            icon={<Settings className="h-4 w-4" />}
-            label="Render Image Margin"
-            value={settings.margin}
-            onChange={(value) => setSettings(prev => ({ ...prev, margin: value }))}
-            type="range"
-            min={10}
-            max={90}
-            step={10}
-            disabled={isRendering}
-          />
+            <RenderSettingItem
+                icon={<Settings className="h-4 w-4" />}
+                label="Render Image Margin"
+                value={settings.margin}
+                onChange={(value) => setSettings(prev => ({ 
+                  ...prev, 
+                  margin: typeof value === 'string' ? parseInt(value, 10) : value 
+                }))}
+                type="range"
+                min={10}
+                max={90}
+                step={10}
+                disabled={isRendering}
+              />
           
           <RenderSettingItem
             icon={<Settings className="h-4 w-4" />}
             label="Background Color"
             value={settings.backgroundColor}
-            onChange={(value) => setSettings(prev => ({ ...prev, backgroundColor: value }))}
+            onChange={(value) => setSettings(prev => ({ 
+              ...prev, 
+              backgroundColor: String(value)
+            }))}
             type="select"
             options={[
               { label: "White", value: "1,1,1" },
@@ -64,7 +70,10 @@ export default function RenderSettings({
             icon={<Settings className="h-4 w-4" />}
             label="Resolution"
             value={settings.resolution}
-            onChange={(value) => setSettings(prev => ({ ...prev, resolution: value }))}
+            onChange={(value) => setSettings(prev => ({ 
+              ...prev, 
+              resolution: String(value) 
+            }))}
             type="select"
             options={[
               { label: "1920x1080", value: "1920x1080" },
@@ -77,7 +86,10 @@ export default function RenderSettings({
             icon={<Settings className="h-4 w-4" />}
             label="Image Format"
             value={settings.imageFormat}
-            onChange={(value) => setSettings(prev => ({ ...prev, imageFormat: value }))}
+            onChange={(value) => setSettings(prev => ({ 
+              ...prev, 
+              imageFormat: String(value) 
+            }))}
             type="select"
             options={[
               { label: "JPEG", value: "JPEG" },

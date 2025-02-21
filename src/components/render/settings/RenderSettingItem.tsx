@@ -12,7 +12,7 @@ interface RenderSettingItemProps {
   value: number | string;
   onChange: (value: number | string) => void;
   type: 'select' | 'range';
-  options?: SelectOption[];
+  options?: { label: string; value: string }[];
   min?: number;
   max?: number;
   step?: number;
