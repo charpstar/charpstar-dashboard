@@ -1,4 +1,3 @@
-// src/types/render.ts
 export type RenderStatus = 
   | "idle" 
   | "uploading" 
