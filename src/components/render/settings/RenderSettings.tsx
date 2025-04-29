@@ -39,14 +39,17 @@ export default function RenderSettings({
     imageFormat: "JPEG"
   });
 
-  const handleColorChange = (color: string) => {
+  const handleColorChange = (value: string | number) => {
+    // Only process if the value is a string
+    if (typeof value !== 'string') return;
+    
     // Validate hex color
-    const isValidHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i.test(color);
+    const isValidHex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i.test(value);
     if (!isValidHex) return;
 
     setSettings(prev => ({ 
       ...prev, 
-      backgroundColor: color
+      backgroundColor: value
     }));
   };
 
