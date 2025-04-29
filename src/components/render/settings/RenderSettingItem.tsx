@@ -80,7 +80,7 @@ export default function RenderSettingItem({
               min={min}
               max={max}
               step={step}
-              onValueChange={(vals) => onChange(vals[0])}
+              onValueChange={(vals) => onChange(vals[0] ?? Number(value))}
               disabled={disabled}
               className="flex-1"
             />
