@@ -16,7 +16,7 @@ export function buildDateRange(monitoredSince?: string) {
   if (monitoredSince) {
     const monitoredSinceDate = dayjs(monitoredSince);
     // Check if we have at least 30 days of data
-    if (end.diff(monitoredSinceDate, 'day') >= 30) {
+    if (end.diff(monitoredSinceDate, 'day') >= 30)  {
       return {
         startDate: dayjsToComp(defaultStart),
         endDate: dayjsToComp(end),
