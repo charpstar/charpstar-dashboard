@@ -2,6 +2,391 @@ export type TDatasets = keyof typeof queries;
 
 export const queries = {
 
+  analytics_286072860: (eventsBetween: string) => `
+  WITH
+    base_events AS (
+      SELECT
+        user_pseudo_id,
+        event_timestamp,
+        event_name,
+        event_params,
+        items
+      FROM \`fast-lattice-421210.analytics_286072860.events_*\`
+      WHERE ${eventsBetween}
+        AND user_pseudo_id IS NOT NULL
+    ),
+
+    -- Users who loaded CharpstAR (definitive source of CharpstAR-enabled pages)
+    charpstar_page_users AS (
+      SELECT DISTINCT user_pseudo_id
+      FROM base_events
+      WHERE event_name = 'charpstAR_Load'
+    ),
+
+    -- User segmentation for CharpstAR interactions
+    user_segments AS (
+      SELECT 
+        cpu.user_pseudo_id,
+        MAX(CASE WHEN be.event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click') THEN 1 ELSE 0 END) as used_charpstar
+      FROM charpstar_page_users cpu
+      LEFT JOIN base_events be ON cpu.user_pseudo_id = be.user_pseudo_id
+      GROUP BY cpu.user_pseudo_id
+    ),
+
+    -- Extract product information from CharpstAR clicks
+    click_events_with_products AS (
+      SELECT DISTINCT
+        be.event_timestamp AS click_timestamp,
+        be.user_pseudo_id,
+        be.event_name,
+        TRIM(REGEXP_REPLACE(pt.value.string_value, r' \\| Sono$', '')) AS original_product_name,
+        LOWER(TRIM(SPLIT(
+          TRIM(REGEXP_REPLACE(pt.value.string_value, r' \\| Sono$', '')), '|')[OFFSET(0)]
+        )) AS product_name
+      FROM base_events be
+      JOIN UNNEST(be.event_params) AS pt ON pt.key = 'page_title'
+      WHERE be.event_name IN ('charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
+        AND pt.value.string_value IS NOT NULL
+        AND be.user_pseudo_id IN (SELECT user_pseudo_id FROM charpstar_page_users)
+    ),
+
+    -- Product viewers from CharpstAR page users only
+    product_viewers AS (
+      SELECT 
+        LOWER(TRIM(SPLIT(
+          TRIM(REGEXP_REPLACE(pt.value.string_value, r' \\| Sono$', '')), '|')[OFFSET(0)]
+        )) AS product_name,
+        TRIM(REGEXP_REPLACE(pt.value.string_value, r' \\| Sono$', '')) AS original_product_name,
+        be.user_pseudo_id,
+        be.event_timestamp
+      FROM base_events be
+      JOIN UNNEST(be.event_params) AS pt ON pt.key = 'page_title'
+      WHERE be.event_name IN ('view_item', 'page_view', 'select_item')
+        AND pt.value.string_value IS NOT NULL
+        AND be.user_pseudo_id IN (SELECT user_pseudo_id FROM charpstar_page_users)
+    ),
+
+    -- Purchase data from CharpstAR page users only
+    purchase_data AS (
+      SELECT 
+        cpu.user_pseudo_id,
+        be.event_timestamp,
+        ga.value.int_value AS ga_session_id,
+        tx.value.string_value AS transaction_id,
+        val.value.double_value AS purchase_value
+      FROM charpstar_page_users cpu
+      INNER JOIN base_events be ON cpu.user_pseudo_id = be.user_pseudo_id
+      LEFT JOIN UNNEST(be.event_params) AS ga ON ga.key = 'ga_session_id'
+      LEFT JOIN UNNEST(be.event_params) AS tx ON tx.key = 'transaction_id'  
+      LEFT JOIN UNNEST(be.event_params) AS val ON val.key = 'value'
+      WHERE be.event_name = 'purchase'
+        AND tx.value.string_value IS NOT NULL
+        AND val.value.double_value IS NOT NULL
+        AND val.value.double_value > 0
+    ),
+
+    -- User-level purchase aggregation
+    user_purchases AS (
+      SELECT 
+        user_pseudo_id,
+        COUNT(DISTINCT transaction_id) as purchase_count,
+        AVG(purchase_value) as avg_order_value,
+        SUM(purchase_value) as total_purchase_value
+      FROM purchase_data
+      GROUP BY user_pseudo_id
+    ),
+
+    -- Cart additions from CharpstAR page users
+    cart_additions AS (
+      SELECT 
+        cpu.user_pseudo_id,
+        COUNT(*) as cart_count
+      FROM charpstar_page_users cpu
+      INNER JOIN base_events be ON cpu.user_pseudo_id = be.user_pseudo_id
+      WHERE be.event_name = 'add_to_cart'
+      GROUP BY cpu.user_pseudo_id
+    ),
+
+    -- FIXED: Product-level purchases with NO double counting
+    product_purchases_with_ar AS (
+      SELECT
+        pd.user_pseudo_id,
+        pd.transaction_id,
+        pd.purchase_value,
+        cep.product_name,
+        cep.original_product_name,
+        CASE 
+          WHEN cep.user_pseudo_id IS NOT NULL THEN 'yes'
+          ELSE 'no'
+        END AS purchased_after_ar
+      FROM purchase_data pd
+      LEFT JOIN (
+        SELECT
+          pd2.user_pseudo_id,
+          cep2.product_name,
+          cep2.original_product_name,
+          cep2.click_timestamp,
+          pd2.transaction_id,
+          -- Only keep the MOST RECENT AR/3D interaction before each purchase
+          ROW_NUMBER() OVER (
+            PARTITION BY pd2.transaction_id 
+            ORDER BY cep2.click_timestamp DESC
+          ) as rn
+        FROM purchase_data pd2
+        JOIN click_events_with_products cep2
+          ON pd2.user_pseudo_id = cep2.user_pseudo_id
+          AND cep2.click_timestamp <= pd2.event_timestamp
+          AND cep2.click_timestamp >= pd2.event_timestamp - (30 * 24 * 60 * 60 * 1000000)
+      ) cep
+        ON pd.user_pseudo_id = cep.user_pseudo_id
+        AND pd.transaction_id = cep.transaction_id
+        AND cep.rn = 1  -- Only the most recent interaction
+    ),
+
+    -- Product-level metrics
+    ar_clicks AS (
+      SELECT
+        product_name,
+        MAX(original_product_name) AS original_product_name, 
+        COUNT(DISTINCT click_timestamp) AS AR_Button_Clicks,
+        COUNT(DISTINCT user_pseudo_id) AS unique_ar_users
+      FROM click_events_with_products
+      WHERE event_name = 'charpstAR_AR_Button_Click'
+      GROUP BY product_name
+    ),
+
+    _3d_clicks AS (
+      SELECT
+        product_name,
+        MAX(original_product_name) AS original_product_name,
+        COUNT(DISTINCT click_timestamp) AS _3D_Button_Clicks,
+        COUNT(DISTINCT user_pseudo_id) AS unique_3d_users
+      FROM click_events_with_products
+      WHERE event_name = 'charpstAR_3D_Button_Click'
+      GROUP BY product_name
+    ),
+
+    total_views AS (
+      SELECT
+        product_name,
+        MAX(original_product_name) AS original_product_name,
+        COUNT(DISTINCT CONCAT(user_pseudo_id, CAST(event_timestamp AS STRING))) AS total_views,
+        COUNT(DISTINCT user_pseudo_id) AS unique_viewers
+      FROM product_viewers
+      GROUP BY product_name
+    ),
+
+    products_purchased_after_click_events AS (
+      SELECT
+        product_name,
+        COUNT(DISTINCT transaction_id) AS purchases_with_service,
+        COUNT(DISTINCT user_pseudo_id) AS users_with_purchases
+      FROM product_purchases_with_ar
+      WHERE purchased_after_ar = 'yes'
+        AND product_name IS NOT NULL
+      GROUP BY product_name
+    ),
+
+    total_purchases_by_product AS (
+      SELECT
+        product_name,
+        COUNT(DISTINCT transaction_id) AS total_purchases,
+        COUNT(DISTINCT user_pseudo_id) AS users_with_purchases
+      FROM product_purchases_with_ar
+      WHERE product_name IS NOT NULL
+      GROUP BY product_name
+    ),
+
+    default_conversion_rate AS (
+      SELECT
+        v.product_name,
+        v.original_product_name,
+        v.total_views,
+        v.unique_viewers,
+        COALESCE(p.total_purchases, 0) AS total_purchases,
+        COALESCE(p.users_with_purchases, 0) AS users_with_purchases,
+        COALESCE(ROUND(SAFE_DIVIDE(p.users_with_purchases, v.unique_viewers) * 100, 2), 0) AS default_conv_rate
+      FROM total_views v
+      LEFT JOIN total_purchases_by_product p ON v.product_name = p.product_name
+      GROUP BY 
+        v.product_name,
+        v.original_product_name,
+        v.total_views,
+        v.unique_viewers,
+        p.total_purchases,
+        p.users_with_purchases
+    ),
+
+    -- Event counts
+    event_counts AS (
+      SELECT event_name, COUNT(*) AS total_events
+      FROM base_events
+      WHERE event_name IN ('charpstAR_Load', 'charpstAR_AR_Button_Click', 'charpstAR_3D_Button_Click')
+        AND user_pseudo_id IN (SELECT user_pseudo_id FROM charpstar_page_users)
+      GROUP BY event_name
+    ),
+
+    -- Session durations
+    user_activity AS (
+      SELECT 
+        cpu.user_pseudo_id,
+        MIN(be.event_timestamp) as first_event,
+        MAX(be.event_timestamp) as last_event
+      FROM charpstar_page_users cpu
+      INNER JOIN base_events be ON cpu.user_pseudo_id = be.user_pseudo_id
+      GROUP BY cpu.user_pseudo_id
+    ),
+
+    session_durations AS (
+      SELECT 
+        user_pseudo_id,
+        (last_event - first_event) / 1000000 as total_duration_seconds
+      FROM user_activity
+      WHERE (last_event - first_event) / 1000000 BETWEEN 1 AND 7200
+    ),
+
+    -- Product metrics output
+    product_metrics AS (
+      SELECT
+        'product' AS data_type,
+        COALESCE(
+          ar.original_product_name,
+          td.original_product_name,
+          v.original_product_name
+        ) AS metric_name,
+        JSON_OBJECT(
+          'AR_Button_Clicks', CAST(COALESCE(ar.AR_Button_Clicks, 0) AS STRING),
+          '_3D_Button_Clicks', CAST(COALESCE(td._3D_Button_Clicks, 0) AS STRING),
+          'purchases_with_service', CAST(COALESCE(p.purchases_with_service, 0) AS STRING),
+          'total_purchases', CAST(COALESCE(tp.total_purchases, 0) AS STRING),
+          'total_button_clicks', CAST(COALESCE(td._3D_Button_Clicks, 0) + COALESCE(ar.AR_Button_Clicks, 0) AS STRING),
+          'product_conv_rate', CAST(COALESCE(dc.default_conv_rate, 0) AS STRING),
+          'total_views', CAST(COALESCE(v.total_views, 0) AS STRING),
+          'default_conv_rate', CAST(COALESCE(dc.default_conv_rate, 0) AS STRING),
+          'unique_viewers', CAST(COALESCE(v.unique_viewers, 0) AS STRING),
+          'unique_ar_users', CAST(COALESCE(ar.unique_ar_users, 0) AS STRING),
+          'unique_3d_users', CAST(COALESCE(td.unique_3d_users, 0) AS STRING)
+        ) AS metrics
+      FROM (
+        SELECT product_name FROM ar_clicks
+        UNION DISTINCT
+        SELECT product_name FROM _3d_clicks
+        UNION DISTINCT
+        SELECT product_name FROM total_views
+      ) base
+      LEFT JOIN ar_clicks ar ON base.product_name = ar.product_name
+      LEFT JOIN _3d_clicks td ON base.product_name = td.product_name
+      LEFT JOIN products_purchased_after_click_events p ON base.product_name = p.product_name
+      LEFT JOIN total_purchases_by_product tp ON base.product_name = tp.product_name
+      LEFT JOIN total_views v ON base.product_name = v.product_name
+      LEFT JOIN default_conversion_rate dc ON base.product_name = dc.product_name
+      WHERE COALESCE(td._3D_Button_Clicks, 0) + COALESCE(ar.AR_Button_Clicks, 0) > 0
+    ),
+
+    -- Overall metrics calculation
+    overall_metrics AS (
+      SELECT 'overall' AS data_type, m.event_name AS metric_name,
+      JSON_OBJECT('value', CAST(m.count AS STRING)) AS metrics
+      FROM (
+        SELECT 'total_views' AS event_name,
+             CAST((SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.total_views') AS INT64)) 
+                  FROM product_metrics) AS FLOAT64) as count
+        UNION ALL
+        SELECT 'overall_conv_rate' AS event_name,
+             ROUND(
+               (COUNT(CASE WHEN up.purchase_count > 0 THEN 1 END) * 100.0) / 
+               COUNT(*), 2
+             ) as count
+        FROM user_segments us
+        LEFT JOIN user_purchases up ON us.user_pseudo_id = up.user_pseudo_id
+        UNION ALL
+        SELECT 'overall_conv_rate_CharpstAR' AS event_name,
+             ROUND(
+               (COUNT(CASE WHEN us.used_charpstar = 1 AND up.purchase_count > 0 THEN 1 END) * 100.0) / 
+               NULLIF(COUNT(CASE WHEN us.used_charpstar = 1 THEN 1 END), 0), 2
+             ) as count
+        FROM user_segments us
+        LEFT JOIN user_purchases up ON us.user_pseudo_id = up.user_pseudo_id
+        UNION ALL
+        SELECT 'charpstAR_AR_Button_Click' AS event_name,
+             CAST((SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$.AR_Button_Clicks') AS INT64)) 
+                  FROM product_metrics) AS FLOAT64) as count
+        UNION ALL
+        SELECT 'charpstAR_3D_Button_Click' AS event_name,
+             CAST((SELECT SUM(CAST(JSON_EXTRACT_SCALAR(metrics, '$._3D_Button_Clicks') AS INT64)) 
+                  FROM product_metrics) AS FLOAT64) as count
+        UNION ALL
+        SELECT 'charpstAR_Load' AS event_name, 
+             CAST(total_events AS FLOAT64) 
+        FROM event_counts 
+        WHERE event_name = 'charpstAR_Load'
+        UNION ALL
+        SELECT 'percentage_charpstAR' AS event_name,
+             ROUND(
+               (COUNT(DISTINCT CASE WHEN us.used_charpstar = 1 THEN us.user_pseudo_id END) * 100.0) / 
+               COUNT(DISTINCT us.user_pseudo_id), 2
+             ) as count
+        FROM user_segments us
+        UNION ALL
+        SELECT 'cart_percentage_default' AS event_name,
+             ROUND(
+               (COUNT(CASE WHEN ca.cart_count > 0 THEN 1 END) * 100.0) / 
+               COUNT(*), 2
+             ) as count
+        FROM user_segments us
+        LEFT JOIN cart_additions ca ON us.user_pseudo_id = ca.user_pseudo_id
+        UNION ALL
+        SELECT 'cart_after_ar_percentage' AS event_name,
+             ROUND(
+               (COUNT(CASE WHEN us.used_charpstar = 1 AND ca.cart_count > 0 THEN 1 END) * 100.0) / 
+               NULLIF(COUNT(CASE WHEN us.used_charpstar = 1 THEN 1 END), 0), 2
+             ) as count
+        FROM user_segments us
+        LEFT JOIN cart_additions ca ON us.user_pseudo_id = ca.user_pseudo_id
+        UNION ALL
+        SELECT 'total_purchases' AS event_name,
+             CAST(COUNT(DISTINCT pd.transaction_id) AS FLOAT64)
+        FROM purchase_data pd
+        UNION ALL
+        SELECT 'total_unique_users' AS event_name,
+             CAST(COUNT(DISTINCT user_pseudo_id) AS FLOAT64)
+        FROM charpstar_page_users
+        UNION ALL
+        SELECT 'total_activated_users' AS event_name,
+             CAST(COUNT(DISTINCT CASE WHEN us.used_charpstar = 1 THEN us.user_pseudo_id END) AS FLOAT64)
+        FROM user_segments us
+        UNION ALL
+        SELECT 'total_purchases_after_ar' AS event_name,
+             CAST(SUM(CASE WHEN us.used_charpstar = 1 THEN up.purchase_count ELSE 0 END) AS FLOAT64)
+        FROM user_segments us
+        LEFT JOIN user_purchases up ON us.user_pseudo_id = up.user_pseudo_id
+        UNION ALL
+        SELECT 'average_order_value_all_users' AS event_name,
+             ROUND(AVG(CASE WHEN up.purchase_count > 0 THEN up.avg_order_value END), 2)
+        FROM user_segments us
+        LEFT JOIN user_purchases up ON us.user_pseudo_id = up.user_pseudo_id
+        UNION ALL
+        SELECT 'average_order_value_ar_users' AS event_name,
+             ROUND(AVG(CASE WHEN us.used_charpstar = 1 AND up.purchase_count > 0 THEN up.avg_order_value END), 2)
+        FROM user_segments us
+        LEFT JOIN user_purchases up ON us.user_pseudo_id = up.user_pseudo_id
+        UNION ALL
+        SELECT 'session_time_default' AS event_name,
+             ROUND(AVG(sd.total_duration_seconds), 2)
+        FROM session_durations sd
+        UNION ALL
+        SELECT 'combined_session_time' AS event_name,
+             ROUND(AVG(CASE WHEN us.used_charpstar = 1 THEN sd.total_duration_seconds END), 2)
+        FROM user_segments us
+        LEFT JOIN session_durations sd ON us.user_pseudo_id = sd.user_pseudo_id
+      ) m
+    )
+
+    SELECT * FROM product_metrics
+    UNION ALL
+    SELECT * FROM overall_metrics
+    ORDER BY data_type, metric_name`,
+
 analytics_287358793: (eventsBetween: string) => `
   WITH
     base_events AS (

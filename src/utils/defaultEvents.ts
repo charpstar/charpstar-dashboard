@@ -8,70 +8,70 @@ export const defaultEvents = {
     tooltip: "Total Unique Users on CharpstAR service enabled PDPs",
   },
   overall_conv_rate: {
-    title: "Conversion rate without AR/3D activation",
-    tooltip: `The average conversion rate of users who do not use our services<br/><br/>
+    title: "Overall Conversion Rate",
+    tooltip: `The conversion rate of all users who visited CharpstAR-enabled pages<br/><br/>
       <strong>Formula:</strong><br/>
-      (Total Purchases on entire store / Total Unique Users on entire store) × 100`,
+      (Total Purchases on CharpstAR pages / Total Unique Users on CharpstAR pages) × 100`,
   },
   overall_conv_rate_CharpstAR: {
-    title: "Conversion rate with AR/3D activation",
-    tooltip: `The average conversion rate of users when using either of our services<br/><br/>
+    title: "Conversion Rate (CharpstAR Activated)",
+    tooltip: `The conversion rate of users who actively clicked AR or 3D buttons<br/><br/>
       <strong>Formula:</strong><br/>
-      (Total Purchases with AR or 3D / Total Unique Users with AR or 3D uses) × 100`,
+      (Total Purchases by CharpstAR Activated Users / Total Users who clicked AR or 3D) × 100`,
   },
   cart_percentage_default: {
-    title: "Add to Cart Default",
-    tooltip: `The percentage of users adding a product to cart when they have not interacted with CharpstAR services<br/><br/>
+    title: "Overall Add to Cart Rate",
+    tooltip: `The percentage of users adding products to cart on CharpstAR-enabled pages<br/><br/>
       <strong>Formula:</strong><br/>
-      (Cart Additions on entire store  / Total Unique Users on entire store) × 100`,
+      (Cart Additions on CharpstAR pages / Total Unique Users on CharpstAR pages) × 100`,
   },
   cart_after_ar_percentage: {
-    title: "Add to Cart with CharpstAR",
-    tooltip: `The percentage of users adding a product to cart after they have interacted with either of the AR/3D buttons<br/><br/>
+    title: "Add to Cart Rate (CharpstAR Activated)",
+    tooltip: `The percentage of users adding products to cart after clicking AR or 3D buttons<br/><br/>
       <strong>Formula:</strong><br/>
-      (Cart Additions with AR or 3D uses / Total Unique Users with AR or 3D uses) × 100`,
+      (Cart Additions by CharpstAR Activated Users / Total Users who clicked AR or 3D) × 100`,
   },
   percentage_charpstAR: {
-    title: "Percentage of users using our service",
-    tooltip: `The percentage of users who have visited a page with our script and have clicked either the AR or 3D Button<br/><br/>
+    title: "CharpstAR Activation Rate",
+    tooltip: `The percentage of CharpstAR page visitors who actively clicked AR or 3D buttons<br/><br/>
       <strong>Formula:</strong><br/>
-      (Total Unique Users with AR or 3D uses / Total Unique Users on entire store) × 100`,
+      (Total Users who clicked AR or 3D / Total Unique Users on CharpstAR pages) × 100`,
   },
   total_activated_users: {
-    title: "Total Users who activate our services",
-    tooltip: "Total Users on PDPs who click either of the AR/3D buttons",
+    title: "Total CharpstAR Activated Users",
+    tooltip: "Total Users on CharpstAR-enabled pages who clicked either AR or 3D buttons",
   },
   total_purchases_after_ar: {
-    title: "Total Purchases with AR/3D activation",
-    tooltip: "Total Purchases made after interacting with our services",
+    title: "Total Purchases (CharpstAR Activated)",
+    tooltip: "Total Purchases made by users who clicked AR or 3D buttons",
   },
   average_pages_after_ar: {
-    title: "Average Page visits after AR/3D activation",
-    tooltip: "The average amount of pages visited by a user after they activate our services",
+    title: "Average Page Visits (CharpstAR Activated)",
+    tooltip: "The average number of pages visited by users after they click AR or 3D buttons",
   },
   charpstAR_AR_Button_Click: {
     title: "Total AR Clicks",
-    tooltip: "Total clicks by users on the 'View in AR' Button",
+    tooltip: "Total clicks by users on the 'View in AR' Button on CharpstAR-enabled pages",
   },
   charpstAR_3D_Button_Click: {
     title: "Total 3D Clicks",
-    tooltip: "Total clicks by users on the 'View in 3D' Button",
+    tooltip: "Total clicks by users on the 'View in 3D' Button on CharpstAR-enabled pages",
   },
   session_time_default: {
-    title: "Session time duration without AR/3D activation",
-    tooltip: "The average session time of users on CharpstAR service enabled PDPs when they have not interacted with our services",
+    title: "Overall Average Session Time",
+    tooltip: "The average session duration of all users on CharpstAR-enabled pages",
   },
   combined_session_time: {
-    title: "Session time duration with AR/3D activation",
-    tooltip: "The average session time of users who have visited a page with our services and clicked either the AR or 3D Button",
+    title: "Average Session Time (CharpstAR Activated)",
+    tooltip: "The average session duration of users who clicked AR or 3D buttons",
   },
   average_order_value_all_users: {
-    title: "Average Order Value without AR/3D activation (Store currency)",
-    tooltip: "The Average value in the store's default currency of orders made by customers when they have not interacted with CharpstAR services",
+    title: "Overall Average Order Value",
+    tooltip: "The average order value of purchases made by all users on CharpstAR-enabled pages",
   },
   average_order_value_ar_users: {
-    title: "Average Order Value with AR/3D activation (Store currency)",
-    tooltip: "The Average value in the store's default currency of orders made by customers after they have interacted with either of the AR/3D buttons",
+    title: "Average Order Value (CharpstAR Activated)",
+    tooltip: "The average order value of purchases made by users who clicked AR or 3D buttons",
   },
 } as const;
 
