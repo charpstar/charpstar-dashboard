@@ -11,7 +11,7 @@ export const queries = {
         event_name,
         event_params,
         items
-      FROM \`fast-lattice-421210.analytics_286120907.events_*\`
+      FROM \`fast-lattice-421210.analytics_286101032.events_*\`
       WHERE ${eventsBetween}
         AND user_pseudo_id IS NOT NULL
     ),
